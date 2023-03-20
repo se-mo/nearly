@@ -1,5 +1,19 @@
 # nearly
 
+[![license][license-badge]][license-url]&nbsp;
+[![crate][crate-badge]][crate-url]&nbsp;
+[![doc][doc-badge]][doc-url]&nbsp;
+[![ci][ci-badge]][ci-url]
+
+[license-badge]: https://img.shields.io/github/license/se-mo/nearly?color=blue&style=flat-square
+[license-url]: https://github.com/se-mo/nearly/blob/main/LICENSE
+[crate-badge]: https://img.shields.io/crates/v/nearly.svg?style=flat-square&logo=rust
+[crate-url]: https://crates.io/crates/nearly
+[doc-badge]: https://img.shields.io/docsrs/nearly?style=flat-square&logo=docsdotrs
+[doc-url]: https://docs.rs/nearly
+[ci-badge]: https://img.shields.io/github/actions/workflow/status/se-mo/nearly/ci.yml?label=ci&style=flat-square&logo=github
+[ci-url]: https://github.com/se-mo/nearly/actions/workflows/ci.yml
+
 Compare IEEE floating point primitives by nearly comparisons.
 
 The issue in directly compare floating point primitives is, that they might be identical from a
