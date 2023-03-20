@@ -5,7 +5,8 @@ use crate::tolerance::{EpsTolerance, Tolerance, ToleranceTypes, UlpsTolerance};
 /// This trait is a convenience trait to use nearly equality comparison with a default tolerances.
 ///
 /// This is the same as using the [NearlyEqTol] trait with [Tolerance::default()].
-pub trait NearlyEq<Rhs = Self, LhsTol = Self, RhsTol = Rhs>: NearlyEqTol<Rhs, LhsTol, RhsTol>
+pub trait NearlyEq<Rhs = Self, LhsTol = Self, RhsTol = Rhs>:
+    NearlyEqTol<Rhs, LhsTol, RhsTol>
 where
     Rhs: ?Sized,
     LhsTol: EpsTolerance<RhsTol> + UlpsTolerance<RhsTol>,

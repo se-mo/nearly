@@ -5,7 +5,7 @@ use crate::ulps::Ulps;
 pub trait NearlyEqUlps<Rhs = Self, LhsTol = Self, RhsTol = Rhs>
 where
     Rhs: ?Sized,
-    LhsTol: UlpsTolerance<RhsTol>
+    LhsTol: UlpsTolerance<RhsTol>,
 {
     /// Returns whether `self`is nearly equal to `other` based on an ulps value `ulps`.
     fn nearly_eq_ulps(&self, other: &Rhs, ulps: UlpsToleranceType<LhsTol, RhsTol>) -> bool;

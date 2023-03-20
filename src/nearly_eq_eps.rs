@@ -4,7 +4,7 @@ use crate::tolerance::{EpsTolerance, EpsToleranceType};
 pub trait NearlyEqEps<Rhs = Self, LhsTol = Self, RhsTol = Rhs>
 where
     Rhs: ?Sized,
-    LhsTol: EpsTolerance<RhsTol>
+    LhsTol: EpsTolerance<RhsTol>,
 {
     /// Returns whether `self` is nearly equal to `other` based on an absolute epsilon value `eps`.
     fn nearly_eq_eps(&self, other: &Rhs, eps: EpsToleranceType<LhsTol, RhsTol>) -> bool;

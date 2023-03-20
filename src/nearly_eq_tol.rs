@@ -6,7 +6,8 @@ use crate::tolerance::{EpsTolerance, Tolerance, ToleranceTypes, UlpsTolerance};
 /// and an ulps value. See [Tolerance].
 ///
 /// This trait combines the traits [NearlyEqEps] and [NearlyEqUlps].
-pub trait NearlyEqTol<Rhs = Self, LhsTol = Self, RhsTol = Rhs>: NearlyEqEps<Rhs, LhsTol, RhsTol> + NearlyEqUlps<Rhs, LhsTol, RhsTol>
+pub trait NearlyEqTol<Rhs = Self, LhsTol = Self, RhsTol = Rhs>:
+    NearlyEqEps<Rhs, LhsTol, RhsTol> + NearlyEqUlps<Rhs, LhsTol, RhsTol>
 where
     Rhs: ?Sized,
     LhsTol: EpsTolerance<RhsTol> + UlpsTolerance<RhsTol>,
