@@ -1,5 +1,5 @@
 use crate::nearly_eq_tol::NearlyEqTol;
-use crate::tolerance::{EpsTolerance, Tolerance, ToleranceTypes, UlpsTolerance};
+use crate::tolerance::{EpsAndUlpsTolerance, EpsTolerance, Tolerance, UlpsTolerance};
 
 /// A trait for nearly equality comparison based on a default tolerance.
 /// This trait is a convenience trait to use nearly equality comparison with a default tolerances.

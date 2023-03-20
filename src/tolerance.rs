@@ -40,12 +40,15 @@ pub type UlpsToleranceType<Lhs, Rhs = Lhs> = <Lhs as UlpsTolerance<Rhs>>::T;
 /// epsilon tolerance and an ulps tolerance is required.
 ///
 /// Besides combining the two traits, this trait does not provide any new functionality.
-pub trait ToleranceTypes<Rhs = Self>: EpsTolerance<Rhs> + UlpsTolerance<Rhs>
+pub trait EpsAndUlpsTolerance<Rhs = Self>: EpsTolerance<Rhs> + UlpsTolerance<Rhs>
 where
     Rhs: ?Sized,
 {
 }
-impl<T: ?Sized + EpsTolerance<Rhs> + UlpsTolerance<Rhs>, Rhs: ?Sized> ToleranceTypes<Rhs> for T {}
+impl<T: ?Sized + EpsTolerance<Rhs> + UlpsTolerance<Rhs>, Rhs: ?Sized> EpsAndUlpsTolerance<Rhs>
+    for T
+{
+}
 
 impl EpsTolerance for f32 {
     type T = f32;
@@ -80,20 +83,20 @@ pub type ToleranceF64 = Tolerance<f64>;
 #[derive(Clone, Copy, Debug)]
 pub struct Tolerance<Lhs, Rhs = Lhs>
 where
-    Lhs: ?Sized + ToleranceTypes<Rhs>,
+    Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>,
     Rhs: ?Sized,
 {
     pub eps: EpsToleranceType<Lhs, Rhs>,
     pub ulps: UlpsToleranceType<Lhs, Rhs>,
 }
 
-impl<Lhs: ?Sized + ToleranceTypes<Rhs>, Rhs: ?Sized> Tolerance<Lhs, Rhs> {
+impl<Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>, Rhs: ?Sized> Tolerance<Lhs, Rhs> {
     pub fn new(eps: EpsToleranceType<Lhs, Rhs>, ulps: UlpsToleranceType<Lhs, Rhs>) -> Self {
         Tolerance::<Lhs, Rhs> { eps, ulps }
     }
 }
 
-impl<Lhs: ?Sized + ToleranceTypes<Rhs>, Rhs: ?Sized> Default for Tolerance<Lhs, Rhs> {
+impl<Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>, Rhs: ?Sized> Default for Tolerance<Lhs, Rhs> {
     fn default() -> Self {
         Tolerance::<Lhs, Rhs> {
             eps: <Lhs as EpsTolerance<Rhs>>::DEFAULT,
@@ -102,7 +105,7 @@ impl<Lhs: ?Sized + ToleranceTypes<Rhs>, Rhs: ?Sized> Default for Tolerance<Lhs, 
     }
 }
 
-impl<Lhs: ?Sized + ToleranceTypes<Rhs>, Rhs: ?Sized>
+impl<Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>, Rhs: ?Sized>
     From<(EpsToleranceType<Lhs, Rhs>, UlpsToleranceType<Lhs, Rhs>)> for Tolerance<Lhs, Rhs>
 {
     fn from(tuple: (EpsToleranceType<Lhs, Rhs>, UlpsToleranceType<Lhs, Rhs>)) -> Self {
@@ -113,7 +116,7 @@ impl<Lhs: ?Sized + ToleranceTypes<Rhs>, Rhs: ?Sized>
     }
 }
 
-impl<Lhs: ?Sized + ToleranceTypes<Rhs>, Rhs: ?Sized> From<Tolerance<Lhs, Rhs>>
+impl<Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>, Rhs: ?Sized> From<Tolerance<Lhs, Rhs>>
     for (EpsToleranceType<Lhs, Rhs>, UlpsToleranceType<Lhs, Rhs>)
 {
     fn from(val: Tolerance<Lhs, Rhs>) -> Self {

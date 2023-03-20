@@ -1,6 +1,6 @@
 use crate::nearly_eq_eps::NearlyEqEps;
 use crate::nearly_eq_ulps::NearlyEqUlps;
-use crate::tolerance::{EpsTolerance, Tolerance, ToleranceTypes, UlpsTolerance};
+use crate::tolerance::{EpsAndUlpsTolerance, EpsTolerance, Tolerance, UlpsTolerance};
 
 /// A trait for nearly equality comparison based on a tolerance including an absolute epsilon value
 /// and an ulps value. See [Tolerance].

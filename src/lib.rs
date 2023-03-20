@@ -235,8 +235,8 @@
 //!
 //! ```
 //! use nearly::{
-//!     EpsTolerance, EpsToleranceType, NearlyEq, NearlyEqEps, NearlyEqTol, NearlyEqUlps,
-//!     ToleranceTypes, UlpsTolerance, UlpsToleranceType
+//!     EpsAndUlpsTolerance, EpsTolerance, EpsToleranceType, NearlyEq, NearlyEqEps, NearlyEqTol,
+//!     NearlyEqUlps, UlpsTolerance, UlpsToleranceType
 //! };
 //!
 //! struct Point<T> {
@@ -278,8 +278,8 @@
 //!     }
 //! }
 //!
-//! impl<T> NearlyEqTol for Point<T> where T: NearlyEqTol + ToleranceTypes {}
-//! impl<T> NearlyEq for Point<T> where T: NearlyEq + ToleranceTypes {}
+//! impl<T> NearlyEqTol for Point<T> where T: NearlyEqTol + EpsAndUlpsTolerance {}
+//! impl<T> NearlyEq for Point<T> where T: NearlyEq + EpsAndUlpsTolerance {}
 //! ```
 //!
 //! ## Comparing two different structs
@@ -365,12 +365,12 @@ mod nearly_eq_ulps;
 pub use nearly_eq_ulps::NearlyEqUlps;
 
 mod tolerance;
+pub use tolerance::EpsAndUlpsTolerance;
 pub use tolerance::EpsTolerance;
 pub use tolerance::EpsToleranceType;
 pub use tolerance::Tolerance;
 pub use tolerance::ToleranceF32;
 pub use tolerance::ToleranceF64;
-pub use tolerance::ToleranceTypes;
 pub use tolerance::UlpsTolerance;
 pub use tolerance::UlpsToleranceType;
 
