@@ -11,7 +11,7 @@ where
 }
 
 macro_rules! impl_ulps {
-    ($float: ty, $int: ty, $uint: ty) => {
+    ($float: ty, $int: ty) => {
         impl Ulps for $float {
             type IntRep = $int;
 
@@ -27,8 +27,8 @@ macro_rules! impl_ulps {
     };
 }
 
-impl_ulps!(f32, i32, u32);
-impl_ulps!(f64, i64, u64);
+impl_ulps!(f32, i32);
+impl_ulps!(f64, i64);
 
 #[cfg(test)]
 mod tests {
