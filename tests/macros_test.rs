@@ -97,6 +97,92 @@ fn macro_nearly_eq_tol_f64() {
 }
 
 #[test]
+fn macro_nearly_eq_eps_ulps_f32() {
+    let default_eps = ToleranceF32::default().eps;
+    let default_ulps = ToleranceF32::default().ulps;
+
+    assert!(nearly_eq!(
+        0.0_f32,
+        0.0_f32,
+        eps = default_eps,
+        ulps = default_ulps
+    ));
+    assert!(nearly_eq!(
+        1.0_f32,
+        1.0_f32,
+        eps = default_eps,
+        ulps = default_ulps
+    ));
+    assert!(nearly_eq!(
+        1.0_f32,
+        1.0000005_f32,
+        eps = default_eps,
+        ulps = default_ulps
+    ));
+    assert!(nearly_eq!(
+        -1.0_f32,
+        -1.0000005_f32,
+        eps = default_eps,
+        ulps = default_ulps
+    ));
+    assert!(!nearly_eq!(
+        1.0_f32,
+        f32::INFINITY,
+        eps = f32::MAX,
+        ulps = i32::MAX << 1
+    ));
+    assert!(!nearly_eq!(
+        1.0_f32,
+        f32::NAN,
+        eps = f32::MAX,
+        ulps = i32::MAX
+    ));
+}
+
+#[test]
+fn macro_nearly_eq_eps_ulps_f64() {
+    let default_eps = ToleranceF64::default().eps;
+    let default_ulps = ToleranceF64::default().ulps;
+
+    assert!(nearly_eq!(
+        0.0_f64,
+        0.0_f64,
+        eps = default_eps,
+        ulps = default_ulps
+    ));
+    assert!(nearly_eq!(
+        1.0_f64,
+        1.0_f64,
+        eps = default_eps,
+        ulps = default_ulps
+    ));
+    assert!(nearly_eq!(
+        1.0_f64,
+        1.0000000000000009_f64,
+        eps = default_eps,
+        ulps = default_ulps
+    ));
+    assert!(nearly_eq!(
+        -1.0_f64,
+        -1.0000000000000009_f64,
+        eps = default_eps,
+        ulps = default_ulps
+    ));
+    assert!(!nearly_eq!(
+        1.0_f64,
+        f64::INFINITY,
+        eps = f64::MAX,
+        ulps = i64::MAX << 1
+    ));
+    assert!(!nearly_eq!(
+        1.0_f64,
+        f64::NAN,
+        eps = f64::MAX,
+        ulps = i64::MAX
+    ));
+}
+
+#[test]
 fn macro_nearly_eq_f32() {
     assert!(nearly_eq!(0.0_f32, 0.0_f32));
     assert!(nearly_eq!(1.0_f32, 1.0_f32));
@@ -209,6 +295,54 @@ fn macro_nearly_ne_tol_f64() {
         1.0_f64,
         f64::NAN,
         tol = ToleranceF64::new(f64::MAX, i64::MAX)
+    ));
+}
+
+#[test]
+fn macro_nearly_ne_eps_ulps_f32() {
+    assert!(nearly_ne!(
+        0.0_f32,
+        0.00001_f32,
+        eps = ToleranceF32::default().eps,
+        ulps = ToleranceF32::default().ulps
+    ));
+    assert!(nearly_ne!(1.0_f32, -1.0_f32, eps = 0.1_f32, ulps = 100_i32));
+    assert!(nearly_ne!(2.3_f32, 5.9_f32, eps = 2.6_f32, ulps = 100_i32));
+    assert!(nearly_ne!(
+        1.0_f32,
+        f32::INFINITY,
+        eps = f32::MAX,
+        ulps = i32::MAX << 1
+    ));
+    assert!(nearly_ne!(
+        1.0_f32,
+        f32::NAN,
+        eps = f32::MAX,
+        ulps = i32::MAX
+    ));
+}
+
+#[test]
+fn macro_nearly_ne_eps_ulps_f64() {
+    assert!(nearly_ne!(
+        0.0_f64,
+        0.00001_f64,
+        eps = ToleranceF64::default().eps,
+        ulps = ToleranceF64::default().ulps
+    ));
+    assert!(nearly_ne!(1.0_f64, -1.0_f64, eps = 0.1_f64, ulps = 100_i64));
+    assert!(nearly_ne!(2.3_f64, 5.9_f64, eps = 2.6_f64, ulps = 100_i64));
+    assert!(nearly_ne!(
+        1.0_f64,
+        f64::INFINITY,
+        eps = f64::MAX,
+        ulps = i64::MAX << 1
+    ));
+    assert!(nearly_ne!(
+        1.0_f64,
+        f64::NAN,
+        eps = f64::MAX,
+        ulps = i64::MAX
     ));
 }
 

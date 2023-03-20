@@ -102,6 +102,7 @@
 //! assert!( nearly_eq!(a, b) );
 //! assert!( nearly_eq!(a, b, eps = 0.001) );
 //! assert!( nearly_eq!(a, b, ulps = 15) );
+//! assert!( nearly_eq!(a, b, eps = 0.001, ulps = 15) );
 //! assert!( nearly_eq!(a, b, tol = ToleranceF32::new(0.001, 15)) );
 //! ```
 //!
@@ -116,6 +117,7 @@
 //! assert_nearly_eq!(a, b);
 //! assert_nearly_eq!(a, b, eps = 0.001);
 //! assert_nearly_eq!(a, b, ulps = 15);
+//! assert_nearly_eq!(a, b, eps = 0.001, ulps = 15);
 //! assert_nearly_eq!(a, b, tol = ToleranceF32::new(0.001, 15));
 //! ```
 //!
@@ -131,6 +133,7 @@
 //! debug_assert_nearly_eq!(a, b);
 //! debug_assert_nearly_eq!(a, b, eps = 0.001);
 //! debug_assert_nearly_eq!(a, b, ulps = 15);
+//! debug_assert_nearly_eq!(a, b, eps = 0.001, ulps = 15);
 //! debug_assert_nearly_eq!(a, b, tol = ToleranceF32::new(0.001, 15));
 //! ```
 //!

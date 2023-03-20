@@ -21,6 +21,8 @@ macro_rules! add_nearly_macro {
             ///
             /// // use epsilon and ulps based comparison
             #[doc = "let " $operator ": bool = nearly_" $operator
+            "!(a, b, eps = 0.01, ulps = 5);"]
+            #[doc = "let " $operator ": bool = nearly_" $operator
             "!(a, b, tol = ToleranceF32::new(0.01, 5));"]
             ///
             /// // use epsilon and ulps based comparison with default tolerance
@@ -51,6 +53,9 @@ macro_rules! add_nearly_macro {
                             left_val.[<nearly_ $operator _tol>](right_val, *tolerance_val)
                         }
                     }
+                };
+                ($left: expr, $right: expr, eps = $eps: expr, ulps = $ulps: expr) => {
+                    [<nearly_ $operator>]!($left, $right, tol = ($eps, $ulps).into());
                 };
                 ($left: expr, $right: expr) => {
                     match (&$left, &$right) {
@@ -88,6 +93,7 @@ macro_rules! add_assert_nearly_macro {
             #[doc = "assert_nearly_" $operator "!(a, b, ulps = 5);"]
             ///
             /// // use epsilon and ulps based comparison
+            #[doc = "assert_nearly_" $operator "!(a, b, eps = 0.01, ulps = 5);"]
             #[doc = "assert_nearly_" $operator "!(a, b, tol = ToleranceF32::new(0.01, 5));"]
             ///
             /// // use epsilon and ulps based comparison with default tolerance
@@ -145,6 +151,9 @@ macro_rules! add_assert_nearly_macro {
                         }
                     }
                 };
+                ($left: expr, $right: expr, eps = $eps: expr, ulps = $ulps: expr) => {
+                    [<assert_nearly_ $operator>]!($left, $right, tol = ($eps, $ulps).into());
+                };
                 ($left: expr, $right: expr) => {
                     match (&$left, &$right) {
                         (left_val, right_val) => {
@@ -192,6 +201,7 @@ macro_rules! add_debug_assert_nearly_macro {
             #[doc = "debug_assert_nearly_" $operator "!(a, b, ulps = 5);"]
             ///
             /// // use epsilon and ulps based comparison
+            #[doc = "debug_assert_nearly_" $operator "!(a, b, eps = 0.01, ulps = 5);"]
             #[doc = "debug_assert_nearly_" $operator "!(a, b, tol = ToleranceF32::new(0.01, 5));"]
             ///
             /// // use epsilon and ulps based comparison with default tolerance
@@ -216,6 +226,9 @@ macro_rules! add_debug_assert_nearly_macro {
                         use nearly::[<assert_nearly_ $operator>];
                         [<assert_nearly_ $operator>]!($left, $right, tol = $tolerance)
                     }
+                };
+                ($left: expr, $right: expr, eps = $eps: expr, ulps = $ulps: expr) => {
+                    [<debug_assert_nearly_ $operator>]!($left, $right, tol = ($eps, $ulps).into());
                 };
                 ($left: expr, $right: expr) => {
                     if cfg!(debug_assertions) {
