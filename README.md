@@ -64,6 +64,6 @@ For information on how to:
 
 - use comparison based on non default tolerance values
 - use absolute or ulps difference explicitly
-- implement the crate traits to enable nearly comparison for you own types
+- implement the crate traits to enable nearly comparison for your own types
 
 see the detailed documentation here: https://docs.rs/nearly
