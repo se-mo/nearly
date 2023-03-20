@@ -30,7 +30,7 @@ macro_rules! add_nearly_macro {
             /// ```
             #[macro_export]
             macro_rules! [<nearly_$operator>] {
-                ($left: expr, $right: expr, eps = $eps:expr) => {
+                ($left: expr, $right: expr, eps = $eps: expr) => {
                     match (&$left, &$right, &$eps) {
                         (left_val, right_val, eps_val) => {
                             use nearly::NearlyEqEps;
@@ -38,7 +38,7 @@ macro_rules! add_nearly_macro {
                         }
                     }
                 };
-                ($left: expr, $right: expr, ulps = $ulps:expr) => {
+                ($left: expr, $right: expr, ulps = $ulps: expr) => {
                     match (&$left, &$right, &$ulps) {
                         (left_val, right_val, ulps_val) => {
                             use nearly::NearlyEqUlps;
@@ -46,7 +46,7 @@ macro_rules! add_nearly_macro {
                         }
                     }
                 };
-                ($left: expr, $right: expr, tol = $tolerance:expr) => {
+                ($left: expr, $right: expr, tol = $tolerance: expr) => {
                     match (&$left, &$right, &$tolerance) {
                         (left_val, right_val, tolerance_val) => {
                             use nearly::NearlyEqTol;
@@ -101,7 +101,7 @@ macro_rules! add_assert_nearly_macro {
             /// ```
             #[macro_export]
             macro_rules! [<assert_nearly_$operator>] {
-                ($left: expr, $right: expr, eps = $eps:expr) => {
+                ($left: expr, $right: expr, eps = $eps: expr) => {
                     match (&$left, &$right, &$eps) {
                         (left_val, right_val, eps_val) => {
                             use nearly::NearlyEqEps;
@@ -209,19 +209,19 @@ macro_rules! add_debug_assert_nearly_macro {
             /// ```
             #[macro_export]
             macro_rules! [<debug_assert_nearly_$operator>] {
-                ($left: expr, $right: expr, eps = $eps:expr) => {
+                ($left: expr, $right: expr, eps = $eps: expr) => {
                     if cfg!(debug_assertions) {
                         use nearly::[<assert_nearly_ $operator>];
                         [<assert_nearly_ $operator>]!($left, $right, eps = $eps)
                     }
                 };
-                ($left: expr, $right: expr, ulps = $ulps:expr) => {
+                ($left: expr, $right: expr, ulps = $ulps: expr) => {
                     if cfg!(debug_assertions) {
                         use nearly::[<assert_nearly_ $operator>];
                         [<assert_nearly_ $operator>]!($left, $right, ulps = $ulps)
                     }
                 };
-                ($left: expr, $right: expr, tol = $tolerance:expr) => {
+                ($left: expr, $right: expr, tol = $tolerance: expr) => {
                     if cfg!(debug_assertions) {
                         use nearly::[<assert_nearly_ $operator>];
                         [<assert_nearly_ $operator>]!($left, $right, tol = $tolerance)
