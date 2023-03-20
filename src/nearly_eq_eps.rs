@@ -1,16 +1,17 @@
 use crate::tolerance::{EpsTolerance, EpsToleranceType};
 
 /// A trait for nearly equality comparison based on an absolute epsilon value.
-pub trait NearlyEqEps<Rhs = Self>: EpsTolerance<Rhs>
+pub trait NearlyEqEps<Rhs = Self, LhsTol = Self, RhsTol = Rhs>
 where
     Rhs: ?Sized,
+    LhsTol: EpsTolerance<RhsTol>
 {
     /// Returns whether `self` is nearly equal to `other` based on an absolute epsilon value `eps`.
-    fn nearly_eq_eps(&self, other: &Rhs, eps: EpsToleranceType<Self, Rhs>) -> bool;
+    fn nearly_eq_eps(&self, other: &Rhs, eps: EpsToleranceType<LhsTol, RhsTol>) -> bool;
 
     /// Returns whether `self` is nearly not equal to `other` based on an absolute epsilon value `eps`.
     #[inline]
-    fn nearly_ne_eps(&self, other: &Rhs, eps: EpsToleranceType<Self, Rhs>) -> bool {
+    fn nearly_ne_eps(&self, other: &Rhs, eps: EpsToleranceType<LhsTol, RhsTol>) -> bool {
         !self.nearly_eq_eps(other, eps)
     }
 }

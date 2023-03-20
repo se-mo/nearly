@@ -233,7 +233,7 @@
 //! ```
 //! use nearly::{
 //!     EpsTolerance, EpsToleranceType, NearlyEq, NearlyEqEps, NearlyEqTol, NearlyEqUlps,
-//!     UlpsTolerance, UlpsToleranceType
+//!     ToleranceTypes, UlpsTolerance, UlpsToleranceType
 //! };
 //!
 //! struct Point<T> {
@@ -259,7 +259,7 @@
 //!
 //! impl<T> NearlyEqEps for Point<T>
 //! where
-//!     T: NearlyEqEps,
+//!     T: NearlyEqEps + EpsTolerance,
 //! {
 //!     fn nearly_eq_eps(&self, other: &Self, eps: EpsToleranceType<Self>) -> bool {
 //!         self.x.nearly_eq_eps(&other.x, eps) && self.y.nearly_eq_eps(&other.y, eps)
@@ -268,15 +268,15 @@
 //!
 //! impl<T> NearlyEqUlps for Point<T>
 //! where
-//!     T: NearlyEqUlps,
+//!     T: NearlyEqUlps + UlpsTolerance,
 //! {
 //!     fn nearly_eq_ulps(&self, other: &Self, ulps: UlpsToleranceType<Self>) -> bool {
 //!         self.x.nearly_eq_ulps(&other.x, ulps) && self.y.nearly_eq_ulps(&other.y, ulps)
 //!     }
 //! }
 //!
-//! impl<T> NearlyEqTol for Point<T> where T: NearlyEqTol {}
-//! impl<T> NearlyEq for Point<T> where T: NearlyEq {}
+//! impl<T> NearlyEqTol for Point<T> where T: NearlyEqTol + ToleranceTypes {}
+//! impl<T> NearlyEq for Point<T> where T: NearlyEq + ToleranceTypes {}
 //! ```
 //!
 //! ## Comparing two different structs
@@ -367,6 +367,7 @@ pub use tolerance::EpsToleranceType;
 pub use tolerance::Tolerance;
 pub use tolerance::ToleranceF32;
 pub use tolerance::ToleranceF64;
+pub use tolerance::ToleranceTypes;
 pub use tolerance::UlpsTolerance;
 pub use tolerance::UlpsToleranceType;
 
