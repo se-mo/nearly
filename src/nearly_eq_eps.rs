@@ -28,7 +28,16 @@ macro_rules! impl_nearly_eps {
                     return true;
                 }
 
-                (self - other).abs() <= eps
+                let diff = self - other;
+                #[cfg(not(feature = "std"))]
+                // use custom abs in no_std by setting sign bit to 0
+                let abs = <$float>::from_bits(
+                    diff.to_bits() & !(1 << ((core::mem::size_of::<$float>() * 8) - 1)),
+                );
+                #[cfg(feature = "std")]
+                let abs = diff.abs();
+
+                abs <= eps
             }
         }
     };
