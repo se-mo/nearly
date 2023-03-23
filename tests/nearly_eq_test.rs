@@ -143,6 +143,42 @@ fn nearly_eq_nan_f64() {
     assert!(!(-f64::NAN).nearly_eq(&-f64::NAN));
 }
 
+#[test]
+fn nearly_eq_array_f32() {
+    {
+        let a: [f32; 4] = [1.0, 1.0, 1.0, 1.0000008];
+        let b: [f32; 4] = [1.0, 1.0000008, 1.0, 1.0];
+
+        assert!(a.nearly_eq(&b));
+        assert!(b.nearly_eq(&a));
+    }
+    {
+        let a: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
+        let b: [f32; 4] = [1.0, 1.1, 1.0, 1.0];
+
+        assert!(!a.nearly_eq(&b));
+        assert!(!b.nearly_eq(&a));
+    }
+}
+
+#[test]
+fn nearly_eq_array_f64() {
+    {
+        let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
+        let b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+        assert!(a.nearly_eq(&b));
+        assert!(b.nearly_eq(&a));
+    }
+    {
+        let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0, 1.0];
+        let b: [f64; 5] = [1.0, 1.1, 1.0, 1.0, 1.0];
+
+        assert!(!a.nearly_eq(&b));
+        assert!(!b.nearly_eq(&a));
+    }
+}
+
 ////////////////
 
 #[test]
@@ -286,4 +322,40 @@ fn nearly_ne_nan_f64() {
     assert!(f64::NAN.nearly_ne(&-f64::NAN));
     assert!((-f64::NAN).nearly_ne(&f64::NAN));
     assert!((-f64::NAN).nearly_ne(&-f64::NAN));
+}
+
+#[test]
+fn nearly_ne_array_f32() {
+    {
+        let a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
+        let b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
+
+        assert!(!a.nearly_ne(&b));
+        assert!(!b.nearly_ne(&a));
+    }
+    {
+        let a: [f32; 5] = [1.0, 1.0, 1.0, 1.0, 1.0];
+        let b: [f32; 5] = [1.0, 1.1, 1.0, 1.0, 1.0];
+
+        assert!(a.nearly_ne(&b));
+        assert!(b.nearly_ne(&a));
+    }
+}
+
+#[test]
+fn nearly_ne_array_f64() {
+    {
+        let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
+        let b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+        assert!(!a.nearly_ne(&b));
+        assert!(!b.nearly_ne(&a));
+    }
+    {
+        let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0, 1.0];
+        let b: [f64; 5] = [1.0, 1.1, 1.0, 1.0, 1.0];
+
+        assert!(a.nearly_ne(&b));
+        assert!(b.nearly_ne(&a));
+    }
 }

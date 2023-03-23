@@ -48,3 +48,17 @@ macro_rules! impl_nearly_ulps {
 
 impl_nearly_ulps!(f32);
 impl_nearly_ulps!(f64);
+
+impl<Lhs, Rhs, const N: usize> NearlyEqUlps<[Rhs; N], Lhs, Rhs> for [Lhs; N]
+where
+    Lhs: NearlyEqUlps<Rhs> + UlpsTolerance<Rhs>,
+{
+    fn nearly_eq_ulps(&self, other: &[Rhs; N], ulps: UlpsToleranceType<Lhs, Rhs>) -> bool {
+        for i in 0..N {
+            if self[i].nearly_ne_ulps(&other[i], ulps) {
+                return false;
+            }
+        }
+        true
+    }
+}

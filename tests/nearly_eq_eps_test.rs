@@ -160,6 +160,36 @@ fn nearly_eq_eps_nan_f64() {
     assert!(!(-f64::NAN).nearly_eq_eps(&-f64::NAN, f64::MAX));
 }
 
+#[test]
+fn nearly_eq_eps_array_f32() {
+    let a: [f32; 5] = [1.0, 1.0, 1.0, 1.000003, 1.0];
+    let b: [f32; 5] = [1.0, 1.000003, 1.0, 1.0, 1.0];
+
+    assert!(!a.nearly_eq_eps(&b, 0.000002));
+    assert!(!b.nearly_eq_eps(&a, 0.000002));
+
+    assert!(a.nearly_eq_eps(&b, 0.000003));
+    assert!(b.nearly_eq_eps(&a, 0.000003));
+
+    assert!(a.nearly_eq_eps(&b, 0.000004));
+    assert!(b.nearly_eq_eps(&a, 0.000004));
+}
+
+#[test]
+fn nearly_eq_eps_array_f64() {
+    let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000003, 1.0];
+    let b: [f64; 5] = [1.0, 1.0000000000003, 1.0, 1.0, 1.0];
+
+    assert!(!a.nearly_eq_eps(&b, 0.0000000000002));
+    assert!(!b.nearly_eq_eps(&a, 0.0000000000002));
+
+    assert!(a.nearly_eq_eps(&b, 0.0000000000003));
+    assert!(b.nearly_eq_eps(&a, 0.0000000000003));
+
+    assert!(a.nearly_eq_eps(&b, 0.0000000000004));
+    assert!(b.nearly_eq_eps(&a, 0.0000000000004));
+}
+
 ////////////////
 
 #[test]
@@ -320,4 +350,34 @@ fn nearly_ne_eps_nan_f64() {
     assert!(f64::NAN.nearly_ne_eps(&-f64::NAN, f64::MAX));
     assert!((-f64::NAN).nearly_ne_eps(&f64::NAN, f64::MAX));
     assert!((-f64::NAN).nearly_ne_eps(&-f64::NAN, f64::MAX));
+}
+
+#[test]
+fn nearly_ne_eps_array_f32() {
+    let a: [f32; 4] = [1.0, 1.0, 1.0, 1.000003];
+    let b: [f32; 4] = [1.0, 1.000003, 1.0, 1.0];
+
+    assert!(a.nearly_ne_eps(&b, 0.000002));
+    assert!(b.nearly_ne_eps(&a, 0.000002));
+
+    assert!(!a.nearly_ne_eps(&b, 0.000003));
+    assert!(!b.nearly_ne_eps(&a, 0.000003));
+
+    assert!(!a.nearly_ne_eps(&b, 0.000004));
+    assert!(!b.nearly_ne_eps(&a, 0.000004));
+}
+
+#[test]
+fn nearly_ne_eps_array_f64() {
+    let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000003, 1.0];
+    let b: [f64; 5] = [1.0, 1.0000000000003, 1.0, 1.0, 1.0];
+
+    assert!(a.nearly_ne_eps(&b, 0.0000000000002));
+    assert!(b.nearly_ne_eps(&a, 0.0000000000002));
+
+    assert!(!a.nearly_ne_eps(&b, 0.0000000000003));
+    assert!(!b.nearly_ne_eps(&a, 0.0000000000003));
+
+    assert!(!a.nearly_ne_eps(&b, 0.0000000000004));
+    assert!(!b.nearly_ne_eps(&a, 0.0000000000004));
 }

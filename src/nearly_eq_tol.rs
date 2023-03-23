@@ -1,6 +1,6 @@
 use crate::nearly_eq_eps::NearlyEqEps;
 use crate::nearly_eq_ulps::NearlyEqUlps;
-use crate::tolerance::{EpsAndUlpsTolerance, EpsTolerance, Tolerance, UlpsTolerance};
+use crate::tolerance::{EpsAndUlpsTolerance, Tolerance};
 
 /// A trait for nearly equality comparison based on a tolerance including an absolute epsilon value
 /// and an ulps value. See [Tolerance].
@@ -10,7 +10,7 @@ pub trait NearlyEqTol<Rhs = Self, LhsTol = Self, RhsTol = Rhs>:
     NearlyEqEps<Rhs, LhsTol, RhsTol> + NearlyEqUlps<Rhs, LhsTol, RhsTol>
 where
     Rhs: ?Sized,
-    LhsTol: EpsTolerance<RhsTol> + UlpsTolerance<RhsTol>,
+    LhsTol: EpsAndUlpsTolerance<RhsTol>,
 {
     /// Returns whether `self` is nearly equal to `other` based on a tolerance `tolerance`.
     /// Returns true if either `self` is nearly equal to `other` based on an epsilon value
@@ -32,3 +32,7 @@ where
 
 impl NearlyEqTol for f32 {}
 impl NearlyEqTol for f64 {}
+impl<Lhs, Rhs, const N: usize> NearlyEqTol<[Rhs; N], Lhs, Rhs> for [Lhs; N] where
+    Lhs: NearlyEqEps<Rhs> + NearlyEqUlps<Rhs> + EpsAndUlpsTolerance<Rhs>
+{
+}

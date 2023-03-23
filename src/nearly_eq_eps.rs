@@ -45,3 +45,17 @@ macro_rules! impl_nearly_eps {
 
 impl_nearly_eps!(f32);
 impl_nearly_eps!(f64);
+
+impl<Lhs, Rhs, const N: usize> NearlyEqEps<[Rhs; N], Lhs, Rhs> for [Lhs; N]
+where
+    Lhs: NearlyEqEps<Rhs> + EpsTolerance<Rhs>,
+{
+    fn nearly_eq_eps(&self, other: &[Rhs; N], eps: EpsToleranceType<Lhs, Rhs>) -> bool {
+        for i in 0..N {
+            if self[i].nearly_ne_eps(&other[i], eps) {
+                return false;
+            }
+        }
+        true
+    }
+}

@@ -152,6 +152,36 @@ fn nearly_eq_ulps_nan_f64() {
     assert!(!(-f64::NAN).nearly_eq_ulps(&-f64::NAN, i64::MAX));
 }
 
+#[test]
+fn nearly_eq_ulps_array_f32() {
+    let a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
+    let b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
+
+    assert!(!a.nearly_eq_ulps(&b, 6));
+    assert!(!b.nearly_eq_ulps(&a, 6));
+
+    assert!(a.nearly_eq_ulps(&b, 7));
+    assert!(b.nearly_eq_ulps(&a, 7));
+
+    assert!(a.nearly_eq_ulps(&b, 8));
+    assert!(b.nearly_eq_ulps(&a, 8));
+}
+
+#[test]
+fn nearly_eq_ulps_array_f64() {
+    let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
+    let b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+    assert!(!a.nearly_eq_ulps(&b, 6));
+    assert!(!b.nearly_eq_ulps(&a, 6));
+
+    assert!(a.nearly_eq_ulps(&b, 7));
+    assert!(b.nearly_eq_ulps(&a, 7));
+
+    assert!(a.nearly_eq_ulps(&b, 8));
+    assert!(b.nearly_eq_ulps(&a, 8));
+}
+
 ////////////////
 
 #[test]
@@ -304,4 +334,34 @@ fn nearly_ne_ulps_nan_f64() {
     assert!(f64::NAN.nearly_ne_ulps(&-f64::NAN, i64::MAX));
     assert!((-f64::NAN).nearly_ne_ulps(&f64::NAN, i64::MAX));
     assert!((-f64::NAN).nearly_ne_ulps(&-f64::NAN, i64::MAX));
+}
+
+#[test]
+fn nearly_ne_ulps_array_f32() {
+    let a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
+    let b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
+
+    assert!(a.nearly_ne_ulps(&b, 6));
+    assert!(b.nearly_ne_ulps(&a, 6));
+
+    assert!(!a.nearly_ne_ulps(&b, 7));
+    assert!(!b.nearly_ne_ulps(&a, 7));
+
+    assert!(!a.nearly_ne_ulps(&b, 8));
+    assert!(!b.nearly_ne_ulps(&a, 8));
+}
+
+#[test]
+fn nearly_ne_ulps_array_f64() {
+    let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
+    let b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+    assert!(a.nearly_ne_ulps(&b, 6));
+    assert!(b.nearly_ne_ulps(&a, 6));
+
+    assert!(!a.nearly_ne_ulps(&b, 7));
+    assert!(!b.nearly_ne_ulps(&a, 7));
+
+    assert!(!a.nearly_ne_ulps(&b, 8));
+    assert!(!b.nearly_ne_ulps(&a, 8));
 }

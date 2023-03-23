@@ -210,6 +210,56 @@ fn macro_assert_nearly_eq_panic_f64() {
     assert_nearly_eq!(1.0_f64, 1.1_f64);
 }
 
+#[test]
+fn macro_assert_nearly_eq_array_f32() {
+    let a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
+    let b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
+
+    assert_nearly_eq!(a, b, eps = 0.0000009);
+    assert_nearly_eq!(a, b, ulps = 7);
+    assert_nearly_eq!(a, b, eps = 0.0000009, ulps = 7);
+    assert_nearly_eq!(a, b, tol = ToleranceF32::new(0.0000009, 7));
+    assert_nearly_eq!(a, b);
+}
+
+#[test]
+fn macro_assert_nearly_eq_array_f64() {
+    let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
+    let b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+    assert_nearly_eq!(a, b, eps = 0.000000000000002);
+    assert_nearly_eq!(a, b, ulps = 7);
+    assert_nearly_eq!(a, b, eps = 0.000000000000002, ulps = 7);
+    assert_nearly_eq!(a, b, tol = ToleranceF64::new(0.000000000000002, 7));
+    assert_nearly_eq!(a, b);
+}
+
+#[test]
+#[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
+  left: `[1.0, 1.0, 1.0, 1.0000008, 1.0]`,
+ right: `[1.0, 1.0000008, 1.0, 1.0, 1.0]`,
+   eps: `7e-7`,
+  ulps: `6`"#)]
+fn macro_assert_nearly_eq_array_panic_f32() {
+    let a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
+    let b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
+
+    assert_nearly_eq!(a, b, eps = 0.0000007, ulps = 6);
+}
+
+#[test]
+#[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
+  left: `[1.0, 1.0, 1.0, 1.0000000000000016, 1.0]`,
+ right: `[1.0, 1.0000000000000016, 1.0, 1.0, 1.0]`,
+   eps: `1e-15`,
+  ulps: `6`"#)]
+fn macro_assert_nearly_eq_array_panic_f64() {
+    let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
+    let b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+    assert_nearly_eq!(a, b, eps = 0.000000000000001, ulps = 6);
+}
+
 ////////////////
 
 #[test]
@@ -399,4 +449,58 @@ fn macro_assert_nearly_ne_panic_f32() {
   ulps: `DEFAULT`"#)]
 fn macro_assert_nearly_ne_panic_f64() {
     assert_nearly_ne!(1.0_f64, 1.0000000000000009_f64);
+}
+
+#[test]
+fn macro_assert_nearly_ne_array_f32() {
+    let a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
+    let b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
+
+    assert_nearly_ne!(a, b, eps = 0.0000007);
+    assert_nearly_ne!(a, b, ulps = 6);
+    assert_nearly_ne!(a, b, eps = 0.0000007, ulps = 6);
+    assert_nearly_ne!(a, b, tol = ToleranceF32::new(0.0000007, 6));
+
+    let b: [f32; 5] = [2.0, 1.0000008, 1.0, 1.0, 1.0];
+    assert_nearly_ne!(a, b);
+}
+
+#[test]
+fn macro_assert_nearly_ne_array_f64() {
+    let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
+    let b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+    assert_nearly_ne!(a, b, eps = 0.000000000000001);
+    assert_nearly_ne!(a, b, ulps = 6);
+    assert_nearly_ne!(a, b, eps = 0.000000000000001, ulps = 6);
+    assert_nearly_ne!(a, b, tol = ToleranceF64::new(0.000000000000001, 6));
+
+    let b: [f64; 5] = [2.0, 1.0000008, 1.0, 1.0, 1.0];
+    assert_nearly_ne!(a, b);
+}
+
+#[test]
+#[should_panic(expected = r#"assertion failed: `(left nearly_ne_tol right)`
+  left: `[1.0, 1.0, 1.0, 1.0000008, 1.0]`,
+ right: `[1.0, 1.0000008, 1.0, 1.0, 1.0]`,
+   eps: `9e-7`,
+  ulps: `7`"#)]
+fn macro_assert_nearly_ne_array_panic_f32() {
+    let a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
+    let b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
+
+    assert_nearly_ne!(a, b, eps = 0.0000009, ulps = 7);
+}
+
+#[test]
+#[should_panic(expected = r#"assertion failed: `(left nearly_ne_tol right)`
+  left: `[1.0, 1.0, 1.0, 1.0000000000000016, 1.0]`,
+ right: `[1.0, 1.0000000000000016, 1.0, 1.0, 1.0]`,
+   eps: `2e-15`,
+  ulps: `7`"#)]
+fn macro_assert_nearly_ne_array_panic_f64() {
+    let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
+    let b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+    assert_nearly_ne!(a, b, eps = 0.000000000000002, ulps = 7);
 }
