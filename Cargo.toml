@@ -7,7 +7,7 @@ description = "A library to compare IEEE floating point primitives"
 repository = "https://github.com/se-mo/nearly"
 documentation = "https://docs.rs/nearly"
 readme = "README.md"
-keywords = ["float", "compare", "comparison", "nearly", "approx", "almost"]
+keywords = ["float", "compare", "comparison", "nearly", "approx", "almost", "equal"]
 categories = ["mathematics", "no-std"]
 license = "MIT"
 
