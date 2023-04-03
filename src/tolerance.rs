@@ -45,8 +45,11 @@ where
     Rhs: ?Sized,
 {
 }
-impl<T: ?Sized + EpsTolerance<Rhs> + UlpsTolerance<Rhs>, Rhs: ?Sized> EpsAndUlpsTolerance<Rhs>
-    for T
+
+impl<Lhs, Rhs> EpsAndUlpsTolerance<Rhs> for Lhs
+where
+    Lhs: ?Sized + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
+    Rhs: ?Sized,
 {
 }
 
@@ -90,13 +93,21 @@ where
     pub ulps: UlpsToleranceType<Lhs, Rhs>,
 }
 
-impl<Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>, Rhs: ?Sized> Tolerance<Lhs, Rhs> {
+impl<Lhs, Rhs> Tolerance<Lhs, Rhs>
+where
+    Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>,
+    Rhs: ?Sized,
+{
     pub fn new(eps: EpsToleranceType<Lhs, Rhs>, ulps: UlpsToleranceType<Lhs, Rhs>) -> Self {
         Tolerance::<Lhs, Rhs> { eps, ulps }
     }
 }
 
-impl<Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>, Rhs: ?Sized> Default for Tolerance<Lhs, Rhs> {
+impl<Lhs, Rhs> Default for Tolerance<Lhs, Rhs>
+where
+    Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>,
+    Rhs: ?Sized,
+{
     fn default() -> Self {
         Tolerance::<Lhs, Rhs> {
             eps: <Lhs as EpsTolerance<Rhs>>::DEFAULT,
@@ -105,8 +116,11 @@ impl<Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>, Rhs: ?Sized> Default for Tolerance<
     }
 }
 
-impl<Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>, Rhs: ?Sized>
-    From<(EpsToleranceType<Lhs, Rhs>, UlpsToleranceType<Lhs, Rhs>)> for Tolerance<Lhs, Rhs>
+impl<Lhs, Rhs> From<(EpsToleranceType<Lhs, Rhs>, UlpsToleranceType<Lhs, Rhs>)>
+    for Tolerance<Lhs, Rhs>
+where
+    Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>,
+    Rhs: ?Sized,
 {
     fn from(tuple: (EpsToleranceType<Lhs, Rhs>, UlpsToleranceType<Lhs, Rhs>)) -> Self {
         Tolerance::<Lhs, Rhs> {
@@ -116,8 +130,11 @@ impl<Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>, Rhs: ?Sized>
     }
 }
 
-impl<Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>, Rhs: ?Sized> From<Tolerance<Lhs, Rhs>>
+impl<Lhs, Rhs> From<Tolerance<Lhs, Rhs>>
     for (EpsToleranceType<Lhs, Rhs>, UlpsToleranceType<Lhs, Rhs>)
+where
+    Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>,
+    Rhs: ?Sized,
 {
     fn from(val: Tolerance<Lhs, Rhs>) -> Self {
         (val.eps, val.ulps)
