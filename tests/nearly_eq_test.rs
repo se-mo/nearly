@@ -179,6 +179,54 @@ fn nearly_eq_array_f64() {
     }
 }
 
+#[test]
+fn nearly_eq_slice_f32() {
+    {
+        let array_a: [f32; 4] = [1.0, 1.0, 1.0, 1.0000008];
+        let array_b: [f32; 4] = [1.0, 1.0000008, 1.0, 1.0];
+
+        let a: &[f32] = &array_a[1..4];
+        let b: &[f32] = &array_b[1..4];
+
+        assert!(a.nearly_eq(&b));
+        assert!(b.nearly_eq(&a));
+    }
+    {
+        let array_a: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
+        let array_b: [f32; 4] = [1.0, 1.1, 1.0, 1.0];
+
+        let a: &[f32] = &array_a[1..4];
+        let b: &[f32] = &array_b[1..4];
+
+        assert!(!a.nearly_eq(&b));
+        assert!(!b.nearly_eq(&a));
+    }
+}
+
+#[test]
+fn nearly_eq_slice_f64() {
+    {
+        let array_a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
+        let array_b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+        let a: &[f64] = &array_a[1..4];
+        let b: &[f64] = &array_b[1..4];
+
+        assert!(a.nearly_eq(&b));
+        assert!(b.nearly_eq(&a));
+    }
+    {
+        let array_a: [f64; 5] = [1.0, 1.0, 1.0, 1.0, 1.0];
+        let array_b: [f64; 5] = [1.0, 1.1, 1.0, 1.0, 1.0];
+
+        let a: &[f64] = &array_a[1..4];
+        let b: &[f64] = &array_b[1..4];
+
+        assert!(!a.nearly_eq(&b));
+        assert!(!b.nearly_eq(&a));
+    }
+}
+
 ////////////////
 
 #[test]
@@ -354,6 +402,54 @@ fn nearly_ne_array_f64() {
     {
         let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0, 1.0];
         let b: [f64; 5] = [1.0, 1.1, 1.0, 1.0, 1.0];
+
+        assert!(a.nearly_ne(&b));
+        assert!(b.nearly_ne(&a));
+    }
+}
+
+#[test]
+fn nearly_ne_slice_f32() {
+    {
+        let array_a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
+        let array_b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
+
+        let a: &[f32] = &array_a[1..4];
+        let b: &[f32] = &array_b[1..4];
+
+        assert!(!a.nearly_ne(&b));
+        assert!(!b.nearly_ne(&a));
+    }
+    {
+        let array_a: [f32; 5] = [1.0, 1.0, 1.0, 1.0, 1.0];
+        let array_b: [f32; 5] = [1.0, 1.1, 1.0, 1.0, 1.0];
+
+        let a: &[f32] = &array_a[1..4];
+        let b: &[f32] = &array_b[1..4];
+
+        assert!(a.nearly_ne(&b));
+        assert!(b.nearly_ne(&a));
+    }
+}
+
+#[test]
+fn nearly_ne_slice_f64() {
+    {
+        let array_a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
+        let array_b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+        let a: &[f64] = &array_a[1..4];
+        let b: &[f64] = &array_b[1..4];
+
+        assert!(!a.nearly_ne(&b));
+        assert!(!b.nearly_ne(&a));
+    }
+    {
+        let array_a: [f64; 5] = [1.0, 1.0, 1.0, 1.0, 1.0];
+        let array_b: [f64; 5] = [1.0, 1.1, 1.0, 1.0, 1.0];
+
+        let a: &[f64] = &array_a[1..4];
+        let b: &[f64] = &array_b[1..4];
 
         assert!(a.nearly_ne(&b));
         assert!(b.nearly_ne(&a));

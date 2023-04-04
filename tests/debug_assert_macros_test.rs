@@ -350,6 +350,94 @@ fn macro_debug_assert_nearly_eq_array_panic_f64() {
     debug_assert_nearly_eq!(a, b, eps = 0.000000000000001, ulps = 6);
 }
 
+#[test]
+fn macro_debug_assert_nearly_eq_slice_f32() {
+    let array_a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
+    let array_b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
+
+    let a: &[f32] = &array_a[1..4];
+    let b: &[f32] = &array_b[1..4];
+
+    debug_assert_nearly_eq!(a, b, eps = 0.0000009);
+    debug_assert_nearly_eq!(a, b, ulps = 7);
+    debug_assert_nearly_eq!(a, b, eps = 0.0000009, ulps = 7);
+    debug_assert_nearly_eq!(a, b, tol = ToleranceF32::new(0.0000009, 7));
+    debug_assert_nearly_eq!(a, b);
+}
+
+#[test]
+fn macro_debug_assert_nearly_eq_slice_f64() {
+    let array_a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
+    let array_b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+    let a: &[f64] = &array_a[1..4];
+    let b: &[f64] = &array_b[1..4];
+
+    debug_assert_nearly_eq!(a, b, eps = 0.000000000000002);
+    debug_assert_nearly_eq!(a, b, ulps = 7);
+    debug_assert_nearly_eq!(a, b, eps = 0.000000000000002, ulps = 7);
+    debug_assert_nearly_eq!(a, b, tol = ToleranceF64::new(0.000000000000002, 7));
+    debug_assert_nearly_eq!(a, b);
+}
+
+#[test]
+#[cfg(debug_assertions)]
+#[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
+  left: `[1.0, 1.0, 1.0000008]`,
+ right: `[1.0000008, 1.0, 1.0]`,
+   eps: `7e-7`,
+  ulps: `6`"#)]
+fn macro_debug_assert_nearly_eq_slice_panic_f32() {
+    let array_a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
+    let array_b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
+
+    let a: &[f32] = &array_a[1..4];
+    let b: &[f32] = &array_b[1..4];
+
+    debug_assert_nearly_eq!(a, b, eps = 0.0000007, ulps = 6);
+}
+
+#[test]
+#[cfg(not(debug_assertions))]
+fn macro_debug_assert_nearly_eq_slice_panic_f32() {
+    let array_a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
+    let array_b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
+
+    let a: &[f32] = &array_a[1..4];
+    let b: &[f32] = &array_b[1..4];
+
+    debug_assert_nearly_eq!(a, b, eps = 0.0000007, ulps = 6);
+}
+
+#[test]
+#[cfg(debug_assertions)]
+#[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
+  left: `[1.0, 1.0, 1.0000000000000016]`,
+ right: `[1.0000000000000016, 1.0, 1.0]`,
+   eps: `1e-15`,
+  ulps: `6`"#)]
+fn macro_debug_assert_nearly_eq_slice_panic_f64() {
+    let array_a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
+    let array_b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+    let a: &[f64] = &array_a[1..4];
+    let b: &[f64] = &array_b[1..4];
+
+    debug_assert_nearly_eq!(a, b, eps = 0.000000000000001, ulps = 6);
+}
+
+#[test]
+#[cfg(not(debug_assertions))]
+fn macro_debug_assert_nearly_eq_slice_panic_f64() {
+    let array_a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
+    let array_b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+    let a: &[f64] = &array_a[1..4];
+    let b: &[f64] = &array_b[1..4];
+
+    debug_assert_nearly_eq!(a, b, eps = 0.000000000000001, ulps = 6);
+}
+
 ////////////////
 
 #[test]
@@ -694,6 +782,100 @@ fn macro_debug_assert_nearly_ne_array_panic_f64() {
 fn macro_debug_assert_nearly_ne_array_panic_f64() {
     let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
     let b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+    debug_assert_nearly_ne!(a, b, eps = 0.000000000000002, ulps = 7);
+}
+
+#[test]
+fn macro_debug_assert_nearly_ne_slice_f32() {
+    let array_a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
+    let array_b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
+
+    let a: &[f32] = &array_a[1..4];
+    let b: &[f32] = &array_b[1..4];
+
+    debug_assert_nearly_ne!(a, b, eps = 0.0000007);
+    debug_assert_nearly_ne!(a, b, ulps = 6);
+    debug_assert_nearly_ne!(a, b, eps = 0.0000007, ulps = 6);
+    debug_assert_nearly_ne!(a, b, tol = ToleranceF32::new(0.0000007, 6));
+
+    let array_b: [f32; 5] = [2.0, 1.0000008, 1.0, 1.0, 1.0];
+    let b: &[f32] = &array_b[0..3];
+    debug_assert_nearly_ne!(a, b);
+}
+
+#[test]
+fn macro_debug_assert_nearly_ne_slice_f64() {
+    let array_a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
+    let array_b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+    let a: &[f64] = &array_a[1..4];
+    let b: &[f64] = &array_b[1..4];
+
+    debug_assert_nearly_ne!(a, b, eps = 0.000000000000001);
+    debug_assert_nearly_ne!(a, b, ulps = 6);
+    debug_assert_nearly_ne!(a, b, eps = 0.000000000000001, ulps = 6);
+    debug_assert_nearly_ne!(a, b, tol = ToleranceF64::new(0.000000000000001, 6));
+
+    let array_b: [f64; 5] = [2.0, 1.0000008, 1.0, 1.0, 1.0];
+    let b: &[f64] = &array_b[0..3];
+    debug_assert_nearly_ne!(a, b);
+}
+
+#[test]
+#[cfg(debug_assertions)]
+#[should_panic(expected = r#"assertion failed: `(left nearly_ne_tol right)`
+  left: `[1.0, 1.0, 1.0000008]`,
+ right: `[1.0000008, 1.0, 1.0]`,
+   eps: `9e-7`,
+  ulps: `7`"#)]
+fn macro_debug_assert_nearly_ne_slice_panic_f32() {
+    let array_a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
+    let array_b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
+
+    let a: &[f32] = &array_a[1..4];
+    let b: &[f32] = &array_b[1..4];
+
+    debug_assert_nearly_ne!(a, b, eps = 0.0000009, ulps = 7);
+}
+
+#[test]
+#[cfg(not(debug_assertions))]
+fn macro_debug_assert_nearly_ne_slice_panic_f32() {
+    let array_a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
+    let array_b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
+
+    let a: &[f32] = &array_a[1..4];
+    let b: &[f32] = &array_b[1..4];
+
+    debug_assert_nearly_ne!(a, b, eps = 0.0000009, ulps = 7);
+}
+
+#[test]
+#[cfg(debug_assertions)]
+#[should_panic(expected = r#"assertion failed: `(left nearly_ne_tol right)`
+  left: `[1.0, 1.0, 1.0000000000000016]`,
+ right: `[1.0000000000000016, 1.0, 1.0]`,
+   eps: `2e-15`,
+  ulps: `7`"#)]
+fn macro_debug_assert_nearly_ne_slice_panic_f64() {
+    let array_a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
+    let array_b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+    let a: &[f64] = &array_a[1..4];
+    let b: &[f64] = &array_b[1..4];
+
+    debug_assert_nearly_ne!(a, b, eps = 0.000000000000002, ulps = 7);
+}
+
+#[test]
+#[cfg(not(debug_assertions))]
+fn macro_debug_assert_nearly_ne_slice_panic_f64() {
+    let array_a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
+    let array_b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+    let a: &[f64] = &array_a[1..4];
+    let b: &[f64] = &array_b[1..4];
 
     debug_assert_nearly_ne!(a, b, eps = 0.000000000000002, ulps = 7);
 }

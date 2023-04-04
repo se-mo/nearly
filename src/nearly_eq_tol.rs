@@ -36,3 +36,7 @@ impl<Lhs, Rhs, const N: usize> NearlyEqTol<[Rhs; N], Lhs, Rhs> for [Lhs; N] wher
     Lhs: NearlyEqTol<Rhs> + EpsAndUlpsTolerance<Rhs>
 {
 }
+impl<Lhs, Rhs> NearlyEqTol<[Rhs], Lhs, Rhs> for [Lhs] where
+    Lhs: NearlyEqTol<Rhs> + EpsAndUlpsTolerance<Rhs>
+{
+}

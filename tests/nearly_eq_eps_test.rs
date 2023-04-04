@@ -190,6 +190,42 @@ fn nearly_eq_eps_array_f64() {
     assert!(b.nearly_eq_eps(&a, 0.0000000000004));
 }
 
+#[test]
+fn nearly_eq_eps_slice_f32() {
+    let array_a: [f32; 5] = [1.0, 1.0, 1.0, 1.000003, 1.0];
+    let array_b: [f32; 5] = [1.0, 1.000003, 1.0, 1.0, 1.0];
+
+    let a: &[f32] = &array_a[1..4];
+    let b: &[f32] = &array_b[1..4];
+
+    assert!(!a.nearly_eq_eps(&b, 0.000002));
+    assert!(!b.nearly_eq_eps(&a, 0.000002));
+
+    assert!(a.nearly_eq_eps(&b, 0.000003));
+    assert!(b.nearly_eq_eps(&a, 0.000003));
+
+    assert!(a.nearly_eq_eps(&b, 0.000004));
+    assert!(b.nearly_eq_eps(&a, 0.000004));
+}
+
+#[test]
+fn nearly_eq_eps_slice_f64() {
+    let array_a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000003, 1.0];
+    let array_b: [f64; 5] = [1.0, 1.0000000000003, 1.0, 1.0, 1.0];
+
+    let a: &[f64] = &array_a[1..4];
+    let b: &[f64] = &array_b[1..4];
+
+    assert!(!a.nearly_eq_eps(&b, 0.0000000000002));
+    assert!(!b.nearly_eq_eps(&a, 0.0000000000002));
+
+    assert!(a.nearly_eq_eps(&b, 0.0000000000003));
+    assert!(b.nearly_eq_eps(&a, 0.0000000000003));
+
+    assert!(a.nearly_eq_eps(&b, 0.0000000000004));
+    assert!(b.nearly_eq_eps(&a, 0.0000000000004));
+}
+
 ////////////////
 
 #[test]
@@ -371,6 +407,42 @@ fn nearly_ne_eps_array_f32() {
 fn nearly_ne_eps_array_f64() {
     let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000003, 1.0];
     let b: [f64; 5] = [1.0, 1.0000000000003, 1.0, 1.0, 1.0];
+
+    assert!(a.nearly_ne_eps(&b, 0.0000000000002));
+    assert!(b.nearly_ne_eps(&a, 0.0000000000002));
+
+    assert!(!a.nearly_ne_eps(&b, 0.0000000000003));
+    assert!(!b.nearly_ne_eps(&a, 0.0000000000003));
+
+    assert!(!a.nearly_ne_eps(&b, 0.0000000000004));
+    assert!(!b.nearly_ne_eps(&a, 0.0000000000004));
+}
+
+#[test]
+fn nearly_ne_eps_slice_f32() {
+    let array_a: [f32; 4] = [1.0, 1.0, 1.0, 1.000003];
+    let array_b: [f32; 4] = [1.0, 1.000003, 1.0, 1.0];
+
+    let a: &[f32] = &array_a[1..4];
+    let b: &[f32] = &array_b[1..4];
+
+    assert!(a.nearly_ne_eps(&b, 0.000002));
+    assert!(b.nearly_ne_eps(&a, 0.000002));
+
+    assert!(!a.nearly_ne_eps(&b, 0.000003));
+    assert!(!b.nearly_ne_eps(&a, 0.000003));
+
+    assert!(!a.nearly_ne_eps(&b, 0.000004));
+    assert!(!b.nearly_ne_eps(&a, 0.000004));
+}
+
+#[test]
+fn nearly_ne_eps_slice_f64() {
+    let array_a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000003, 1.0];
+    let array_b: [f64; 5] = [1.0, 1.0000000000003, 1.0, 1.0, 1.0];
+
+    let a: &[f64] = &array_a[1..4];
+    let b: &[f64] = &array_b[1..4];
 
     assert!(a.nearly_ne_eps(&b, 0.0000000000002));
     assert!(b.nearly_ne_eps(&a, 0.0000000000002));

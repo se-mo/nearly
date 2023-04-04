@@ -250,6 +250,60 @@ fn macro_nearly_eq_array_f64() {
     assert!(nearly_eq!(a, b));
 }
 
+#[test]
+fn macro_nearly_eq_slice_f32() {
+    let array_a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
+    let array_b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
+
+    let a: &[f32] = &array_a[1..4];
+    let b: &[f32] = &array_b[1..4];
+
+    assert!(!nearly_eq!(a, b, eps = 0.0000007));
+    assert!(nearly_eq!(a, b, eps = 0.0000009));
+
+    assert!(!nearly_eq!(a, b, ulps = 6));
+    assert!(nearly_eq!(a, b, ulps = 7));
+
+    assert!(!nearly_eq!(a, b, eps = 0.0000007, ulps = 6));
+    assert!(nearly_eq!(a, b, eps = 0.0000009, ulps = 7));
+
+    assert!(!nearly_eq!(a, b, tol = ToleranceF32::new(0.0000007, 6)));
+    assert!(nearly_eq!(a, b, tol = ToleranceF32::new(0.0000009, 7)));
+
+    assert!(nearly_eq!(a, b));
+}
+
+#[test]
+fn macro_nearly_eq_slice_f64() {
+    let array_a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
+    let array_b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+    let a: &[f64] = &array_a[1..4];
+    let b: &[f64] = &array_b[1..4];
+
+    assert!(!nearly_eq!(a, b, eps = 0.000000000000001));
+    assert!(nearly_eq!(a, b, eps = 0.000000000000002));
+
+    assert!(!nearly_eq!(a, b, ulps = 6));
+    assert!(nearly_eq!(a, b, ulps = 7));
+
+    assert!(!nearly_eq!(a, b, eps = 0.000000000000001, ulps = 6));
+    assert!(nearly_eq!(a, b, eps = 0.000000000000002, ulps = 7));
+
+    assert!(!nearly_eq!(
+        a,
+        b,
+        tol = ToleranceF64::new(0.000000000000001, 6)
+    ));
+    assert!(nearly_eq!(
+        a,
+        b,
+        tol = ToleranceF64::new(0.000000000000002, 7)
+    ));
+
+    assert!(nearly_eq!(a, b));
+}
+
 ////////////////
 
 #[test]
@@ -436,6 +490,60 @@ fn macro_nearly_ne_array_f32() {
 fn macro_nearly_ne_array_f64() {
     let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
     let b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+    assert!(nearly_ne!(a, b, eps = 0.000000000000001));
+    assert!(!nearly_ne!(a, b, eps = 0.000000000000002));
+
+    assert!(nearly_ne!(a, b, ulps = 6));
+    assert!(!nearly_ne!(a, b, ulps = 7));
+
+    assert!(nearly_ne!(a, b, eps = 0.000000000000001, ulps = 6));
+    assert!(!nearly_ne!(a, b, eps = 0.000000000000002, ulps = 7));
+
+    assert!(nearly_ne!(
+        a,
+        b,
+        tol = ToleranceF64::new(0.000000000000001, 6)
+    ));
+    assert!(!nearly_ne!(
+        a,
+        b,
+        tol = ToleranceF64::new(0.000000000000002, 7)
+    ));
+
+    assert!(!nearly_ne!(a, b));
+}
+
+#[test]
+fn macro_nearly_ne_slice_f32() {
+    let array_a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
+    let array_b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
+
+    let a: &[f32] = &array_a[1..4];
+    let b: &[f32] = &array_b[1..4];
+
+    assert!(nearly_ne!(a, b, eps = 0.0000007));
+    assert!(!nearly_ne!(a, b, eps = 0.0000009));
+
+    assert!(nearly_ne!(a, b, ulps = 6));
+    assert!(!nearly_ne!(a, b, ulps = 7));
+
+    assert!(nearly_ne!(a, b, eps = 0.0000007, ulps = 6));
+    assert!(!nearly_ne!(a, b, eps = 0.0000009, ulps = 7));
+
+    assert!(nearly_ne!(a, b, tol = ToleranceF32::new(0.0000007, 6)));
+    assert!(!nearly_ne!(a, b, tol = ToleranceF32::new(0.0000009, 7)));
+
+    assert!(!nearly_ne!(a, b));
+}
+
+#[test]
+fn macro_nearly_ne_slice_f64() {
+    let array_a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
+    let array_b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+
+    let a: &[f64] = &array_a[1..4];
+    let b: &[f64] = &array_b[1..4];
 
     assert!(nearly_ne!(a, b, eps = 0.000000000000001));
     assert!(!nearly_ne!(a, b, eps = 0.000000000000002));

@@ -62,3 +62,16 @@ where
         true
     }
 }
+
+impl<Lhs, Rhs> NearlyEqUlps<[Rhs], Lhs, Rhs> for [Lhs]
+where
+    Lhs: NearlyEqUlps<Rhs> + UlpsTolerance<Rhs>,
+{
+    fn nearly_eq_ulps(&self, other: &[Rhs], ulps: UlpsToleranceType<Lhs, Rhs>) -> bool {
+        self.len() == other.len()
+            && self
+                .iter()
+                .zip(other.iter())
+                .all(|(a, b)| a.nearly_eq_ulps(b, ulps))
+    }
+}

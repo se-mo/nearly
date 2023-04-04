@@ -59,3 +59,16 @@ where
         true
     }
 }
+
+impl<Lhs, Rhs> NearlyEqEps<[Rhs], Lhs, Rhs> for [Lhs]
+where
+    Lhs: NearlyEqEps<Rhs> + EpsTolerance<Rhs>,
+{
+    fn nearly_eq_eps(&self, other: &[Rhs], eps: EpsToleranceType<Lhs, Rhs>) -> bool {
+        self.len() == other.len()
+            && self
+                .iter()
+                .zip(other.iter())
+                .all(|(a, b)| a.nearly_eq_eps(b, eps))
+    }
+}
