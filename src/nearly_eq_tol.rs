@@ -33,6 +33,6 @@ where
 impl NearlyEqTol for f32 {}
 impl NearlyEqTol for f64 {}
 impl<Lhs, Rhs, const N: usize> NearlyEqTol<[Rhs; N], Lhs, Rhs> for [Lhs; N] where
-    Lhs: NearlyEqEps<Rhs> + NearlyEqUlps<Rhs> + EpsAndUlpsTolerance<Rhs>
+    Lhs: NearlyEqTol<Rhs> + EpsAndUlpsTolerance<Rhs>
 {
 }

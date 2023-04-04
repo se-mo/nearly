@@ -1,6 +1,4 @@
-use crate::nearly_eq_eps::NearlyEqEps;
 use crate::nearly_eq_tol::NearlyEqTol;
-use crate::nearly_eq_ulps::NearlyEqUlps;
 use crate::tolerance::{EpsAndUlpsTolerance, Tolerance};
 
 /// A trait for nearly equality comparison based on a default tolerance.
@@ -31,6 +29,6 @@ where
 impl NearlyEq for f32 {}
 impl NearlyEq for f64 {}
 impl<Lhs, Rhs, const N: usize> NearlyEq<[Rhs; N], Lhs, Rhs> for [Lhs; N] where
-    Lhs: NearlyEqTol<Rhs> + NearlyEqEps<Rhs> + NearlyEqUlps<Rhs> + EpsAndUlpsTolerance<Rhs>
+    Lhs: NearlyEqTol<Rhs> + EpsAndUlpsTolerance<Rhs>
 {
 }
