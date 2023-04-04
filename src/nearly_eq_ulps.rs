@@ -17,7 +17,7 @@ where
     }
 }
 
-macro_rules! impl_nearly_ulps {
+macro_rules! impl_nearly_ulps_float {
     ($float: ty) => {
         impl NearlyEqUlps for $float {
             /// Returns true if the signed ulps distance between `self` and `other` is in range
@@ -46,8 +46,8 @@ macro_rules! impl_nearly_ulps {
     };
 }
 
-impl_nearly_ulps!(f32);
-impl_nearly_ulps!(f64);
+impl_nearly_ulps_float!(f32);
+impl_nearly_ulps_float!(f64);
 
 impl<Lhs, Rhs, const N: usize> NearlyEqUlps<[Rhs; N], Lhs, Rhs> for [Lhs; N]
 where

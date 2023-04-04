@@ -16,7 +16,7 @@ where
     }
 }
 
-macro_rules! impl_nearly_eps {
+macro_rules! impl_nearly_eps_float {
     ($float: ty) => {
         impl NearlyEqEps for $float {
             /// Returns true if `self - other` is in range `[-eps, eps]`.
@@ -43,8 +43,8 @@ macro_rules! impl_nearly_eps {
     };
 }
 
-impl_nearly_eps!(f32);
-impl_nearly_eps!(f64);
+impl_nearly_eps_float!(f32);
+impl_nearly_eps_float!(f64);
 
 impl<Lhs, Rhs, const N: usize> NearlyEqEps<[Rhs; N], Lhs, Rhs> for [Lhs; N]
 where
