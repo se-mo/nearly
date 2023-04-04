@@ -29,10 +29,10 @@ where
 impl NearlyEq for f32 {}
 impl NearlyEq for f64 {}
 impl<Lhs, Rhs, const N: usize> NearlyEq<[Rhs; N], Lhs, Rhs> for [Lhs; N] where
-    Lhs: NearlyEqTol<Rhs> + EpsAndUlpsTolerance<Rhs>
+    Lhs: NearlyEq<Rhs> + EpsAndUlpsTolerance<Rhs>
 {
 }
 impl<Lhs, Rhs> NearlyEq<[Rhs], Lhs, Rhs> for [Lhs] where
-    Lhs: NearlyEqTol<Rhs> + EpsAndUlpsTolerance<Rhs>
+    Lhs: NearlyEq<Rhs> + EpsAndUlpsTolerance<Rhs>
 {
 }
