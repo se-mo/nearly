@@ -9,9 +9,9 @@ pub trait EpsTolerance<Rhs = Self>
 where
     Rhs: ?Sized,
 {
-    /// The type of the epsilon values for the type implementing this trait.
+    /// The type of the epsilon tolerance values for the type implementing this trait.
     type T: Debug + Copy;
-    /// The default epsilon value for the type implementing this trait.
+    /// The default epsilon tolerance value for the type implementing this trait.
     /// Used for default [Tolerance](Tolerance::default()).
     const DEFAULT: Self::T;
 }
@@ -27,7 +27,10 @@ pub trait UlpsTolerance<Rhs = Self>
 where
     Rhs: ?Sized,
 {
+    /// The type of the ulps tolerance values for the type implementing this trait.
     type T: Debug + Copy;
+    /// The default ulps tolerance value for the type implementing this trait.
+    /// Used for default [Tolerance](Tolerance::default()).
     const DEFAULT: Self::T;
 }
 
