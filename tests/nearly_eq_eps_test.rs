@@ -43,17 +43,17 @@ fn nearly_eq_eps_same_f64() {
 #[test]
 fn nearly_eq_eps_different_f32() {
     let a: f32 = 1.0;
-    let b: f32 = 1.000003;
+    let b: f32 = 1.0000008;
     assert_ne!(a, b);
 
-    assert!(!a.nearly_eq_eps(&b, 0.000002));
-    assert!(!b.nearly_eq_eps(&a, 0.000002));
+    assert!(!a.nearly_eq_eps(&b, 0.0000007));
+    assert!(!b.nearly_eq_eps(&a, 0.0000007));
 
-    assert!(a.nearly_eq_eps(&b, 0.000003));
-    assert!(b.nearly_eq_eps(&a, 0.000003));
+    assert!(a.nearly_eq_eps(&b, 0.0000009));
+    assert!(b.nearly_eq_eps(&a, 0.0000009));
 
-    assert!(a.nearly_eq_eps(&b, 0.000004));
-    assert!(b.nearly_eq_eps(&a, 0.000004));
+    assert!(a.nearly_eq_eps(&b, 0.0000011));
+    assert!(b.nearly_eq_eps(&a, 0.0000011));
 }
 
 #[test]
@@ -207,17 +207,17 @@ fn nearly_ne_eps_same_f64() {
 #[test]
 fn nearly_ne_eps_different_f32() {
     let a: f32 = 1.0;
-    let b: f32 = 1.000003;
+    let b: f32 = 1.0000008;
     assert_ne!(a, b);
 
-    assert!(a.nearly_ne_eps(&b, 0.000002));
-    assert!(b.nearly_ne_eps(&a, 0.000002));
+    assert!(a.nearly_ne_eps(&b, 0.0000007));
+    assert!(b.nearly_ne_eps(&a, 0.0000007));
 
-    assert!(!a.nearly_ne_eps(&b, 0.000003));
-    assert!(!b.nearly_ne_eps(&a, 0.000003));
+    assert!(!a.nearly_ne_eps(&b, 0.0000009));
+    assert!(!b.nearly_ne_eps(&a, 0.0000009));
 
-    assert!(!a.nearly_ne_eps(&b, 0.000004));
-    assert!(!b.nearly_ne_eps(&a, 0.000004));
+    assert!(!a.nearly_ne_eps(&b, 0.0000011));
+    assert!(!b.nearly_ne_eps(&a, 0.0000011));
 }
 
 #[test]

@@ -43,17 +43,17 @@ fn nearly_eq_tol_same_f64() {
 #[test]
 fn nearly_eq_tol_eps_different_f32() {
     let a: f32 = 1.0;
-    let b: f32 = 1.000003;
+    let b: f32 = 1.0000008;
     assert_ne!(a, b);
 
-    assert!(!a.nearly_eq_tol(&b, ToleranceF32::new(0.000002, 0)));
-    assert!(!b.nearly_eq_tol(&a, ToleranceF32::new(0.000002, 0)));
+    assert!(!a.nearly_eq_tol(&b, ToleranceF32::new(0.0000007, 0)));
+    assert!(!b.nearly_eq_tol(&a, ToleranceF32::new(0.0000007, 0)));
 
-    assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.000003, 0)));
-    assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.000003, 0)));
+    assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.0000009, 0)));
+    assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.0000009, 0)));
 
-    assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.000004, 0)));
-    assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.000004, 0)));
+    assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.0000011, 0)));
+    assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.0000011, 0)));
 }
 
 #[test]
@@ -239,17 +239,17 @@ fn nearly_ne_tol_same_f64() {
 #[test]
 fn nearly_ne_tol_eps_different_f32() {
     let a: f32 = 1.0;
-    let b: f32 = 1.000003;
+    let b: f32 = 1.0000008;
     assert_ne!(a, b);
 
-    assert!(a.nearly_ne_tol(&b, ToleranceF32::new(0.000002, 0)));
-    assert!(b.nearly_ne_tol(&a, ToleranceF32::new(0.000002, 0)));
+    assert!(a.nearly_ne_tol(&b, ToleranceF32::new(0.0000007, 0)));
+    assert!(b.nearly_ne_tol(&a, ToleranceF32::new(0.0000007, 0)));
 
-    assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.000003, 0)));
-    assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.000003, 0)));
+    assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.0000009, 0)));
+    assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.0000009, 0)));
 
-    assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.000004, 0)));
-    assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.000004, 0)));
+    assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.0000011, 0)));
+    assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.0000011, 0)));
 }
 
 #[test]

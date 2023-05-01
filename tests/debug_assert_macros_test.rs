@@ -9,7 +9,7 @@ use nearly::{ToleranceF32, ToleranceF64};
 fn macro_debug_assert_nearly_eq_eps_f32() {
     debug_assert_nearly_eq!(0.0_f32, 0.0_f32, eps = 0.0_f32);
     debug_assert_nearly_eq!(1.0_f32, 1.0_f32, eps = 0.01_f32);
-    debug_assert_nearly_eq!(1.0_f32, 1.000003, eps = 0.000004_f32);
+    debug_assert_nearly_eq!(1.0_f32, 1.0000008_f32, eps = 0.000004_f32);
     debug_assert_nearly_eq!(1.0_f32, 1.1_f32, eps = 1.11_f32);
 }
 
