@@ -46,7 +46,6 @@ fn nearly_eq_different_f32() {
     let b: f32 = 1.0000005;
     assert_ne!(a, b);
 
-    println!("e: {}", f32::EPSILON);
     assert!(a.nearly_eq(&b));
     assert!(b.nearly_eq(&a));
 }
@@ -193,7 +192,6 @@ fn nearly_ne_different_f32() {
     let b: f32 = 1.0000005;
     assert_ne!(a, b);
 
-    println!("e: {}", f32::EPSILON);
     assert!(!a.nearly_ne(&b));
     assert!(!b.nearly_ne(&a));
 }
