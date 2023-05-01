@@ -8,7 +8,8 @@ use crate::ulps::Ulps;
 pub trait NearlyEqEps<Rhs = Self, LhsTol = Self, RhsTol = Rhs>
 where
     Rhs: ?Sized,
-    LhsTol: EpsTolerance<RhsTol>,
+    LhsTol: EpsTolerance<RhsTol> + ?Sized,
+    RhsTol: ?Sized,
 {
     /// Returns whether `self` is nearly equal to `other` based on an absolute epsilon value `eps`.
     fn nearly_eq_eps(&self, other: &Rhs, eps: EpsToleranceType<LhsTol, RhsTol>) -> bool;
@@ -24,7 +25,8 @@ where
 pub trait NearlyEqUlps<Rhs = Self, LhsTol = Self, RhsTol = Rhs>
 where
     Rhs: ?Sized,
-    LhsTol: UlpsTolerance<RhsTol>,
+    LhsTol: UlpsTolerance<RhsTol> + ?Sized,
+    RhsTol: ?Sized,
 {
     /// Returns whether `self`is nearly equal to `other` based on an ulps value `ulps`.
     fn nearly_eq_ulps(&self, other: &Rhs, ulps: UlpsToleranceType<LhsTol, RhsTol>) -> bool;
@@ -44,7 +46,8 @@ pub trait NearlyEqTol<Rhs = Self, LhsTol = Self, RhsTol = Rhs>:
     NearlyEqEps<Rhs, LhsTol, RhsTol> + NearlyEqUlps<Rhs, LhsTol, RhsTol>
 where
     Rhs: ?Sized,
-    LhsTol: EpsAndUlpsTolerance<RhsTol>,
+    LhsTol: EpsAndUlpsTolerance<RhsTol> + ?Sized,
+    RhsTol: ?Sized,
 {
     /// Returns whether `self` is nearly equal to `other` based on a tolerance `tolerance`.
     /// Returns true if either `self` is nearly equal to `other` based on an epsilon value
@@ -72,7 +75,8 @@ pub trait NearlyEq<Rhs = Self, LhsTol = Self, RhsTol = Rhs>:
     NearlyEqTol<Rhs, LhsTol, RhsTol>
 where
     Rhs: ?Sized,
-    LhsTol: EpsAndUlpsTolerance<RhsTol>,
+    LhsTol: EpsAndUlpsTolerance<RhsTol> + ?Sized,
+    RhsTol: ?Sized,
 {
     /// Returns whether `self` is nearly equal to `other` based on the default tolerance for type
     /// `Self`.
@@ -147,6 +151,43 @@ macro_rules! impl_nearly_float {
 
 impl_nearly_float!(f32);
 impl_nearly_float!(f64);
+
+macro_rules! impl_nearly_ref {
+    ($lhs: ty, $rhs: ty) => {
+        impl<Lhs: ?Sized, Rhs: ?Sized> NearlyEqEps<$rhs, Lhs, Rhs> for $lhs
+        where
+            Lhs: NearlyEqEps<Rhs> + EpsTolerance<Rhs>,
+        {
+            fn nearly_eq_eps(&self, other: &$rhs, eps: EpsToleranceType<Lhs, Rhs>) -> bool {
+                NearlyEqEps::nearly_eq_eps(*self, *other, eps)
+            }
+        }
+
+        impl<Lhs: ?Sized, Rhs: ?Sized> NearlyEqUlps<$rhs, Lhs, Rhs> for $lhs
+        where
+            Lhs: NearlyEqUlps<Rhs> + UlpsTolerance<Rhs>,
+        {
+            fn nearly_eq_ulps(&self, other: &$rhs, ulps: UlpsToleranceType<Lhs, Rhs>) -> bool {
+                NearlyEqUlps::nearly_eq_ulps(*self, *other, ulps)
+            }
+        }
+
+        impl<Lhs: ?Sized, Rhs: ?Sized> NearlyEqTol<$rhs, Lhs, Rhs> for $lhs where
+            Lhs: NearlyEqTol<Rhs> + EpsAndUlpsTolerance<Rhs>
+        {
+        }
+
+        impl<Lhs: ?Sized, Rhs: ?Sized> NearlyEq<$rhs, Lhs, Rhs> for $lhs where
+            Lhs: NearlyEq<Rhs> + EpsAndUlpsTolerance<Rhs>
+        {
+        }
+    };
+}
+
+impl_nearly_ref!(&Lhs, &Rhs);
+impl_nearly_ref!(&Lhs, &mut Rhs);
+impl_nearly_ref!(&mut Lhs, &Rhs);
+impl_nearly_ref!(&mut Lhs, &mut Rhs);
 
 macro_rules! impl_nearly_collection {
     ([$($vars:tt)*], $lhs: ty, $rhs: ty) => {
