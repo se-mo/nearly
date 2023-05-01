@@ -211,7 +211,7 @@ impl_nearly_collection!([], &[Lhs], [Rhs]);
 impl_nearly_collection!([const N: usize], &[Lhs], [Rhs; N]);
 
 #[cfg(feature = "std")]
-mod std_types {
+mod std_collection {
     use super::*;
     use std::collections::{LinkedList, VecDeque};
 
@@ -236,4 +236,50 @@ mod std_types {
     impl_nearly_collection!([], &[Lhs], VecDeque<Rhs>);
 
     impl_nearly_collection!([], LinkedList<Lhs>, LinkedList<Rhs>);
+}
+
+#[cfg(feature = "std")]
+mod pointer {
+    use super::*;
+    use std::boxed::Box;
+    use std::rc::Rc;
+    use std::sync::Arc;
+
+    macro_rules! impl_nearly_pointer {
+        ($lhs: ty, $rhs: ty) => {
+            impl<Lhs, Rhs> NearlyEqEps<$rhs, Lhs, Rhs> for $lhs
+            where
+                Lhs: NearlyEqEps<Rhs> + EpsTolerance<Rhs>,
+            {
+                #[inline]
+                fn nearly_eq_eps(&self, other: &$rhs, eps: EpsToleranceType<Lhs, Rhs>) -> bool {
+                    NearlyEqEps::nearly_eq_eps(&**self, &**other, eps)
+                }
+            }
+
+            impl<Lhs, Rhs> NearlyEqUlps<$rhs, Lhs, Rhs> for $lhs
+            where
+                Lhs: NearlyEqUlps<Rhs> + UlpsTolerance<Rhs>,
+            {
+                #[inline]
+                fn nearly_eq_ulps(&self, other: &$rhs, ulps: UlpsToleranceType<Lhs, Rhs>) -> bool {
+                    NearlyEqUlps::nearly_eq_ulps(&**self, &**other, ulps)
+                }
+            }
+
+            impl<Lhs, Rhs> NearlyEqTol<$rhs, Lhs, Rhs> for $lhs where
+                Lhs: NearlyEqTol<Rhs> + EpsAndUlpsTolerance<Rhs>
+            {
+            }
+
+            impl<Lhs, Rhs> NearlyEq<$rhs, Lhs, Rhs> for $lhs where
+                Lhs: NearlyEq<Rhs> + EpsAndUlpsTolerance<Rhs>
+            {
+            }
+        };
+    }
+
+    impl_nearly_pointer!(Arc<Lhs>, Arc<Rhs>);
+    impl_nearly_pointer!(Box<Lhs>, Box<Rhs>);
+    impl_nearly_pointer!(Rc<Lhs>, Rc<Rhs>);
 }
