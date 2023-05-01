@@ -323,4 +323,45 @@ mod pointer {
     impl_nearly_pointer!(Arc<Lhs>, Arc<Rhs>);
     impl_nearly_pointer!(Box<Lhs>, Box<Rhs>);
     impl_nearly_pointer!(Rc<Lhs>, Rc<Rhs>);
+
+    use std::ops::Deref;
+    use std::pin::Pin;
+
+    impl<Lhs: Deref, Rhs: Deref> NearlyEqEps<Pin<Rhs>, Lhs::Target, Rhs::Target> for Pin<Lhs>
+    where
+        Lhs::Target: NearlyEqEps<Rhs::Target> + EpsTolerance<Rhs::Target>,
+    {
+        #[inline]
+        fn nearly_eq_eps(
+            &self,
+            other: &Pin<Rhs>,
+            eps: EpsToleranceType<Lhs::Target, Rhs::Target>,
+        ) -> bool {
+            Lhs::Target::nearly_eq_eps(self, other, eps)
+        }
+    }
+
+    impl<Lhs: Deref, Rhs: Deref> NearlyEqUlps<Pin<Rhs>, Lhs::Target, Rhs::Target> for Pin<Lhs>
+    where
+        Lhs::Target: NearlyEqUlps<Rhs::Target> + UlpsTolerance<Rhs::Target>,
+    {
+        #[inline]
+        fn nearly_eq_ulps(
+            &self,
+            other: &Pin<Rhs>,
+            ulps: UlpsToleranceType<Lhs::Target, Rhs::Target>,
+        ) -> bool {
+            Lhs::Target::nearly_eq_ulps(self, other, ulps)
+        }
+    }
+
+    impl<Lhs: Deref, Rhs: Deref> NearlyEqTol<Pin<Rhs>, Lhs::Target, Rhs::Target> for Pin<Lhs> where
+        Lhs::Target: NearlyEqTol<Rhs::Target> + EpsAndUlpsTolerance<Rhs::Target>
+    {
+    }
+
+    impl<Lhs: Deref, Rhs: Deref> NearlyEq<Pin<Rhs>, Lhs::Target, Rhs::Target> for Pin<Lhs> where
+        Lhs::Target: NearlyEq<Rhs::Target> + EpsAndUlpsTolerance<Rhs::Target>
+    {
+    }
 }
