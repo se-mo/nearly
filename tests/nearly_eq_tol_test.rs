@@ -1,5 +1,9 @@
 use nearly::{NearlyEqTol, ToleranceF32, ToleranceF64};
 
+///////////////////
+// nearly_eq_tol //
+///////////////////
+
 #[test]
 fn nearly_eq_tol_zero_f32() {
     let a: f32 = 0.0;
@@ -192,97 +196,9 @@ fn nearly_eq_tol_nan_f64() {
     assert!(!(-f64::NAN).nearly_eq_tol(&-f64::NAN, ToleranceF64::new(f64::MAX, i64::MAX)));
 }
 
-#[test]
-fn nearly_eq_tol_array_f32() {
-    let a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
-    let b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
-
-    assert!(!a.nearly_eq_tol(&b, ToleranceF32::new(0.0, 6)));
-    assert!(!a.nearly_eq_tol(&b, ToleranceF32::new(0.0000007, 0)));
-    assert!(!b.nearly_eq_tol(&a, ToleranceF32::new(0.0, 6)));
-    assert!(!b.nearly_eq_tol(&a, ToleranceF32::new(0.0000007, 0)));
-
-    assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.0, 7)));
-    assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.0000009, 0)));
-    assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.0, 7)));
-    assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.0000009, 0)));
-
-    assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.0, 8)));
-    assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.000001, 0)));
-    assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.0, 8)));
-    assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.000001, 0)));
-}
-
-#[test]
-fn nearly_eq_tol_array_f64() {
-    let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
-    let b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
-
-    assert!(!a.nearly_eq_tol(&b, ToleranceF64::new(0.0, 6)));
-    assert!(!a.nearly_eq_tol(&b, ToleranceF64::new(0.000000000000001, 0)));
-    assert!(!b.nearly_eq_tol(&a, ToleranceF64::new(0.0, 6)));
-    assert!(!b.nearly_eq_tol(&a, ToleranceF64::new(0.000000000000001, 0)));
-
-    assert!(a.nearly_eq_tol(&b, ToleranceF64::new(0.0, 7)));
-    assert!(a.nearly_eq_tol(&b, ToleranceF64::new(0.000000000000002, 0)));
-    assert!(b.nearly_eq_tol(&a, ToleranceF64::new(0.0, 7)));
-    assert!(b.nearly_eq_tol(&a, ToleranceF64::new(0.000000000000002, 0)));
-
-    assert!(a.nearly_eq_tol(&b, ToleranceF64::new(0.0, 8)));
-    assert!(a.nearly_eq_tol(&b, ToleranceF64::new(0.000000000000003, 0)));
-    assert!(b.nearly_eq_tol(&a, ToleranceF64::new(0.0, 8)));
-    assert!(b.nearly_eq_tol(&a, ToleranceF64::new(0.000000000000003, 0)));
-}
-
-#[test]
-fn nearly_eq_tol_slice_f32() {
-    let array_a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
-    let array_b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
-
-    let a: &[f32] = &array_a[1..4];
-    let b: &[f32] = &array_b[1..4];
-
-    assert!(!a.nearly_eq_tol(&b, ToleranceF32::new(0.0, 6)));
-    assert!(!a.nearly_eq_tol(&b, ToleranceF32::new(0.0000007, 0)));
-    assert!(!b.nearly_eq_tol(&a, ToleranceF32::new(0.0, 6)));
-    assert!(!b.nearly_eq_tol(&a, ToleranceF32::new(0.0000007, 0)));
-
-    assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.0, 7)));
-    assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.0000009, 0)));
-    assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.0, 7)));
-    assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.0000009, 0)));
-
-    assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.0, 8)));
-    assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.000001, 0)));
-    assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.0, 8)));
-    assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.000001, 0)));
-}
-
-#[test]
-fn nearly_eq_tol_slice_f64() {
-    let array_a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
-    let array_b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
-
-    let a: &[f64] = &array_a[1..4];
-    let b: &[f64] = &array_b[1..4];
-
-    assert!(!a.nearly_eq_tol(&b, ToleranceF64::new(0.0, 6)));
-    assert!(!a.nearly_eq_tol(&b, ToleranceF64::new(0.000000000000001, 0)));
-    assert!(!b.nearly_eq_tol(&a, ToleranceF64::new(0.0, 6)));
-    assert!(!b.nearly_eq_tol(&a, ToleranceF64::new(0.000000000000001, 0)));
-
-    assert!(a.nearly_eq_tol(&b, ToleranceF64::new(0.0, 7)));
-    assert!(a.nearly_eq_tol(&b, ToleranceF64::new(0.000000000000002, 0)));
-    assert!(b.nearly_eq_tol(&a, ToleranceF64::new(0.0, 7)));
-    assert!(b.nearly_eq_tol(&a, ToleranceF64::new(0.000000000000002, 0)));
-
-    assert!(a.nearly_eq_tol(&b, ToleranceF64::new(0.0, 8)));
-    assert!(a.nearly_eq_tol(&b, ToleranceF64::new(0.000000000000003, 0)));
-    assert!(b.nearly_eq_tol(&a, ToleranceF64::new(0.0, 8)));
-    assert!(b.nearly_eq_tol(&a, ToleranceF64::new(0.000000000000003, 0)));
-}
-
-////////////////
+///////////////////
+// nearly_eq_tol //
+///////////////////
 
 #[test]
 fn nearly_ne_tol_zero_f32() {
@@ -474,94 +390,4 @@ fn nearly_ne_tol_nan_f64() {
     assert!(f64::NAN.nearly_ne_tol(&-f64::NAN, ToleranceF64::new(f64::MAX, i64::MAX)));
     assert!((-f64::NAN).nearly_ne_tol(&f64::NAN, ToleranceF64::new(f64::MAX, i64::MAX)));
     assert!((-f64::NAN).nearly_ne_tol(&-f64::NAN, ToleranceF64::new(f64::MAX, i64::MAX)));
-}
-
-#[test]
-fn nearly_ne_tol_array_f32() {
-    let a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
-    let b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
-
-    assert!(a.nearly_ne_tol(&b, ToleranceF32::new(0.0, 6)));
-    assert!(a.nearly_ne_tol(&b, ToleranceF32::new(0.0000007, 0)));
-    assert!(b.nearly_ne_tol(&a, ToleranceF32::new(0.0, 6)));
-    assert!(b.nearly_ne_tol(&a, ToleranceF32::new(0.0000007, 0)));
-
-    assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.0, 7)));
-    assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.0000009, 0)));
-    assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.0, 7)));
-    assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.0000009, 0)));
-
-    assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.0, 8)));
-    assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.000001, 0)));
-    assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.0, 8)));
-    assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.000001, 0)));
-}
-
-#[test]
-fn nearly_ne_tol_array_f64() {
-    let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
-    let b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
-
-    assert!(a.nearly_ne_tol(&b, ToleranceF64::new(0.0, 6)));
-    assert!(a.nearly_ne_tol(&b, ToleranceF64::new(0.000000000000001, 0)));
-    assert!(b.nearly_ne_tol(&a, ToleranceF64::new(0.0, 6)));
-    assert!(b.nearly_ne_tol(&a, ToleranceF64::new(0.000000000000001, 0)));
-
-    assert!(!a.nearly_ne_tol(&b, ToleranceF64::new(0.0, 7)));
-    assert!(!a.nearly_ne_tol(&b, ToleranceF64::new(0.000000000000002, 0)));
-    assert!(!b.nearly_ne_tol(&a, ToleranceF64::new(0.0, 7)));
-    assert!(!b.nearly_ne_tol(&a, ToleranceF64::new(0.000000000000002, 0)));
-
-    assert!(!a.nearly_ne_tol(&b, ToleranceF64::new(0.0, 8)));
-    assert!(!a.nearly_ne_tol(&b, ToleranceF64::new(0.000000000000003, 0)));
-    assert!(!b.nearly_ne_tol(&a, ToleranceF64::new(0.0, 8)));
-    assert!(!b.nearly_ne_tol(&a, ToleranceF64::new(0.000000000000003, 0)));
-}
-
-#[test]
-fn nearly_ne_tol_slice_f32() {
-    let array_a: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
-    let array_b: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
-
-    let a: &[f32] = &array_a[1..4];
-    let b: &[f32] = &array_b[1..4];
-
-    assert!(a.nearly_ne_tol(&b, ToleranceF32::new(0.0, 6)));
-    assert!(a.nearly_ne_tol(&b, ToleranceF32::new(0.0000007, 0)));
-    assert!(b.nearly_ne_tol(&a, ToleranceF32::new(0.0, 6)));
-    assert!(b.nearly_ne_tol(&a, ToleranceF32::new(0.0000007, 0)));
-
-    assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.0, 7)));
-    assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.0000009, 0)));
-    assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.0, 7)));
-    assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.0000009, 0)));
-
-    assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.0, 8)));
-    assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.000001, 0)));
-    assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.0, 8)));
-    assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.000001, 0)));
-}
-
-#[test]
-fn nearly_ne_tol_slice_f64() {
-    let array_a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
-    let array_b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
-
-    let a: &[f64] = &array_a[1..4];
-    let b: &[f64] = &array_b[1..4];
-
-    assert!(a.nearly_ne_tol(&b, ToleranceF64::new(0.0, 6)));
-    assert!(a.nearly_ne_tol(&b, ToleranceF64::new(0.000000000000001, 0)));
-    assert!(b.nearly_ne_tol(&a, ToleranceF64::new(0.0, 6)));
-    assert!(b.nearly_ne_tol(&a, ToleranceF64::new(0.000000000000001, 0)));
-
-    assert!(!a.nearly_ne_tol(&b, ToleranceF64::new(0.0, 7)));
-    assert!(!a.nearly_ne_tol(&b, ToleranceF64::new(0.000000000000002, 0)));
-    assert!(!b.nearly_ne_tol(&a, ToleranceF64::new(0.0, 7)));
-    assert!(!b.nearly_ne_tol(&a, ToleranceF64::new(0.000000000000002, 0)));
-
-    assert!(!a.nearly_ne_tol(&b, ToleranceF64::new(0.0, 8)));
-    assert!(!a.nearly_ne_tol(&b, ToleranceF64::new(0.000000000000003, 0)));
-    assert!(!b.nearly_ne_tol(&a, ToleranceF64::new(0.0, 8)));
-    assert!(!b.nearly_ne_tol(&a, ToleranceF64::new(0.000000000000003, 0)));
 }

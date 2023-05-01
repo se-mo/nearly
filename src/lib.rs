@@ -354,15 +354,9 @@ mod macros;
 
 mod nearly_eq;
 pub use nearly_eq::NearlyEq;
-
-mod nearly_eq_eps;
-pub use nearly_eq_eps::NearlyEqEps;
-
-mod nearly_eq_tol;
-pub use nearly_eq_tol::NearlyEqTol;
-
-mod nearly_eq_ulps;
-pub use nearly_eq_ulps::NearlyEqUlps;
+pub use nearly_eq::NearlyEqEps;
+pub use nearly_eq::NearlyEqTol;
+pub use nearly_eq::NearlyEqUlps;
 
 mod tolerance;
 pub use tolerance::EpsAndUlpsTolerance;
