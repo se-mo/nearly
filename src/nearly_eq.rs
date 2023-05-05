@@ -365,3 +365,49 @@ mod pointer {
     {
     }
 }
+
+macro_rules! impl_nearly_tuple {
+    ($lhs:ident, $rhs:ident, $idx: tt) => {
+        impl_nearly_tuple!(@impl $lhs, $rhs, $idx);
+    };
+    ($lhs:ident $( $lhsTail:ident )+, $rhs:ident $( $rhsTail:ident )+, $idx:tt $( $idxTail:tt )+) => {
+        impl_nearly_tuple!($( $lhsTail )+, $( $rhsTail )+, $( $idxTail )+);
+        impl_nearly_tuple!(@impl $lhs $( $lhsTail )+, $rhs $( $rhsTail )+, $idx $( $idxTail )+);
+    };
+    (@impl $( $lhs: ident )+, $( $rhs: ident )+, $( $idx: tt )+) => {
+        impl<Lhs, Rhs> NearlyEqEps<($($rhs,)+), Lhs, Rhs> for ($($lhs,)+)
+        where
+            Lhs: NearlyEqEps<Rhs> + EpsTolerance<Rhs>,
+        {
+            fn nearly_eq_eps(&self, other: &($($rhs,)+), eps: EpsToleranceType<Lhs, Rhs>) -> bool {
+                $( self.$idx.nearly_eq_eps(&other.$idx, eps) )&&+
+            }
+        }
+
+        impl<Lhs, Rhs> NearlyEqUlps<($($rhs,)+), Lhs, Rhs> for ($($lhs,)+)
+        where
+            Lhs: NearlyEqUlps<Rhs> + UlpsTolerance<Rhs>,
+        {
+            fn nearly_eq_ulps(&self, other: &($($rhs,)+), ulps: UlpsToleranceType<Lhs, Rhs>) -> bool {
+                $( self.$idx.nearly_eq_ulps(&other.$idx, ulps) )&&+
+            }
+        }
+
+        impl<Lhs, Rhs> NearlyEqTol<($($rhs,)+), Lhs, Rhs> for ($($lhs,)+)
+        where
+            Lhs: NearlyEqTol<Rhs> + EpsAndUlpsTolerance<Rhs>
+        {
+        }
+
+        impl<Lhs, Rhs> NearlyEq<($($rhs,)+), Lhs, Rhs> for ($($lhs,)+)
+        where
+            Lhs: NearlyEq<Rhs> + EpsAndUlpsTolerance<Rhs>
+        {
+        }
+    }
+}
+
+impl_nearly_tuple!(
+    Lhs Lhs Lhs Lhs Lhs Lhs Lhs Lhs Lhs Lhs Lhs Lhs,
+    Rhs Rhs Rhs Rhs Rhs Rhs Rhs Rhs Rhs Rhs Rhs Rhs,
+    11 10 9 8 7 6 5 4 3 2 1 0);
