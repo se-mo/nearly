@@ -160,6 +160,7 @@ macro_rules! impl_test_f32 {
             fn [<macro_nearly_eq_ $name _f32>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f32);
                 let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
+                assert_ne!(a, b);
 
                 assert!(!nearly_eq!(a, b, eps = 0.0000007));
                 assert!(nearly_eq!(a, b, eps = 0.0000009));
@@ -180,6 +181,7 @@ macro_rules! impl_test_f32 {
             fn [<macro_nearly_ne_ $name _f32>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f32);
                 let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
+                assert_ne!(a, b);
 
                 assert!(nearly_ne!(a, b, eps = 0.0000007));
                 assert!(!nearly_ne!(a, b, eps = 0.0000009));
@@ -200,6 +202,7 @@ macro_rules! impl_test_f32 {
             fn [<macro_assert_nearly_eq_ $name _f32>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f32);
                 let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
+                assert_ne!(a, b);
 
                 assert_nearly_eq!(a, b, eps = 0.0000009);
                 assert_nearly_eq!(a, b, ulps = 7);
@@ -212,6 +215,7 @@ macro_rules! impl_test_f32 {
             fn [<macro_assert_nearly_ne_ $name _f32>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f32);
                 let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
+                assert_ne!(a, b);
 
                 assert_nearly_ne!(a, b, eps = 0.0000007);
                 assert_nearly_ne!(a, b, ulps = 6);
@@ -231,6 +235,7 @@ macro_rules! impl_test_f32 {
             fn [<macro_assert_nearly_eq_ $name _panic_f32>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f32);
                 let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
+                assert_ne!(a, b);
 
                 assert_nearly_eq!(a, b, eps = 0.0000007, ulps = 6);
             }
@@ -244,6 +249,7 @@ macro_rules! impl_test_f32 {
             fn [<macro_assert_nearly_ne_ $name _panic_f32>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f32);
                 let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
+                assert_ne!(a, b);
 
                 assert_nearly_ne!(a, b, eps = 0.0000009, ulps = 7);
             }
@@ -252,6 +258,7 @@ macro_rules! impl_test_f32 {
             fn [<macro_debug_assert_nearly_eq_ $name _f32>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f32);
                 let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
+                assert_ne!(a, b);
 
                 debug_assert_nearly_eq!(a, b, eps = 0.0000009);
                 debug_assert_nearly_eq!(a, b, ulps = 7);
@@ -264,6 +271,7 @@ macro_rules! impl_test_f32 {
             fn [<macro_debug_assert_nearly_ne_ $name _f32>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f32);
                 let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
+                assert_ne!(a, b);
 
                 debug_assert_nearly_ne!(a, b, eps = 0.0000007);
                 debug_assert_nearly_ne!(a, b, ulps = 6);
@@ -271,6 +279,7 @@ macro_rules! impl_test_f32 {
                 debug_assert_nearly_ne!(a, b, tol = ToleranceF32::new(0.0000007, 6));
 
                 let c: $ptr = $ptr::new($($ref)* 1.1_f32);
+                assert_ne!(a, c);
                 debug_assert_nearly_ne!(a, c);
             }
 
@@ -284,6 +293,7 @@ macro_rules! impl_test_f32 {
             fn [<macro_debug_assert_nearly_eq_ $name _panic_f32>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f32);
                 let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
+                assert_ne!(a, b);
 
                 debug_assert_nearly_eq!(a, b, eps = 0.0000007, ulps = 6);
             }
@@ -293,6 +303,7 @@ macro_rules! impl_test_f32 {
             fn [<macro_debug_assert_nearly_eq_ $name _panic_f32>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f32);
                 let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
+                assert_ne!(a, b);
 
                 debug_assert_nearly_eq!(a, b, eps = 0.0000007, ulps = 6);
             }
@@ -307,6 +318,7 @@ macro_rules! impl_test_f32 {
             fn [<macro_debug_assert_nearly_ne_ $name _panic_f32>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f32);
                 let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
+                assert_ne!(a, b);
 
                 debug_assert_nearly_ne!(a, b, eps = 0.0000009, ulps = 7);
             }
@@ -316,6 +328,7 @@ macro_rules! impl_test_f32 {
             fn [<macro_debug_assert_nearly_ne_ $name _panic_f32>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f32);
                 let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
+                assert_ne!(a, b);
 
                 debug_assert_nearly_ne!(a, b, eps = 0.0000009, ulps = 7);
             }
@@ -478,6 +491,7 @@ macro_rules! impl_test_f64 {
             fn [<macro_nearly_eq_ $name _f64>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f64);
                 let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
+                assert_ne!(a, b);
 
                 assert!(!nearly_eq!(a, b, eps = 0.000000000000001));
                 assert!(nearly_eq!(a, b, eps = 0.000000000000002));
@@ -506,6 +520,7 @@ macro_rules! impl_test_f64 {
             fn [<macro_nearly_ne_ $name _f64>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f64);
                 let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
+                assert_ne!(a, b);
 
                 assert!(nearly_ne!(a, b, eps = 0.000000000000001));
                 assert!(!nearly_ne!(a, b, eps = 0.000000000000002));
@@ -534,6 +549,7 @@ macro_rules! impl_test_f64 {
             fn [<macro_assert_nearly_eq_ $name _f64>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f64);
                 let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
+                assert_ne!(a, b);
 
                 assert_nearly_eq!(a, b, eps = 0.000000000000002);
                 assert_nearly_eq!(a, b, ulps = 7);
@@ -546,6 +562,7 @@ macro_rules! impl_test_f64 {
             fn [<macro_assert_nearly_ne_ $name _f64>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f64);
                 let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
+                assert_ne!(a, b);
 
                 assert_nearly_ne!(a, b, eps = 0.000000000000001);
                 assert_nearly_ne!(a, b, ulps = 6);
@@ -565,6 +582,7 @@ macro_rules! impl_test_f64 {
             fn [<macro_assert_nearly_eq_ $name _panic_f64>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f64);
                 let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
+                assert_ne!(a, b);
 
                 assert_nearly_eq!(a, b, eps = 0.000000000000001, ulps = 6);
             }
@@ -578,6 +596,7 @@ macro_rules! impl_test_f64 {
             fn [<macro_assert_nearly_ne_ $name _panic_f64>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f64);
                 let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
+                assert_ne!(a, b);
 
                 assert_nearly_ne!(a, b, eps = 0.000000000000002, ulps = 7);
             }
@@ -586,6 +605,7 @@ macro_rules! impl_test_f64 {
             fn [<macro_debug_assert_nearly_eq_ $name _f64>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f64);
                 let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
+                assert_ne!(a, b);
 
                 debug_assert_nearly_eq!(a, b, eps = 0.000000000000002);
                 debug_assert_nearly_eq!(a, b, ulps = 7);
@@ -598,6 +618,7 @@ macro_rules! impl_test_f64 {
             fn [<macro_debug_assert_nearly_ne_ $name _f64>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f64);
                 let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
+                assert_ne!(a, b);
 
                 debug_assert_nearly_ne!(a, b, eps = 0.000000000000001);
                 debug_assert_nearly_ne!(a, b, ulps = 6);
@@ -618,6 +639,7 @@ macro_rules! impl_test_f64 {
             fn [<macro_debug_assert_nearly_eq_ $name _panic_f64>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f64);
                 let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
+                assert_ne!(a, b);
 
                 debug_assert_nearly_eq!(a, b, eps = 0.000000000000001, ulps = 6);
             }
@@ -627,6 +649,7 @@ macro_rules! impl_test_f64 {
             fn [<macro_debug_assert_nearly_eq_ $name _panic_f64>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f64);
                 let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
+                assert_ne!(a, b);
 
                 debug_assert_nearly_eq!(a, b, eps = 0.000000000000001, ulps = 6);
             }
@@ -641,6 +664,7 @@ macro_rules! impl_test_f64 {
             fn [<macro_debug_assert_nearly_ne_ $name _panic_f64>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f64);
                 let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
+                assert_ne!(a, b);
 
                 debug_assert_nearly_ne!(a, b, eps = 0.000000000000002, ulps = 7);
             }
@@ -650,6 +674,7 @@ macro_rules! impl_test_f64 {
             fn [<macro_debug_assert_nearly_ne_ $name _panic_f64>]() {
                 let a: $ptr = $ptr::new($($ref)* 1.0_f64);
                 let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
+                assert_ne!(a, b);
 
                 debug_assert_nearly_ne!(a, b, eps = 0.000000000000002, ulps = 7);
             }
