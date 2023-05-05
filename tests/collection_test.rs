@@ -674,8 +674,8 @@ macro_rules! impl_test_f64 {
    eps: `1e-15`,
   ulps: `6`"#)]
             fn [<macro_assert_nearly_eq_ $name_lhs _ $name_rhs _panaic_f64>]() {
-                let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
-                let b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+                let a: $lhs = get_value!($name_lhs, "a", f64);
+                let b: $rhs = get_value!($name_rhs, "b", f64);
 
                 assert_nearly_eq!(a, b, eps = 0.000000000000001, ulps = 6);
             }
@@ -687,8 +687,8 @@ macro_rules! impl_test_f64 {
    eps: `2e-15`,
   ulps: `7`"#)]
             fn [<macro_assert_nearly_ne_ $name_lhs _ $name_rhs _panaic_f64>]() {
-                let a: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
-                let b: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
+                let a: $lhs = get_value!($name_lhs, "a", f64);
+                let b: $rhs = get_value!($name_rhs, "b", f64);
 
                 assert_nearly_ne!(a, b, eps = 0.000000000000002, ulps = 7);
             }
