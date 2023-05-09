@@ -8,10 +8,12 @@ use paste::paste;
 static A_ARRAY_F32: [f32; 5] = [1.0, 1.0, 1.0, 1.0000008, 1.0];
 static B_ARRAY_F32: [f32; 5] = [1.0, 1.0000008, 1.0, 1.0, 1.0];
 static C_ARRAY_F32: [f32; 5] = [1.0, 1.1, 1.0, 1.0000008, 1.0];
+static D_ARRAY_F32: [f32; 6] = [1.0, 1.0, 1.0, 1.0000008, 1.0, 1.0];
 
 static A_ARRAY_F64: [f64; 5] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0];
 static B_ARRAY_F64: [f64; 5] = [1.0, 1.0000000000000016, 1.0, 1.0, 1.0];
 static C_ARRAY_F64: [f64; 5] = [1.0, 1.1, 1.0, 1.0000000000000016, 1.0];
+static D_ARRAY_F64: [f64; 6] = [1.0, 1.0, 1.0, 1.0000000000000016, 1.0, 1.0];
 
 macro_rules! get_value {
     ($name: expr, "a", $type: ty) => {
@@ -29,6 +31,11 @@ macro_rules! get_value {
             [<get_value_ $name>]!("c", $type)
         }
     };
+    ($name: expr, "d", $type: ty) => {
+        paste! {
+            [<get_value_ $name>]!("d", $type)
+        }
+    };
 }
 
 macro_rules! get_value_array {
@@ -41,6 +48,9 @@ macro_rules! get_value_array {
     ("c", f32) => {
         C_ARRAY_F32
     };
+    ("d", f32) => {
+        D_ARRAY_F32
+    };
     ("a", f64) => {
         A_ARRAY_F64
     };
@@ -49,6 +59,9 @@ macro_rules! get_value_array {
     };
     ("c", f64) => {
         C_ARRAY_F64
+    };
+    ("d", f64) => {
+        D_ARRAY_F64
     };
 }
 
@@ -62,6 +75,9 @@ macro_rules! get_value_slice {
     ("c", f32) => {
         &C_ARRAY_F32[0..5]
     };
+    ("d", f32) => {
+        &D_ARRAY_F32[0..6]
+    };
     ("a", f64) => {
         &A_ARRAY_F64[0..5]
     };
@@ -70,6 +86,9 @@ macro_rules! get_value_slice {
     };
     ("c", f64) => {
         &C_ARRAY_F64[0..5]
+    };
+    ("d", f64) => {
+        &D_ARRAY_F64[0..6]
     };
 }
 
@@ -83,6 +102,9 @@ macro_rules! get_value_vec {
     ("c", f32) => {
         C_ARRAY_F32.into()
     };
+    ("d", f32) => {
+        D_ARRAY_F32.into()
+    };
     ("a", f64) => {
         A_ARRAY_F64.into()
     };
@@ -91,6 +113,9 @@ macro_rules! get_value_vec {
     };
     ("c", f64) => {
         C_ARRAY_F64.into()
+    };
+    ("d", f64) => {
+        D_ARRAY_F64.into()
     };
 }
 
@@ -104,6 +129,9 @@ macro_rules! get_value_vec_deque {
     ("c", f32) => {
         C_ARRAY_F32.into()
     };
+    ("d", f32) => {
+        D_ARRAY_F32.into()
+    };
     ("a", f64) => {
         A_ARRAY_F64.into()
     };
@@ -112,6 +140,9 @@ macro_rules! get_value_vec_deque {
     };
     ("c", f64) => {
         C_ARRAY_F64.into()
+    };
+    ("d", f64) => {
+        D_ARRAY_F64.into()
     };
 }
 
@@ -125,6 +156,9 @@ macro_rules! get_value_linked_list {
     ("c", f32) => {
         LinkedList::from(C_ARRAY_F32)
     };
+    ("d", f32) => {
+        LinkedList::from(D_ARRAY_F32)
+    };
     ("a", f64) => {
         LinkedList::from(A_ARRAY_F64)
     };
@@ -133,6 +167,9 @@ macro_rules! get_value_linked_list {
     };
     ("c", f64) => {
         LinkedList::from(C_ARRAY_F64)
+    };
+    ("d", f64) => {
+        LinkedList::from(D_ARRAY_F64)
     };
 }
 
@@ -768,6 +805,323 @@ macro_rules! impl_test_f64 {
     };
 }
 
+macro_rules! impl_test_different_length_f32 {
+    ($lhs: ty, $rhs: ty, $name_lhs: expr, $name_rhs: expr) => {
+        paste! {
+            #[test]
+            fn [<nearly_eq_eps_ $name_lhs _ $name_rhs _different_length_f32>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f32);
+                let d: $rhs = get_value!($name_rhs, "d", f32);
+
+                assert!(!a.nearly_eq_eps(&d, 0.1));
+                assert!(!d.nearly_eq_eps(&a, 0.1));
+            }
+
+            #[test]
+            fn [<nearly_ne_eps_ $name_lhs _ $name_rhs _different_length_f32>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f32);
+                let d: $rhs = get_value!($name_rhs, "d", f32);
+
+                assert!(a.nearly_ne_eps(&d, 0.1));
+                assert!(d.nearly_ne_eps(&a, 0.1));
+            }
+
+            #[test]
+            fn [<nearly_eq_ulps_ $name_lhs _ $name_rhs _different_length_f32>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f32);
+                let d: $rhs = get_value!($name_rhs, "d", f32);
+
+                assert!(!a.nearly_eq_ulps(&d, 20));
+                assert!(!d.nearly_eq_ulps(&a, 20));
+            }
+
+            #[test]
+            fn [<nearly_ne_ulps_ $name_lhs _ $name_rhs _different_length_f32>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f32);
+                let d: $rhs = get_value!($name_rhs, "d", f32);
+
+                assert!(a.nearly_ne_ulps(&d, 20));
+                assert!(d.nearly_ne_ulps(&a, 20));
+            }
+
+            #[test]
+            fn [<nearly_eq_tol_ $name_lhs _ $name_rhs _different_length_f32>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f32);
+                let d: $rhs = get_value!($name_rhs, "d", f32);
+
+                assert!(!a.nearly_eq_tol(&d, ToleranceF32::new(0.0, 20)));
+                assert!(!a.nearly_eq_tol(&d, ToleranceF32::new(0.1, 0)));
+                assert!(!d.nearly_eq_tol(&a, ToleranceF32::new(0.0, 20)));
+                assert!(!d.nearly_eq_tol(&a, ToleranceF32::new(0.1, 0)));
+            }
+
+            #[test]
+            fn [<nearly_ne_tol_ $name_lhs _ $name_rhs _different_length_f32>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f32);
+                let d: $rhs = get_value!($name_rhs, "d", f32);
+
+                assert!(a.nearly_ne_tol(&d, ToleranceF32::new(0.0, 20)));
+                assert!(a.nearly_ne_tol(&d, ToleranceF32::new(0.1, 0)));
+                assert!(d.nearly_ne_tol(&a, ToleranceF32::new(0.0, 20)));
+                assert!(d.nearly_ne_tol(&a, ToleranceF32::new(0.1, 0)));
+            }
+
+            #[test]
+            fn [<nearly_eq_ $name_lhs _ $name_rhs _different_length_f32>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f32);
+                let d: $rhs = get_value!($name_rhs, "d", f32);
+
+                assert!(!a.nearly_eq(&d));
+                assert!(!d.nearly_eq(&a));
+            }
+
+            #[test]
+            fn [<nearly_ne_ $name_lhs _ $name_rhs _different_length_f32>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f32);
+                let d: $rhs = get_value!($name_rhs, "d", f32);
+
+                assert!(a.nearly_ne(&d));
+                assert!(d.nearly_ne(&a));
+            }
+
+            #[test]
+            fn [<macro_nearly_eq_ $name_lhs _ $name_rhs _different_length_f32>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f32);
+                let d: $rhs = get_value!($name_rhs, "d", f32);
+
+                assert!(!nearly_eq!(a, d, eps = 0.1));
+                assert!(!nearly_eq!(a, d, ulps = 20));
+                assert!(!nearly_eq!(a, d, eps = 0.1, ulps = 20));
+                assert!(!nearly_eq!(a, d, tol = ToleranceF32::new(0.1, 20)));
+                assert!(!nearly_eq!(a, d));
+            }
+
+            #[test]
+            fn [<macro_nearly_ne_ $name_lhs _ $name_rhs _different_length_f32>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f32);
+                let d: $rhs = get_value!($name_rhs, "d", f32);
+
+                assert!(nearly_ne!(a, d, eps = 0.1));
+                assert!(nearly_ne!(a, d, ulps = 20));
+                assert!(nearly_ne!(a, d, eps = 0.1, ulps = 20));
+                assert!(nearly_ne!(a, d, tol = ToleranceF32::new(0.1, 20)));
+                assert!(nearly_ne!(a, d));
+            }
+
+            #[test]
+            fn [<macro_assert_nearly_ne_ $name_lhs _ $name_rhs _different_length_f32>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f32);
+                let d: $rhs = get_value!($name_rhs, "d", f32);
+
+                assert_nearly_ne!(a, d, eps = 0.1, ulps = 20);
+            }
+
+            #[test]
+            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
+  left: `[1.0, 1.0, 1.0, 1.0000008, 1.0]`,
+ right: `[1.0, 1.0, 1.0, 1.0000008, 1.0, 1.0]`,
+   eps: `0.1`,
+  ulps: `20`"#)]
+            fn [<macro_assert_nearly_eq_ $name_lhs _ $name_rhs _different_length_panic_f32>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f32);
+                let d: $rhs = get_value!($name_rhs, "d", f32);
+
+                assert_nearly_eq!(a, d, eps = 0.1, ulps = 20);
+            }
+
+            #[test]
+            fn [<macro_debug_assert_nearly_ne_ $name_lhs _ $name_rhs _different_length_f32>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f32);
+                let d: $rhs = get_value!($name_rhs, "d", f32);
+
+                debug_assert_nearly_ne!(a, d, eps = 0.1, ulps = 20);
+            }
+
+            #[test]
+            #[cfg(debug_assertions)]
+            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
+  left: `[1.0, 1.0, 1.0, 1.0000008, 1.0]`,
+ right: `[1.0, 1.0, 1.0, 1.0000008, 1.0, 1.0]`,
+   eps: `0.1`,
+  ulps: `20`"#)]
+            fn [<macro_debug_assert_nearly_eq_ $name_lhs _ $name_rhs _different_length_panic_f32>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f32);
+                let d: $rhs = get_value!($name_rhs, "d", f32);
+
+                debug_assert_nearly_eq!(a, d, eps = 0.1, ulps = 20);
+            }
+
+            #[test]
+            #[cfg(not(debug_assertions))]
+            fn [<macro_debug_assert_nearly_eq_ $name_lhs _ $name_rhs _different_length_panic_f32>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f32);
+                let d: $rhs = get_value!($name_rhs, "d", f32);
+
+                debug_assert_nearly_eq!(a, d, eps = 0.1, ulps = 20);
+            }
+        }
+    }
+}
+
+macro_rules! impl_test_different_length_f64 {
+    ($lhs: ty, $rhs: ty, $name_lhs: expr, $name_rhs: expr) => {
+        paste! {
+            #[test]
+            fn [<nearly_eq_eps_ $name_lhs _ $name_rhs _different_length_f64>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f64);
+                let d: $rhs = get_value!($name_rhs, "d", f64);
+
+                assert!(!a.nearly_eq_eps(&d, 0.1));
+                assert!(!d.nearly_eq_eps(&a, 0.1));
+            }
+
+            #[test]
+            fn [<nearly_ne_eps_ $name_lhs _ $name_rhs _different_length_f64>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f64);
+                let d: $rhs = get_value!($name_rhs, "d", f64);
+
+                assert!(a.nearly_ne_eps(&d, 0.1));
+                assert!(d.nearly_ne_eps(&a, 0.1));
+            }
+
+            #[test]
+            fn [<nearly_eq_ulps_ $name_lhs _ $name_rhs _different_length_f64>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f64);
+                let d: $rhs = get_value!($name_rhs, "d", f64);
+
+                assert!(!a.nearly_eq_ulps(&d, 20));
+                assert!(!d.nearly_eq_ulps(&a, 20));
+            }
+
+            #[test]
+            fn [<nearly_ne_ulps_ $name_lhs _ $name_rhs _different_length_f64>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f64);
+                let d: $rhs = get_value!($name_rhs, "d", f64);
+
+                assert!(a.nearly_ne_ulps(&d, 20));
+                assert!(d.nearly_ne_ulps(&a, 20));
+            }
+
+            #[test]
+            fn [<nearly_eq_tol_ $name_lhs _ $name_rhs _different_length_f64>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f64);
+                let d: $rhs = get_value!($name_rhs, "d", f64);
+
+                assert!(!a.nearly_eq_tol(&d, ToleranceF64::new(0.0, 20)));
+                assert!(!a.nearly_eq_tol(&d, ToleranceF64::new(0.1, 0)));
+                assert!(!d.nearly_eq_tol(&a, ToleranceF64::new(0.0, 20)));
+                assert!(!d.nearly_eq_tol(&a, ToleranceF64::new(0.1, 0)));
+            }
+
+            #[test]
+            fn [<nearly_ne_tol_ $name_lhs _ $name_rhs _different_length_f64>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f64);
+                let d: $rhs = get_value!($name_rhs, "d", f64);
+
+                assert!(a.nearly_ne_tol(&d, ToleranceF64::new(0.0, 20)));
+                assert!(a.nearly_ne_tol(&d, ToleranceF64::new(0.1, 0)));
+                assert!(d.nearly_ne_tol(&a, ToleranceF64::new(0.0, 20)));
+                assert!(d.nearly_ne_tol(&a, ToleranceF64::new(0.1, 0)));
+            }
+
+            #[test]
+            fn [<nearly_eq_ $name_lhs _ $name_rhs _different_length_f64>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f64);
+                let d: $rhs = get_value!($name_rhs, "d", f64);
+
+                assert!(!a.nearly_eq(&d));
+                assert!(!d.nearly_eq(&a));
+            }
+
+            #[test]
+            fn [<nearly_ne_ $name_lhs _ $name_rhs _different_length_f64>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f64);
+                let d: $rhs = get_value!($name_rhs, "d", f64);
+
+                assert!(a.nearly_ne(&d));
+                assert!(d.nearly_ne(&a));
+            }
+
+            #[test]
+            fn [<macro_nearly_eq_ $name_lhs _ $name_rhs _different_length_f64>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f64);
+                let d: $rhs = get_value!($name_rhs, "d", f64);
+
+                assert!(!nearly_eq!(a, d, eps = 0.1));
+                assert!(!nearly_eq!(a, d, ulps = 20));
+                assert!(!nearly_eq!(a, d, eps = 0.1, ulps = 20));
+                assert!(!nearly_eq!(a, d, tol = ToleranceF64::new(0.1, 20)));
+                assert!(!nearly_eq!(a, d));
+            }
+
+            #[test]
+            fn [<macro_nearly_ne_ $name_lhs _ $name_rhs _different_length_f64>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f64);
+                let d: $rhs = get_value!($name_rhs, "d", f64);
+
+                assert!(nearly_ne!(a, d, eps = 0.1));
+                assert!(nearly_ne!(a, d, ulps = 20));
+                assert!(nearly_ne!(a, d, eps = 0.1, ulps = 20));
+                assert!(nearly_ne!(a, d, tol = ToleranceF64::new(0.1, 20)));
+                assert!(nearly_ne!(a, d));
+            }
+
+            #[test]
+            fn [<macro_assert_nearly_ne_ $name_lhs _ $name_rhs _different_length_f64>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f64);
+                let d: $rhs = get_value!($name_rhs, "d", f64);
+
+                assert_nearly_ne!(a, d, eps = 0.1, ulps = 20);
+            }
+
+            #[test]
+            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
+  left: `[1.0, 1.0, 1.0, 1.0000000000000016, 1.0]`,
+ right: `[1.0, 1.0, 1.0, 1.0000000000000016, 1.0, 1.0]`,
+   eps: `0.1`,
+  ulps: `20`"#)]
+            fn [<macro_assert_nearly_eq_ $name_lhs _ $name_rhs _different_length_panic_f64>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f64);
+                let d: $rhs = get_value!($name_rhs, "d", f64);
+
+                assert_nearly_eq!(a, d, eps = 0.1, ulps = 20);
+            }
+
+            #[test]
+            fn [<macro_debug_assert_nearly_ne_ $name_lhs _ $name_rhs _different_length_f64>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f64);
+                let d: $rhs = get_value!($name_rhs, "d", f64);
+
+                debug_assert_nearly_ne!(a, d, eps = 0.1, ulps = 20);
+            }
+
+            #[test]
+            #[cfg(debug_assertions)]
+            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
+  left: `[1.0, 1.0, 1.0, 1.0000000000000016, 1.0]`,
+ right: `[1.0, 1.0, 1.0, 1.0000000000000016, 1.0, 1.0]`,
+   eps: `0.1`,
+  ulps: `20`"#)]
+            fn [<macro_debug_assert_nearly_eq_ $name_lhs _ $name_rhs _different_length_panic_f64>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f64);
+                let d: $rhs = get_value!($name_rhs, "d", f64);
+
+                debug_assert_nearly_eq!(a, d, eps = 0.1, ulps = 20);
+            }
+
+            #[test]
+            #[cfg(not(debug_assertions))]
+            fn [<macro_debug_assert_nearly_eq_ $name_lhs _ $name_rhs _different_length_panic_f64>]() {
+                let a: $lhs = get_value!($name_lhs, "a", f64);
+                let d: $rhs = get_value!($name_rhs, "d", f64);
+
+                debug_assert_nearly_eq!(a, d, eps = 0.1, ulps = 20);
+            }
+        }
+    }
+}
+
+
 impl_test_f32!([f32; 5], [f32; 5], "array", "array");
 impl_test_f64!([f64; 5], [f64; 5], "array", "array");
 impl_test_f32!([f32; 5], &[f32], "array", "slice");
@@ -777,6 +1131,14 @@ impl_test_f32!(&[f32], &[f32], "slice", "slice");
 impl_test_f64!(&[f64], &[f64], "slice", "slice");
 impl_test_f32!(&[f32], [f32; 5], "slice", "array");
 impl_test_f64!(&[f64], [f64; 5], "slice", "array");
+
+impl_test_different_length_f32!([f32; 5], &[f32], "array", "slice");
+impl_test_different_length_f64!([f64; 5], &[f64], "array", "slice");
+
+impl_test_different_length_f32!(&[f32], &[f32], "slice", "slice");
+impl_test_different_length_f64!(&[f64], &[f64], "slice", "slice");
+impl_test_different_length_f32!(&[f32], [f32; 6], "slice", "array");
+impl_test_different_length_f64!(&[f64], [f64; 6], "slice", "array");
 
 #[cfg(feature = "std")]
 mod std_types {
@@ -818,6 +1180,47 @@ mod std_types {
         "linked_list"
     );
     impl_test_f64!(
+        LinkedList<f64>,
+        LinkedList<f64>,
+        "linked_list",
+        "linked_list"
+    );
+
+    impl_test_different_length_f32!(Vec<f32>, Vec<f32>, "vec", "vec");
+    impl_test_different_length_f64!(Vec<f64>, Vec<f64>, "vec", "vec");
+    impl_test_different_length_f32!(Vec<f32>, VecDeque<f32>, "vec", "vec_deque");
+    impl_test_different_length_f64!(Vec<f64>, VecDeque<f64>, "vec", "vec_deque");
+    impl_test_different_length_f32!(Vec<f32>, [f32; 6], "vec", "array");
+    impl_test_different_length_f64!(Vec<f64>, [f64; 6], "vec", "array");
+    impl_test_different_length_f32!(Vec<f32>, &[f32], "vec", "slice");
+    impl_test_different_length_f64!(Vec<f64>, &[f64], "vec", "slice");
+
+    impl_test_different_length_f32!([f32; 5], Vec<f32>, "array", "vec");
+    impl_test_different_length_f64!([f64; 5], Vec<f64>, "array", "vec");
+    impl_test_different_length_f32!(&[f32], Vec<f32>, "slice", "vec");
+    impl_test_different_length_f64!(&[f64], Vec<f64>, "slice", "vec");
+
+    impl_test_different_length_f32!(VecDeque<f32>, VecDeque<f32>, "vec_deque", "vec_deque");
+    impl_test_different_length_f64!(VecDeque<f64>, VecDeque<f64>, "vec_deque", "vec_deque");
+    impl_test_different_length_f32!(VecDeque<f32>, Vec<f32>, "vec_deque", "vec");
+    impl_test_different_length_f64!(VecDeque<f64>, Vec<f64>, "vec_deque", "vec");
+    impl_test_different_length_f32!(VecDeque<f32>, [f32; 6], "vec_deque", "array");
+    impl_test_different_length_f64!(VecDeque<f64>, [f64; 6], "vec_deque", "array");
+    impl_test_different_length_f32!(VecDeque<f32>, &[f32], "vec_deque", "slice");
+    impl_test_different_length_f64!(VecDeque<f64>, &[f64], "vec_deque", "slice");
+
+    impl_test_different_length_f32!([f32; 5], Vec<f32>, "array", "vec_deque");
+    impl_test_different_length_f64!([f64; 5], Vec<f64>, "array", "vec_deque");
+    impl_test_different_length_f32!(&[f32], Vec<f32>, "slice", "vec_deque");
+    impl_test_different_length_f64!(&[f64], Vec<f64>, "slice", "vec_deque");
+
+    impl_test_different_length_f32!(
+        LinkedList<f32>,
+        LinkedList<f32>,
+        "linked_list",
+        "linked_list"
+    );
+    impl_test_different_length_f64!(
         LinkedList<f64>,
         LinkedList<f64>,
         "linked_list",
