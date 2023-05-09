@@ -93,6 +93,10 @@ where
     }
 }
 
+////////////////
+// primitives //
+////////////////
+
 macro_rules! impl_nearly_float {
     ($float: ty) => {
         impl NearlyEqEps for $float {
@@ -152,6 +156,10 @@ macro_rules! impl_nearly_float {
 impl_nearly_float!(f32);
 impl_nearly_float!(f64);
 
+////////////////
+// references //
+////////////////
+
 macro_rules! impl_nearly_ref {
     ($lhs: ty, $rhs: ty) => {
         impl<Lhs: ?Sized, Rhs: ?Sized> NearlyEqEps<$rhs, Lhs, Rhs> for $lhs
@@ -188,6 +196,10 @@ impl_nearly_ref!(&Lhs, &Rhs);
 impl_nearly_ref!(&Lhs, &mut Rhs);
 impl_nearly_ref!(&mut Lhs, &Rhs);
 impl_nearly_ref!(&mut Lhs, &mut Rhs);
+
+/////////////////
+// collections //
+/////////////////
 
 macro_rules! impl_nearly_collection {
     ([$($vars:tt)*], $lhs: ty, $rhs: ty) => {
@@ -279,6 +291,10 @@ mod std_collection {
     impl_nearly_collection!([], LinkedList<Lhs>, LinkedList<Rhs>);
 }
 
+/////////////
+// pointer //
+/////////////
+
 #[cfg(feature = "std")]
 mod pointer {
     use super::*;
@@ -365,6 +381,10 @@ mod pointer {
     {
     }
 }
+
+///////////
+// tuple //
+///////////
 
 macro_rules! impl_nearly_tuple {
     ($lhs:ident, $rhs:ident, $idx: tt) => {
