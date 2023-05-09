@@ -1121,7 +1121,6 @@ macro_rules! impl_test_different_length_f64 {
     }
 }
 
-
 impl_test_f32!([f32; 5], [f32; 5], "array", "array");
 impl_test_f64!([f64; 5], [f64; 5], "array", "array");
 impl_test_f32!([f32; 5], &[f32], "array", "slice");
