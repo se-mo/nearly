@@ -173,6 +173,55 @@ macro_rules! get_value_linked_list {
     };
 }
 
+macro_rules! create_hashmap {
+    ($array: expr, 5) => {
+        HashMap::from([
+            (0, $array[0]),
+            (1, $array[1]),
+            (2, $array[2]),
+            (3, $array[3]),
+            (4, $array[4]),
+        ])
+    };
+    ($array: expr, 6) => {
+        HashMap::from([
+            (0, $array[0]),
+            (1, $array[1]),
+            (2, $array[2]),
+            (3, $array[3]),
+            (4, $array[4]),
+            (5, $array[5]),
+        ])
+    };
+}
+
+macro_rules! get_value_hashmap {
+    ("a", f32) => {
+        create_hashmap!(A_ARRAY_F32, 5)
+    };
+    ("b", f32) => {
+        create_hashmap!(B_ARRAY_F32, 5)
+    };
+    ("c", f32) => {
+        create_hashmap!(C_ARRAY_F32, 5)
+    };
+    ("d", f32) => {
+        create_hashmap!(D_ARRAY_F32, 6)
+    };
+    ("a", f64) => {
+        create_hashmap!(A_ARRAY_F64, 5)
+    };
+    ("b", f64) => {
+        create_hashmap!(B_ARRAY_F64, 5)
+    };
+    ("c", f64) => {
+        create_hashmap!(C_ARRAY_F64, 5)
+    };
+    ("d", f64) => {
+        create_hashmap!(D_ARRAY_F64, 6)
+    };
+}
+
 macro_rules! impl_test_f32 {
     ($lhs: ty, $rhs: ty, $name_lhs: expr, $name_rhs: expr) => {
         paste! {
@@ -381,11 +430,7 @@ macro_rules! impl_test_f32 {
             }
 
             #[test]
-            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
-  left: `[1.0, 1.0, 1.0, 1.0000008, 1.0]`,
- right: `[1.0, 1.0000008, 1.0, 1.0, 1.0]`,
-   eps: `7e-7`,
-  ulps: `6`"#)]
+            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`"#)]
             fn [<macro_assert_nearly_eq_ $name_lhs _ $name_rhs _panic_f32>]() {
                 let a: $lhs = get_value!($name_lhs, "a", f32);
                 let b: $rhs = get_value!($name_rhs, "b", f32);
@@ -394,11 +439,7 @@ macro_rules! impl_test_f32 {
             }
 
             #[test]
-            #[should_panic(expected = r#"assertion failed: `(left nearly_ne_tol right)`
-  left: `[1.0, 1.0, 1.0, 1.0000008, 1.0]`,
- right: `[1.0, 1.0000008, 1.0, 1.0, 1.0]`,
-   eps: `9e-7`,
-  ulps: `7`"#)]
+            #[should_panic(expected = r#"assertion failed: `(left nearly_ne_tol right)`"#)]
             fn [<macro_assert_nearly_ne_ $name_lhs _ $name_rhs _panic_f32>]() {
                 let a: $lhs = get_value!($name_lhs, "a", f32);
                 let b: $rhs = get_value!($name_rhs, "b", f32);
@@ -434,11 +475,7 @@ macro_rules! impl_test_f32 {
 
             #[test]
             #[cfg(debug_assertions)]
-            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
-  left: `[1.0, 1.0, 1.0, 1.0000008, 1.0]`,
- right: `[1.0, 1.0000008, 1.0, 1.0, 1.0]`,
-   eps: `7e-7`,
-  ulps: `6`"#)]
+            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`"#)]
             fn [<macro_debug_assert_nearly_eq_ $name_lhs _ $name_rhs _panic_f32>]() {
                 let a: $lhs = get_value!($name_lhs, "a", f32);
                 let b: $rhs = get_value!($name_rhs, "b", f32);
@@ -457,11 +494,7 @@ macro_rules! impl_test_f32 {
 
             #[test]
             #[cfg(debug_assertions)]
-            #[should_panic(expected = r#"assertion failed: `(left nearly_ne_tol right)`
-  left: `[1.0, 1.0, 1.0, 1.0000008, 1.0]`,
- right: `[1.0, 1.0000008, 1.0, 1.0, 1.0]`,
-   eps: `9e-7`,
-  ulps: `7`"#)]
+            #[should_panic(expected = r#"assertion failed: `(left nearly_ne_tol right)`"#)]
             fn [<macro_debug_assert_nearly_ne_ $name_lhs _ $name_rhs _panic_f32>]() {
                 let a: $lhs = get_value!($name_lhs, "a", f32);
                 let b: $rhs = get_value!($name_rhs, "b", f32);
@@ -705,11 +738,7 @@ macro_rules! impl_test_f64 {
             }
 
             #[test]
-            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
-  left: `[1.0, 1.0, 1.0, 1.0000000000000016, 1.0]`,
- right: `[1.0, 1.0000000000000016, 1.0, 1.0, 1.0]`,
-   eps: `1e-15`,
-  ulps: `6`"#)]
+            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`"#)]
             fn [<macro_assert_nearly_eq_ $name_lhs _ $name_rhs _panaic_f64>]() {
                 let a: $lhs = get_value!($name_lhs, "a", f64);
                 let b: $rhs = get_value!($name_rhs, "b", f64);
@@ -718,11 +747,7 @@ macro_rules! impl_test_f64 {
             }
 
             #[test]
-            #[should_panic(expected = r#"assertion failed: `(left nearly_ne_tol right)`
-  left: `[1.0, 1.0, 1.0, 1.0000000000000016, 1.0]`,
- right: `[1.0, 1.0000000000000016, 1.0, 1.0, 1.0]`,
-   eps: `2e-15`,
-  ulps: `7`"#)]
+            #[should_panic(expected = r#"assertion failed: `(left nearly_ne_tol right)`"#)]
             fn [<macro_assert_nearly_ne_ $name_lhs _ $name_rhs _panaic_f64>]() {
                 let a: $lhs = get_value!($name_lhs, "a", f64);
                 let b: $rhs = get_value!($name_rhs, "b", f64);
@@ -758,11 +783,7 @@ macro_rules! impl_test_f64 {
 
             #[test]
             #[cfg(debug_assertions)]
-            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
-  left: `[1.0, 1.0, 1.0, 1.0000000000000016, 1.0]`,
- right: `[1.0, 1.0000000000000016, 1.0, 1.0, 1.0]`,
-   eps: `1e-15`,
-  ulps: `6`"#)]
+            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`"#)]
             fn [<macro_debug_assert_nearly_eq_ $name_lhs _ $name_rhs _panic_f64>]() {
                 let a: $lhs = get_value!($name_lhs, "a", f64);
                 let b: $rhs = get_value!($name_rhs, "b", f64);
@@ -781,11 +802,7 @@ macro_rules! impl_test_f64 {
 
             #[test]
             #[cfg(debug_assertions)]
-            #[should_panic(expected = r#"assertion failed: `(left nearly_ne_tol right)`
-  left: `[1.0, 1.0, 1.0, 1.0000000000000016, 1.0]`,
- right: `[1.0, 1.0000000000000016, 1.0, 1.0, 1.0]`,
-   eps: `2e-15`,
-  ulps: `7`"#)]
+            #[should_panic(expected = r#"assertion failed: `(left nearly_ne_tol right)`"#)]
             fn [<macro_debug_assert_nearly_ne_ $name_lhs _ $name_rhs _panic_f64>]() {
                 let a: $lhs = get_value!($name_lhs, "a", f64);
                 let b: $rhs = get_value!($name_rhs, "b", f64);
@@ -917,11 +934,7 @@ macro_rules! impl_test_different_length_f32 {
             }
 
             #[test]
-            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
-  left: `[1.0, 1.0, 1.0, 1.0000008, 1.0]`,
- right: `[1.0, 1.0, 1.0, 1.0000008, 1.0, 1.0]`,
-   eps: `0.1`,
-  ulps: `20`"#)]
+            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`"#)]
             fn [<macro_assert_nearly_eq_ $name_lhs _ $name_rhs _different_length_panic_f32>]() {
                 let a: $lhs = get_value!($name_lhs, "a", f32);
                 let d: $rhs = get_value!($name_rhs, "d", f32);
@@ -939,11 +952,7 @@ macro_rules! impl_test_different_length_f32 {
 
             #[test]
             #[cfg(debug_assertions)]
-            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
-  left: `[1.0, 1.0, 1.0, 1.0000008, 1.0]`,
- right: `[1.0, 1.0, 1.0, 1.0000008, 1.0, 1.0]`,
-   eps: `0.1`,
-  ulps: `20`"#)]
+            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`"#)]
             fn [<macro_debug_assert_nearly_eq_ $name_lhs _ $name_rhs _different_length_panic_f32>]() {
                 let a: $lhs = get_value!($name_lhs, "a", f32);
                 let d: $rhs = get_value!($name_rhs, "d", f32);
@@ -1075,11 +1084,7 @@ macro_rules! impl_test_different_length_f64 {
             }
 
             #[test]
-            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
-  left: `[1.0, 1.0, 1.0, 1.0000000000000016, 1.0]`,
- right: `[1.0, 1.0, 1.0, 1.0000000000000016, 1.0, 1.0]`,
-   eps: `0.1`,
-  ulps: `20`"#)]
+            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`"#)]
             fn [<macro_assert_nearly_eq_ $name_lhs _ $name_rhs _different_length_panic_f64>]() {
                 let a: $lhs = get_value!($name_lhs, "a", f64);
                 let d: $rhs = get_value!($name_rhs, "d", f64);
@@ -1097,11 +1102,7 @@ macro_rules! impl_test_different_length_f64 {
 
             #[test]
             #[cfg(debug_assertions)]
-            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
-  left: `[1.0, 1.0, 1.0, 1.0000000000000016, 1.0]`,
- right: `[1.0, 1.0, 1.0, 1.0000000000000016, 1.0, 1.0]`,
-   eps: `0.1`,
-  ulps: `20`"#)]
+            #[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`"#)]
             fn [<macro_debug_assert_nearly_eq_ $name_lhs _ $name_rhs _different_length_panic_f64>]() {
                 let a: $lhs = get_value!($name_lhs, "a", f64);
                 let d: $rhs = get_value!($name_rhs, "d", f64);
@@ -1142,7 +1143,7 @@ impl_test_different_length_f64!(&[f64], [f64; 6], "slice", "array");
 #[cfg(feature = "std")]
 mod std_types {
     use super::*;
-    use std::collections::{LinkedList, VecDeque};
+    use std::collections::{HashMap, LinkedList, VecDeque};
 
     impl_test_f32!(Vec<f32>, Vec<f32>, "vec", "vec");
     impl_test_f64!(Vec<f64>, Vec<f64>, "vec", "vec");
@@ -1185,6 +1186,19 @@ mod std_types {
         "linked_list"
     );
 
+    impl_test_f32!(
+        HashMap<i32, f32>,
+        HashMap<i32, f32>,
+        "hashmap",
+        "hashmap"
+    );
+    impl_test_f64!(
+        HashMap<i32, f64>,
+        HashMap<i32, f64>,
+        "hashmap",
+        "hashmap"
+    );
+
     impl_test_different_length_f32!(Vec<f32>, Vec<f32>, "vec", "vec");
     impl_test_different_length_f64!(Vec<f64>, Vec<f64>, "vec", "vec");
     impl_test_different_length_f32!(Vec<f32>, VecDeque<f32>, "vec", "vec_deque");
@@ -1224,5 +1238,18 @@ mod std_types {
         LinkedList<f64>,
         "linked_list",
         "linked_list"
+    );
+
+    impl_test_different_length_f32!(
+        HashMap<i32, f32>,
+        HashMap<i32, f32>,
+        "hashmap",
+        "hashmap"
+    );
+    impl_test_different_length_f64!(
+        HashMap<i32, f64>,
+        HashMap<i32, f64>,
+        "hashmap",
+        "hashmap"
     );
 }

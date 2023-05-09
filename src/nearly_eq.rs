@@ -292,6 +292,73 @@ mod std_collection {
 }
 
 /////////////
+// hashmap //
+/////////////
+
+#[cfg(feature = "std")]
+mod hashmap {
+    use super::*;
+    use std::collections::HashMap;
+    use std::hash::{BuildHasher, Hash};
+
+    impl<K, Lhs, Rhs, S> NearlyEqEps<HashMap<K, Rhs, S>, Lhs, Rhs> for HashMap<K, Lhs, S>
+    where
+        K: Eq + Hash,
+        Lhs: NearlyEqEps<Rhs> + EpsTolerance<Rhs>,
+        S: BuildHasher,
+    {
+        fn nearly_eq_eps(
+            &self,
+            other: &HashMap<K, Rhs, S>,
+            eps: EpsToleranceType<Lhs, Rhs>,
+        ) -> bool {
+            self.len() == other.len()
+                && self.iter().all(|(key, v_lhs)| {
+                    other
+                        .get(key)
+                        .map_or(false, |v_rhs| NearlyEqEps::nearly_eq_eps(v_lhs, v_rhs, eps))
+                })
+        }
+    }
+
+    impl<K, Lhs, Rhs, S> NearlyEqUlps<HashMap<K, Rhs, S>, Lhs, Rhs> for HashMap<K, Lhs, S>
+    where
+        K: Eq + Hash,
+        Lhs: NearlyEqUlps<Rhs> + UlpsTolerance<Rhs>,
+        S: BuildHasher,
+    {
+        fn nearly_eq_ulps(
+            &self,
+            other: &HashMap<K, Rhs, S>,
+            ulps: UlpsToleranceType<Lhs, Rhs>,
+        ) -> bool {
+            self.len() == other.len()
+                && self.iter().all(|(key, v_lhs)| {
+                    other.get(key).map_or(false, |v_rhs| {
+                        NearlyEqUlps::nearly_eq_ulps(v_lhs, v_rhs, ulps)
+                    })
+                })
+        }
+    }
+
+    impl<K, Lhs, Rhs, S> NearlyEqTol<HashMap<K, Rhs, S>, Lhs, Rhs> for HashMap<K, Lhs, S>
+    where
+        K: Eq + Hash,
+        Lhs: NearlyEqTol<Rhs> + EpsAndUlpsTolerance<Rhs>,
+        S: BuildHasher,
+    {
+    }
+
+    impl<K, Lhs, Rhs, S> NearlyEq<HashMap<K, Rhs, S>, Lhs, Rhs> for HashMap<K, Lhs, S>
+    where
+        K: Eq + Hash,
+        Lhs: NearlyEq<Rhs> + EpsAndUlpsTolerance<Rhs>,
+        S: BuildHasher,
+    {
+    }
+}
+
+/////////////
 // pointer //
 /////////////
 
