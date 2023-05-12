@@ -291,14 +291,14 @@ mod std_collection {
     impl_nearly_collection!([], LinkedList<Lhs>, LinkedList<Rhs>);
 }
 
-/////////////
-// hashmap //
-/////////////
+//////////
+// maps //
+//////////
 
 #[cfg(feature = "std")]
-mod hashmap {
+mod map {
     use super::*;
-    use std::collections::HashMap;
+    use std::collections::{BTreeMap, HashMap};
     use std::hash::{BuildHasher, Hash};
 
     impl<K, Lhs, Rhs, S> NearlyEqEps<HashMap<K, Rhs, S>, Lhs, Rhs> for HashMap<K, Lhs, S>
@@ -354,6 +354,52 @@ mod hashmap {
         K: Eq + Hash,
         Lhs: NearlyEq<Rhs> + EpsAndUlpsTolerance<Rhs>,
         S: BuildHasher,
+    {
+    }
+
+    impl<K, Lhs, Rhs> NearlyEqEps<BTreeMap<K, Rhs>, Lhs, Rhs> for BTreeMap<K, Lhs>
+    where
+        K: PartialEq,
+        Lhs: NearlyEqEps<Rhs> + EpsTolerance<Rhs>,
+    {
+        fn nearly_eq_eps(&self, other: &BTreeMap<K, Rhs>, eps: EpsToleranceType<Lhs, Rhs>) -> bool {
+            self.len() == other.len()
+                && self
+                    .iter()
+                    .zip(other)
+                    .all(|(a, b)| a.0 == b.0 && NearlyEqEps::nearly_eq_eps(a.1, b.1, eps))
+        }
+    }
+
+    impl<K, Lhs, Rhs> NearlyEqUlps<BTreeMap<K, Rhs>, Lhs, Rhs> for BTreeMap<K, Lhs>
+    where
+        K: PartialEq,
+        Lhs: NearlyEqUlps<Rhs> + UlpsTolerance<Rhs>,
+    {
+        fn nearly_eq_ulps(
+            &self,
+            other: &BTreeMap<K, Rhs>,
+            ulps: UlpsToleranceType<Lhs, Rhs>,
+        ) -> bool {
+            self.len() == other.len()
+                && self
+                    .iter()
+                    .zip(other)
+                    .all(|(a, b)| a.0 == b.0 && NearlyEqUlps::nearly_eq_ulps(a.1, b.1, ulps))
+        }
+    }
+
+    impl<K, Lhs, Rhs> NearlyEqTol<BTreeMap<K, Rhs>, Lhs, Rhs> for BTreeMap<K, Lhs>
+    where
+        K: PartialEq,
+        Lhs: NearlyEqTol<Rhs> + EpsAndUlpsTolerance<Rhs>,
+    {
+    }
+
+    impl<K, Lhs, Rhs> NearlyEq<BTreeMap<K, Rhs>, Lhs, Rhs> for BTreeMap<K, Lhs>
+    where
+        K: PartialEq,
+        Lhs: NearlyEq<Rhs> + EpsAndUlpsTolerance<Rhs>,
     {
     }
 }

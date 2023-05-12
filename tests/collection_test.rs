@@ -173,9 +173,9 @@ macro_rules! get_value_linked_list {
     };
 }
 
-macro_rules! create_hashmap {
-    ($array: expr, 5) => {
-        HashMap::from([
+macro_rules! create_map {
+    ($map: ident, $array: expr, 5) => {
+        $map::from([
             (0, $array[0]),
             (1, $array[1]),
             (2, $array[2]),
@@ -183,8 +183,8 @@ macro_rules! create_hashmap {
             (4, $array[4]),
         ])
     };
-    ($array: expr, 6) => {
-        HashMap::from([
+    ($map: ident, $array: expr, 6) => {
+        $map::from([
             (0, $array[0]),
             (1, $array[1]),
             (2, $array[2]),
@@ -197,28 +197,55 @@ macro_rules! create_hashmap {
 
 macro_rules! get_value_hashmap {
     ("a", f32) => {
-        create_hashmap!(A_ARRAY_F32, 5)
+        create_map!(HashMap, A_ARRAY_F32, 5)
     };
     ("b", f32) => {
-        create_hashmap!(B_ARRAY_F32, 5)
+        create_map!(HashMap, B_ARRAY_F32, 5)
     };
     ("c", f32) => {
-        create_hashmap!(C_ARRAY_F32, 5)
+        create_map!(HashMap, C_ARRAY_F32, 5)
     };
     ("d", f32) => {
-        create_hashmap!(D_ARRAY_F32, 6)
+        create_map!(HashMap, D_ARRAY_F32, 6)
     };
     ("a", f64) => {
-        create_hashmap!(A_ARRAY_F64, 5)
+        create_map!(HashMap, A_ARRAY_F64, 5)
     };
     ("b", f64) => {
-        create_hashmap!(B_ARRAY_F64, 5)
+        create_map!(HashMap, B_ARRAY_F64, 5)
     };
     ("c", f64) => {
-        create_hashmap!(C_ARRAY_F64, 5)
+        create_map!(HashMap, C_ARRAY_F64, 5)
     };
     ("d", f64) => {
-        create_hashmap!(D_ARRAY_F64, 6)
+        create_map!(HashMap, D_ARRAY_F64, 6)
+    };
+}
+
+macro_rules! get_value_btree_map {
+    ("a", f32) => {
+        create_map!(BTreeMap, A_ARRAY_F32, 5)
+    };
+    ("b", f32) => {
+        create_map!(BTreeMap, B_ARRAY_F32, 5)
+    };
+    ("c", f32) => {
+        create_map!(BTreeMap, C_ARRAY_F32, 5)
+    };
+    ("d", f32) => {
+        create_map!(BTreeMap, D_ARRAY_F32, 6)
+    };
+    ("a", f64) => {
+        create_map!(BTreeMap, A_ARRAY_F64, 5)
+    };
+    ("b", f64) => {
+        create_map!(BTreeMap, B_ARRAY_F64, 5)
+    };
+    ("c", f64) => {
+        create_map!(BTreeMap, C_ARRAY_F64, 5)
+    };
+    ("d", f64) => {
+        create_map!(BTreeMap, D_ARRAY_F64, 6)
     };
 }
 
@@ -1143,7 +1170,7 @@ impl_test_different_length_f64!(&[f64], [f64; 6], "slice", "array");
 #[cfg(feature = "std")]
 mod std_types {
     use super::*;
-    use std::collections::{HashMap, LinkedList, VecDeque};
+    use std::collections::{BTreeMap, HashMap, LinkedList, VecDeque};
 
     impl_test_f32!(Vec<f32>, Vec<f32>, "vec", "vec");
     impl_test_f64!(Vec<f64>, Vec<f64>, "vec", "vec");
@@ -1199,6 +1226,19 @@ mod std_types {
         "hashmap"
     );
 
+    impl_test_f32!(
+        BTreeMap<i32, f32>,
+        BTreeMap<i32, f32>,
+        "btree_map",
+        "btree_map"
+    );
+    impl_test_f64!(
+        BTreeMap<i32, f64>,
+        BTreeMap<i32, f64>,
+        "btree_map",
+        "btree_map"
+    );
+
     impl_test_different_length_f32!(Vec<f32>, Vec<f32>, "vec", "vec");
     impl_test_different_length_f64!(Vec<f64>, Vec<f64>, "vec", "vec");
     impl_test_different_length_f32!(Vec<f32>, VecDeque<f32>, "vec", "vec_deque");
@@ -1251,5 +1291,18 @@ mod std_types {
         HashMap<i32, f64>,
         "hashmap",
         "hashmap"
+    );
+
+    impl_test_different_length_f32!(
+        BTreeMap<i32, f32>,
+        BTreeMap<i32, f32>,
+        "btree_map",
+        "btree_map"
+    );
+    impl_test_different_length_f64!(
+        BTreeMap<i32, f64>,
+        BTreeMap<i32, f64>,
+        "btree_map",
+        "btree_map"
     );
 }
