@@ -92,6 +92,7 @@ macro_rules! get_value_slice {
     };
 }
 
+#[cfg(feature = "std")]
 macro_rules! get_value_vec {
     ("a", f32) => {
         A_ARRAY_F32.into()
@@ -119,6 +120,7 @@ macro_rules! get_value_vec {
     };
 }
 
+#[cfg(feature = "std")]
 macro_rules! get_value_vec_deque {
     ("a", f32) => {
         A_ARRAY_F32.into()
@@ -146,6 +148,7 @@ macro_rules! get_value_vec_deque {
     };
 }
 
+#[cfg(feature = "std")]
 macro_rules! get_value_linked_list {
     ("a", f32) => {
         LinkedList::from(A_ARRAY_F32)
@@ -173,6 +176,7 @@ macro_rules! get_value_linked_list {
     };
 }
 
+#[cfg(feature = "std")]
 macro_rules! create_map {
     ($map: ident, $array: expr, 5) => {
         $map::from([
@@ -195,6 +199,7 @@ macro_rules! create_map {
     };
 }
 
+#[cfg(feature = "std")]
 macro_rules! get_value_hashmap {
     ("a", f32) => {
         create_map!(HashMap, A_ARRAY_F32, 5)
@@ -222,6 +227,7 @@ macro_rules! get_value_hashmap {
     };
 }
 
+#[cfg(feature = "std")]
 macro_rules! get_value_btree_map {
     ("a", f32) => {
         create_map!(BTreeMap, A_ARRAY_F32, 5)
