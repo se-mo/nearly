@@ -1,6 +1,6 @@
 [package]
 name = "nearly"
-version = "0.2.0-pre"
+version = "0.2.0"
 edition = "2021"
 authors = ["Sebastian Mock"]
 description = "A library to compare IEEE floating point primitives"
