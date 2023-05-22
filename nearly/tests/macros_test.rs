@@ -1,4 +1,4 @@
-use nearly::{nearly_eq, nearly_ne};
+use nearly::{nearly, nearly_eq, nearly_ne};
 use nearly::{ToleranceF32, ToleranceF64};
 
 ////////////////
@@ -207,6 +207,74 @@ fn macro_nearly_eq_f64() {
     assert!(!nearly_eq!(1.0_f64, f64::NAN));
 }
 
+#[test]
+fn macro_nearly_op_eq_f32() {
+    assert!(!nearly!(1.0_f32 == 1.0000008_f32, eps = 0.0000007_f32));
+    assert!(nearly!(1.0_f32 == 1.0000008_f32, eps = 0.0000009_f32));
+
+    assert!(!nearly!(1.0_f32 == 1.0000008_f32, ulps = 6_i32));
+    assert!(nearly!(1.0_f32 == 1.0000008_f32, ulps = 7_i32));
+
+    assert!(!nearly!(
+        1.0_f32 == 1.0000008_f32,
+        eps = 0.0000007_f32,
+        ulps = 6_i32
+    ));
+    assert!(nearly!(
+        1.0_f32 == 1.0000008_f32,
+        eps = 0.0000009_f32,
+        ulps = 7_i32
+    ));
+
+    assert!(!nearly!(
+        1.0_f32 == 1.0000008_f32,
+        tol = ToleranceF32::new(0.0000007_f32, 6_i32)
+    ));
+    assert!(nearly!(
+        1.0_f32 == 1.0000008_f32,
+        tol = ToleranceF32::new(0.0000009_f32, 7_i32)
+    ));
+
+    assert!(nearly!(1.0_f32 == 1.0000008_f32));
+}
+
+#[test]
+fn macro_nearly_op_eq_f64() {
+    assert!(!nearly!(
+        1.0_f64 == 1.0000000000000016_f64,
+        eps = 0.000000000000001_f64
+    ));
+    assert!(nearly!(
+        1.0_f64 == 1.0000000000000016_f64,
+        eps = 0.000000000000002_f64
+    ));
+
+    assert!(!nearly!(1.0_f64 == 1.0000000000000016_f64, ulps = 6_i64));
+    assert!(nearly!(1.0_f64 == 1.0000000000000016_f64, ulps = 7_i64));
+
+    assert!(!nearly!(
+        1.0_f64 == 1.0000000000000016_f64,
+        eps = 0.000000000000001_f64,
+        ulps = 6_i64
+    ));
+    assert!(nearly!(
+        1.0_f64 == 1.0000000000000016_f64,
+        eps = 0.000000000000002_f64,
+        ulps = 7_i64
+    ));
+
+    assert!(!nearly!(
+        1.0_f64 == 1.0000000000000016_f64,
+        tol = ToleranceF64::new(0.000000000000001_f64, 6_i64)
+    ));
+    assert!(nearly!(
+        1.0_f64 == 1.0000000000000016_f64,
+        tol = ToleranceF64::new(0.000000000000002_f64, 7_i64)
+    ));
+
+    assert!(nearly!(1.0_f64 == 1.0000000000000016_f64));
+}
+
 ////////////////
 // nearly_ne! //
 ////////////////
@@ -369,4 +437,72 @@ fn macro_nearly_ne_f64() {
     assert!(nearly_ne!(2.3_f64, 5.9_f64));
     assert!(nearly_ne!(1.0_f64, f64::INFINITY));
     assert!(nearly_ne!(1.0_f64, f64::NAN));
+}
+
+#[test]
+fn macro_nearly_op_ne_f32() {
+    assert!(nearly!(1.0_f32 != 1.0000008_f32, eps = 0.0000007_f32));
+    assert!(!nearly!(1.0_f32 != 1.0000008_f32, eps = 0.0000009_f32));
+
+    assert!(nearly!(1.0_f32 != 1.0000008_f32, ulps = 6_i32));
+    assert!(!nearly!(1.0_f32 != 1.0000008_f32, ulps = 7_i32));
+
+    assert!(nearly!(
+        1.0_f32 != 1.0000008_f32,
+        eps = 0.0000007_f32,
+        ulps = 6_i32
+    ));
+    assert!(!nearly!(
+        1.0_f32 != 1.0000008_f32,
+        eps = 0.0000009_f32,
+        ulps = 7_i32
+    ));
+
+    assert!(nearly!(
+        1.0_f32 != 1.0000008_f32,
+        tol = ToleranceF32::new(0.0000007_f32, 6_i32)
+    ));
+    assert!(!nearly!(
+        1.0_f32 != 1.0000008_f32,
+        tol = ToleranceF32::new(0.0000009_f32, 7_i32)
+    ));
+
+    assert!(!nearly!(1.0_f32 != 1.0000008_f32));
+}
+
+#[test]
+fn macro_nearly_op_ne_f64() {
+    assert!(nearly!(
+        1.0_f64 != 1.0000000000000016_f64,
+        eps = 0.000000000000001_f64
+    ));
+    assert!(!nearly!(
+        1.0_f64 != 1.0000000000000016_f64,
+        eps = 0.000000000000002_f64
+    ));
+
+    assert!(nearly!(1.0_f64 != 1.0000000000000016_f64, ulps = 6_i64));
+    assert!(!nearly!(1.0_f64 != 1.0000000000000016_f64, ulps = 7_i64));
+
+    assert!(nearly!(
+        1.0_f64 != 1.0000000000000016_f64,
+        eps = 0.000000000000001_f64,
+        ulps = 6_i64
+    ));
+    assert!(!nearly!(
+        1.0_f64 != 1.0000000000000016_f64,
+        eps = 0.000000000000002_f64,
+        ulps = 7_i64
+    ));
+
+    assert!(nearly!(
+        1.0_f64 != 1.0000000000000016_f64,
+        tol = ToleranceF64::new(0.000000000000001_f64, 6_i64)
+    ));
+    assert!(!nearly!(
+        1.0_f64 != 1.0000000000000016_f64,
+        tol = ToleranceF64::new(0.000000000000002_f64, 7_i64)
+    ));
+
+    assert!(!nearly!(1.0_f64 != 1.0000000000000016_f64));
 }

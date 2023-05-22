@@ -1,6 +1,6 @@
 use nearly::{assert_nearly_eq, assert_nearly_ne};
 use nearly::{debug_assert_nearly_eq, debug_assert_nearly_ne};
-use nearly::{nearly_eq, nearly_ne};
+use nearly::{nearly, nearly_eq, nearly_ne};
 use nearly::{NearlyEq, NearlyEqEps, NearlyEqTol, NearlyEqUlps};
 use nearly::{ToleranceF32, ToleranceF64};
 use paste::paste;
@@ -337,6 +337,48 @@ macro_rules! impl_test_f32 {
             }
 
             #[test]
+            fn [<macro_nearly_op_eq_tuple $size _f32>]() {
+                let a: ($($type,)+) = get_value!(f32, "a", $size);
+                let b: ($($type,)+) = get_value!(f32, "b", $size);
+                assert_ne!(a, b);
+
+                assert!(!nearly!(a == b, eps = 0.0000007));
+                assert!(nearly!(a == b, eps = 0.0000009));
+
+                assert!(!nearly!(a == b, ulps = 6));
+                assert!(nearly!(a == b, ulps = 7));
+
+                assert!(!nearly!(a == b, eps = 0.0000007, ulps = 6));
+                assert!(nearly!(a == b, eps = 0.0000009, ulps = 7));
+
+                assert!(!nearly!(a == b, tol = ToleranceF32::new(0.0000007, 6)));
+                assert!(nearly!(a == b, tol = ToleranceF32::new(0.0000009, 7)));
+
+                assert!(nearly!(a == b));
+            }
+
+            #[test]
+            fn [<macro_nearly_op_ne_tuple $size _f32>]() {
+                let a: ($($type,)+) = get_value!(f32, "a", $size);
+                let b: ($($type,)+) = get_value!(f32, "b", $size);
+                assert_ne!(a, b);
+
+                assert!(nearly!(a != b, eps = 0.0000007));
+                assert!(!nearly!(a != b, eps = 0.0000009));
+
+                assert!(nearly!(a != b, ulps = 6));
+                assert!(!nearly!(a != b, ulps = 7));
+
+                assert!(nearly!(a != b, eps = 0.0000007, ulps = 6));
+                assert!(!nearly!(a != b, eps = 0.0000009, ulps = 7));
+
+                assert!(nearly!(a != b, tol = ToleranceF32::new(0.0000007, 6)));
+                assert!(!nearly!(a != b, tol = ToleranceF32::new(0.0000009, 7)));
+
+                assert!(!nearly!(a != b));
+            }
+
+            #[test]
             fn [<macro_assert_nearly_eq_tuple $size _f32>]() {
                 let a: ($($type,)+) = get_value!(f32, "a", $size);
                 let b: ($($type,)+) = get_value!(f32, "b", $size);
@@ -666,6 +708,60 @@ macro_rules! impl_test_f64 {
                 ));
 
                 assert!(!nearly_ne!(a, b));
+            }
+
+            #[test]
+            fn [<macro_nearly_op_eq_tuple $size _f64>]() {
+                let a: ($($type,)+) = get_value!(f64, "a", $size);
+                let b: ($($type,)+) = get_value!(f64, "b", $size);
+                assert_ne!(a, b);
+
+                assert!(!nearly!(a == b, eps = 0.000000000000001));
+                assert!(nearly!(a == b, eps = 0.000000000000002));
+
+                assert!(!nearly!(a == b, ulps = 6));
+                assert!(nearly!(a == b, ulps = 7));
+
+                assert!(!nearly!(a == b, eps = 0.000000000000001, ulps = 6));
+                assert!(nearly!(a == b, eps = 0.000000000000002, ulps = 7));
+
+                assert!(!nearly!(
+                    a == b,
+                    tol = ToleranceF64::new(0.000000000000001, 6)
+                ));
+                assert!(nearly!(
+                    a == b,
+                    tol = ToleranceF64::new(0.000000000000002, 7)
+                ));
+
+                assert!(nearly!(a == b));
+            }
+
+            #[test]
+            fn [<macro_nearly_op_ne_tuple $size _f64>]() {
+                let a: ($($type,)+) = get_value!(f64, "a", $size);
+                let b: ($($type,)+) = get_value!(f64, "b", $size);
+                assert_ne!(a, b);
+
+                assert!(nearly!(a != b, eps = 0.000000000000001));
+                assert!(!nearly!(a != b, eps = 0.000000000000002));
+
+                assert!(nearly!(a != b, ulps = 6));
+                assert!(!nearly!(a != b, ulps = 7));
+
+                assert!(nearly!(a != b, eps = 0.000000000000001, ulps = 6));
+                assert!(!nearly!(a != b, eps = 0.000000000000002, ulps = 7));
+
+                assert!(nearly!(
+                    a != b,
+                    tol = ToleranceF64::new(0.000000000000001, 6)
+                ));
+                assert!(!nearly!(
+                    a != b,
+                    tol = ToleranceF64::new(0.000000000000002, 7)
+                ));
+
+                assert!(!nearly!(a != b));
             }
 
             #[test]
