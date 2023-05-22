@@ -220,12 +220,6 @@
 //!         self.x.nearly_eq_ulps(&other.y, ulps) && self.y.nearly_eq(&other.y)
 //!     }
 //! }
-//!
-//! // Since the comparison using a Tolerance (epsilon and ulps) is internally using
-//! // the implementations of the traits NearlyEqEps and NearlyEqUlps,
-//! // we don't have to define a function implementation here
-//! impl NearlyEqTol for Point {}
-//! impl NearlyEq for Point {}
 //! ```
 //!
 //! # Struct with generic typed field
@@ -277,9 +271,6 @@
 //!         self.x.nearly_eq_ulps(&other.x, ulps) && self.y.nearly_eq_ulps(&other.y, ulps)
 //!     }
 //! }
-//!
-//! impl<T> NearlyEqTol for Point<T> where T: NearlyEqTol + EpsAndUlpsTolerance {}
-//! impl<T> NearlyEq for Point<T> where T: NearlyEq + EpsAndUlpsTolerance {}
 //! ```
 //!
 //! ## Comparing two different structs
@@ -330,9 +321,6 @@
 //!         self.a_64.nearly_eq_ulps(&other.b_64, ulps.1)
 //!     }
 //! }
-//!
-//! impl NearlyEqTol<B> for A {}
-//! impl NearlyEq<B> for A {}
 //!
 //!
 //! // This implementation allows us to compare A with B
