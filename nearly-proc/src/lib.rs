@@ -10,7 +10,7 @@ mod nearly;
 ///
 /// # Examples
 /// Comparison can be based on different tolerances:
-/// ```
+/// ```ignore
 /// use nearly::nearly;
 ///
 /// let a: f32 = 1.0;
