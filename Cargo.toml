@@ -1,19 +1,12 @@
-[package]
-name = "nearly"
-version = "0.2.0"
+[workspace]
+members = ["nearly", "nearly-proc"]
+
+[workspace.package]
 edition = "2021"
 authors = ["Sebastian Mock"]
-description = "A library to compare IEEE floating point primitives"
 repository = "https://github.com/se-mo/nearly"
 documentation = "https://docs.rs/nearly"
 readme = "README.md"
 keywords = ["float", "compare", "comparison", "almost", "equal"]
 categories = ["mathematics", "no-std"]
 license = "MIT"
-
-[features]
-default = ["std"]
-std = []
-
-[dependencies]
-paste = "1.0"

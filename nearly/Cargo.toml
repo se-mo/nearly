@@ -1,0 +1,20 @@
+[package]
+name = "nearly"
+version = "0.3.0-pre"
+description = "A library to compare IEEE floating point primitives"
+edition.workspace = true
+authors.workspace = true
+repository.workspace = true
+documentation.workspace = true
+readme.workspace = true
+keywords.workspace = true
+categories.workspace = true
+license.workspace = true
+
+[features]
+default = ["std"]
+std = []
+
+[dependencies]
+paste = "1.0"
+nearly-proc = {path = "../nearly-proc"}

@@ -350,6 +350,8 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
+pub use nearly_proc::nearly;
+
 mod macros;
 
 mod nearly_eq;
