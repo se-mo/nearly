@@ -98,7 +98,7 @@ pub fn nearly_macro(input: TokenStream) -> TokenStream {
 
     quote!({
         use nearly::#macro_ident;
-        #macro_ident!(#left, #right #tol_stream);
+        #macro_ident!(#left, #right #tol_stream)
     })
     .into()
 }
