@@ -6,6 +6,12 @@ use syn::{
     Token,
 };
 
+pub(crate) enum NearlyMacroType {
+    Standard,
+    Assert,
+    DebugAssert,
+}
+
 #[derive(Debug)]
 enum NearlyOp {
     Eq,
@@ -80,7 +86,7 @@ impl Parse for NearlyMacroInput {
     }
 }
 
-pub fn nearly_macro(input: TokenStream) -> TokenStream {
+pub(crate) fn nearly_macro(input: TokenStream, macro_type: NearlyMacroType) -> TokenStream {
     let NearlyMacroInput {
         left,
         right,
@@ -88,10 +94,17 @@ pub fn nearly_macro(input: TokenStream) -> TokenStream {
         tol,
     } = parse_macro_input!(input as NearlyMacroInput);
 
-    let macro_ident = match op {
-        NearlyOp::Eq => format_ident!("nearly_eq"),
-        NearlyOp::Ne => format_ident!("nearly_ne"),
+    let macro_prefix = match macro_type {
+        NearlyMacroType::Standard => "",
+        NearlyMacroType::Assert => "assert_",
+        NearlyMacroType::DebugAssert => "debug_assert_",
     };
+    let macro_postfix = match op {
+        NearlyOp::Eq => "_eq",
+        NearlyOp::Ne => "_ne",
+    };
+
+    let macro_ident = format_ident!("{}nearly{}", macro_prefix, macro_postfix);
 
     let mut tol_stream = proc_macro2::TokenStream::new();
     tol.iter().for_each(|t| t.to_tokens(&mut tol_stream));

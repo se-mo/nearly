@@ -338,6 +338,8 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
+pub use nearly_proc::assert_nearly;
+pub use nearly_proc::debug_assert_nearly;
 pub use nearly_proc::nearly;
 
 mod macros;
