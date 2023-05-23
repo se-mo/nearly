@@ -1,4 +1,4 @@
-use nearly::{debug_assert_nearly_eq, debug_assert_nearly_ne};
+use nearly::{debug_assert_nearly, debug_assert_nearly_eq, debug_assert_nearly_ne};
 use nearly::{ToleranceF32, ToleranceF64};
 
 /////////////////////////////
@@ -285,6 +285,79 @@ fn macro_debug_assert_nearly_eq_panic_f64() {
     debug_assert_nearly_eq!(1.0_f64, 1.1_f64);
 }
 
+#[test]
+fn macro_debug_assert_nearly_op_eq_f32() {
+    debug_assert_nearly!(1.0_f32 == 1.0000008_f32, eps = 0.0000009_f32);
+    debug_assert_nearly!(1.0_f32 == 1.0000008_f32, ulps = 7_i32);
+    debug_assert_nearly!(1.0_f32 == 1.0000008_f32, eps = 0.0000009_f32, ulps = 7_i32);
+    debug_assert_nearly!(
+        1.0_f32 == 1.0000008_f32,
+        tol = ToleranceF32::new(0.0000009_f32, 7_i32)
+    );
+    debug_assert_nearly!(1.0_f32 == 1.0000008_f32);
+}
+
+#[test]
+fn macro_debug_assert_nearly_op_eq_f64() {
+    debug_assert_nearly!(
+        1.0_f64 == 1.0000000000000016_f64,
+        eps = 0.000000000000002_f64
+    );
+    debug_assert_nearly!(1.0_f64 == 1.0000000000000016_f64, ulps = 7_i64);
+    debug_assert_nearly!(
+        1.0_f64 == 1.0000000000000016_f64,
+        eps = 0.000000000000002_f64,
+        ulps = 7_i64
+    );
+    debug_assert_nearly!(
+        1.0_f64 == 1.0000000000000016_f64,
+        tol = ToleranceF64::new(0.000000000000002_f64, 7_i64)
+    );
+    debug_assert_nearly!(1.0_f64 == 1.0000000000000016_f64);
+}
+
+#[test]
+#[cfg(debug_assertions)]
+#[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
+  left: `1.0`,
+ right: `1.0000008`,
+   eps: `7e-7`,
+  ulps: `6`"#)]
+fn macro_debug_assert_nearly_op_eq_panic_f32() {
+    debug_assert_nearly!(1.0_f32 == 1.0000008_f32, eps = 0.0000007_f32, ulps = 6_i32);
+}
+
+#[test]
+#[cfg(not(debug_assertions))]
+fn macro_debug_assert_nearly_op_eq_panic_f32() {
+    debug_assert_nearly!(1.0_f32 == 1.0000008_f32, eps = 0.0000007_f32, ulps = 6_i32);
+}
+
+#[test]
+#[cfg(debug_assertions)]
+#[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
+  left: `1.0`,
+ right: `1.0000000000000016`,
+   eps: `1e-15`,
+  ulps: `6`"#)]
+fn macro_assert_nearly_op_eq_panic_f64() {
+    debug_assert_nearly!(
+        1.0_f64 == 1.0000000000000016_f64,
+        eps = 0.000000000000001_f64,
+        ulps = 6_i64
+    );
+}
+
+#[test]
+#[cfg(not(debug_assertions))]
+fn macro_assert_nearly_op_eq_panic_f64() {
+    debug_assert_nearly!(
+        1.0_f64 == 1.0000000000000016_f64,
+        eps = 0.000000000000001_f64,
+        ulps = 6_i64
+    );
+}
+
 /////////////////////////////
 // debug_assert_nearly_ne! //
 /////////////////////////////
@@ -559,4 +632,77 @@ fn macro_debug_assert_nearly_ne_panic_f64() {
 #[cfg(not(debug_assertions))]
 fn macro_debug_assert_nearly_ne_panic_f64() {
     debug_assert_nearly_ne!(1.0_f64, 1.0000000000000009_f64);
+}
+
+#[test]
+fn macro_debug_assert_nearly_op_ne_f32() {
+    debug_assert_nearly!(1.0_f32 != 1.0000008_f32, eps = 0.0000007_f32);
+    debug_assert_nearly!(1.0_f32 != 1.0000008_f32, ulps = 6_i32);
+    debug_assert_nearly!(1.0_f32 != 1.0000008_f32, eps = 0.0000007_f32, ulps = 6_i32);
+    debug_assert_nearly!(
+        1.0_f32 != 1.0000008_f32,
+        tol = ToleranceF32::new(0.0000007_f32, 6_i32)
+    );
+    debug_assert_nearly!(1.0_f32 != 1.1_f32);
+}
+
+#[test]
+fn macro_debug_assert_nearly_op_ne_f64() {
+    debug_assert_nearly!(
+        1.0_f64 != 1.0000000000000016_f64,
+        eps = 0.000000000000001_f64
+    );
+    debug_assert_nearly!(1.0_f64 != 1.0000000000000016_f64, ulps = 6_i64);
+    debug_assert_nearly!(
+        1.0_f64 != 1.0000000000000016_f64,
+        eps = 0.000000000000001_f64,
+        ulps = 6_i64
+    );
+    debug_assert_nearly!(
+        1.0_f64 != 1.0000000000000016_f64,
+        tol = ToleranceF64::new(0.000000000000001_f64, 6_i64)
+    );
+    debug_assert_nearly!(1.0_f64 != 1.1_f64);
+}
+
+#[test]
+#[cfg(debug_assertions)]
+#[should_panic(expected = r#"assertion failed: `(left nearly_ne_tol right)`
+  left: `1.0`,
+ right: `1.0000008`,
+   eps: `9e-7`,
+  ulps: `7`"#)]
+fn macro_assert_nearly_op_ne_panic_f32() {
+    debug_assert_nearly!(1.0_f32 != 1.0000008_f32, eps = 0.0000009_f32, ulps = 7);
+}
+
+#[test]
+#[cfg(not(debug_assertions))]
+fn macro_assert_nearly_op_ne_panic_f32() {
+    debug_assert_nearly!(1.0_f32 != 1.0000008_f32, eps = 0.0000009_f32, ulps = 7);
+}
+
+#[test]
+#[cfg(debug_assertions)]
+#[should_panic(expected = r#"assertion failed: `(left nearly_ne_tol right)`
+  left: `1.0`,
+ right: `1.0000000000000016`,
+   eps: `2e-15`,
+  ulps: `7`"#)]
+fn macro_assert_nearly_op_ne_panic_f64() {
+    debug_assert_nearly!(
+        1.0_f64 != 1.0000000000000016_f64,
+        eps = 0.000000000000002_f64,
+        ulps = 7
+    );
+}
+
+#[test]
+#[cfg(not(debug_assertions))]
+fn macro_assert_nearly_op_ne_panic_f64() {
+    debug_assert_nearly!(
+        1.0_f64 != 1.0000000000000016_f64,
+        eps = 0.000000000000002_f64,
+        ulps = 7
+    );
 }
