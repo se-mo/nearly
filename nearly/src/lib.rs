@@ -341,6 +341,9 @@
 pub use nearly_proc::assert_nearly;
 pub use nearly_proc::debug_assert_nearly;
 pub use nearly_proc::nearly;
+pub use nearly_proc::NearlyEq;
+pub use nearly_proc::NearlyEqEps;
+pub use nearly_proc::NearlyEqUlps;
 
 mod macros;
 
