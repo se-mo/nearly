@@ -86,7 +86,7 @@ pub type ToleranceF64 = Tolerance<f64>;
 /// This data type combines an absolute epsilon value that will be used for comparisons based on
 /// absolute epsilon values and an ulps value that will be used for comparisons based on
 /// ulps values.
-#[derive(Clone, Copy, Debug)]
+#[derive(Debug)]
 pub struct Tolerance<Lhs, Rhs = Lhs>
 where
     Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>,
@@ -142,6 +142,27 @@ where
     fn from(val: Tolerance<Lhs, Rhs>) -> Self {
         (val.eps, val.ulps)
     }
+}
+
+// We have to implement Copy and Clone explicitly, since derive
+// of these traits doesn't work because of the generics used.
+// See related issue: https://github.com/rust-lang/rust/issues/108894
+
+impl<Lhs, Rhs> Clone for Tolerance<Lhs, Rhs>
+where
+    Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>,
+    Rhs: ?Sized,
+{
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+
+impl<Lhs, Rhs> Copy for Tolerance<Lhs, Rhs>
+where
+    Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>,
+    Rhs: ?Sized,
+{
 }
 
 #[cfg(test)]
@@ -206,5 +227,21 @@ mod tests {
         let tuple: (EpsToleranceType<f64>, UlpsToleranceType<f64>) = tolerance.into();
         assert_eq!(tuple.0, 0.01);
         assert_eq!(tuple.1, 5);
+    }
+
+    #[test]
+    fn clone_f32() {
+        let tolerance = Tolerance::<f32>::new(0.01, 5);
+        let tolerance_2 = tolerance.clone();
+        assert_eq!(tolerance.eps, tolerance_2.eps);
+        assert_eq!(tolerance.ulps, tolerance_2.ulps);
+    }
+
+    #[test]
+    fn clone_f64() {
+        let tolerance = Tolerance::<f64>::new(0.01, 5);
+        let tolerance_2 = tolerance.clone();
+        assert_eq!(tolerance.eps, tolerance_2.eps);
+        assert_eq!(tolerance.ulps, tolerance_2.ulps);
     }
 }

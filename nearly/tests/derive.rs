@@ -347,7 +347,7 @@ mod nearly_eq_ulps {
 mod nearly_eq {
     use nearly::{nearly, NearlyEq, Tolerance};
 
-    #[derive(NearlyEq, Clone, Copy)]
+    #[derive(NearlyEq)]
     struct NamedStructSameType {
         x: f32,
         y: f32,
@@ -394,7 +394,7 @@ mod nearly_eq {
         assert!(nearly!(a != c));
     }
 
-    #[derive(NearlyEq, Clone, Copy)]
+    #[derive(NearlyEq)]
     struct UnnamedStructSameType(f32, f32, f32);
 
     #[test]
@@ -425,13 +425,13 @@ mod nearly_eq {
         assert!(nearly!(a != c));
     }
 
-    #[derive(NearlyEq, Clone, Copy)]
+    #[derive(NearlyEq)]
     struct NamedPair {
         a: f32,
         b: f64,
     }
 
-    #[derive(NearlyEq, Clone, Copy)]
+    #[derive(NearlyEq)]
     struct NamedStructDifferentType {
         x: f32,
         y: f64,
@@ -487,10 +487,10 @@ mod nearly_eq {
         assert!(nearly!(a != c));
     }
 
-    #[derive(NearlyEq, Clone, Copy)]
+    #[derive(NearlyEq)]
     struct UnnamedPair(f32, f64);
 
-    #[derive(NearlyEq, Clone, Copy)]
+    #[derive(NearlyEq)]
     struct UnnamedStructDifferentType(f32, f64, UnnamedPair);
 
     #[test]
@@ -532,7 +532,7 @@ mod nearly_eq {
         assert!(nearly!(a != c));
     }
 
-    #[derive(NearlyEq, Clone, Copy)]
+    #[derive(NearlyEq)]
     struct UnitStruct;
 
     #[test]
@@ -547,7 +547,7 @@ mod nearly_eq {
         assert!(nearly!(a == b));
     }
 
-    #[derive(NearlyEq, Clone, Copy)]
+    #[derive(NearlyEq)]
     enum EnumSameType {
         X(f32),
         Y,
@@ -618,7 +618,7 @@ mod nearly_eq {
         assert!(nearly!(d != f));
     }
 
-    #[derive(NearlyEq, Clone, Copy)]
+    #[derive(NearlyEq)]
     enum EnumDifferentType {
         X(f64),
         Y,

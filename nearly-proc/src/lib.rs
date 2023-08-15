@@ -231,7 +231,7 @@ pub fn nearly_eq_ulps_derive(input: TokenStream) -> TokenStream {
 /// use nearly::NearlyEq;
 /// use nearly::assert_nearly;
 ///
-/// #[derive(NearlyEq, Debug, Copy, Clone)]
+/// #[derive(NearlyEq, Debug)]
 /// struct Point {
 ///     x: f32,
 ///     y: f32,
@@ -259,7 +259,7 @@ pub fn nearly_eq_ulps_derive(input: TokenStream) -> TokenStream {
 /// use nearly::NearlyEq;
 /// use nearly::assert_nearly;
 ///
-/// #[derive(NearlyEq, Debug, Copy, Clone)]
+/// #[derive(NearlyEq, Debug)]
 /// struct Point {
 ///     x: f32,
 ///     y: f64,
