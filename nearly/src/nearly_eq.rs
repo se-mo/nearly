@@ -474,3 +474,29 @@ impl_nearly_tuple!(
     Lhs Lhs Lhs Lhs Lhs Lhs Lhs Lhs Lhs Lhs Lhs Lhs,
     Rhs Rhs Rhs Rhs Rhs Rhs Rhs Rhs Rhs Rhs Rhs Rhs,
     11 10 9 8 7 6 5 4 3 2 1 0);
+
+//////////
+// unit //
+//////////
+
+impl EpsTolerance for () {
+    type T = ();
+    const DEFAULT: () = ();
+}
+
+impl UlpsTolerance for () {
+    type T = ();
+    const DEFAULT: () = ();
+}
+
+impl NearlyEqEps for () {
+    fn nearly_eq_eps(&self, _other: &Self, _eps: EpsToleranceType<Self>) -> bool {
+        true
+    }
+}
+
+impl NearlyEqUlps for () {
+    fn nearly_eq_ulps(&self, _other: &Self, _ulps: UlpsToleranceType<Self>) -> bool {
+        true
+    }
+}
