@@ -232,7 +232,7 @@ mod tests {
     #[test]
     fn clone_f32() {
         let tolerance = Tolerance::<f32>::new(0.01, 5);
-        let tolerance_2 = tolerance.clone();
+        let tolerance_2 = tolerance;
         assert_eq!(tolerance.eps, tolerance_2.eps);
         assert_eq!(tolerance.ulps, tolerance_2.ulps);
     }
@@ -240,7 +240,7 @@ mod tests {
     #[test]
     fn clone_f64() {
         let tolerance = Tolerance::<f64>::new(0.01, 5);
-        let tolerance_2 = tolerance.clone();
+        let tolerance_2 = tolerance;
         assert_eq!(tolerance.eps, tolerance_2.eps);
         assert_eq!(tolerance.ulps, tolerance_2.ulps);
     }
