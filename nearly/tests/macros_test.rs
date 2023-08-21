@@ -1,508 +1,671 @@
-use nearly::{nearly, nearly_eq, nearly_ne};
-use nearly::{ToleranceF32, ToleranceF64};
+use mockall::predicate::eq;
+use mockall::{mock, Sequence};
+use nearly::{
+    assert_nearly, debug_assert_nearly, nearly, EpsTolerance, EpsToleranceType, NearlyEqEps,
+    NearlyEqUlps, Tolerance, UlpsTolerance, UlpsToleranceType,
+};
 
-////////////////
-// nearly_eq! //
-////////////////
+#[derive(Debug, PartialEq)]
+struct Rhs;
+
+mock!(
+    #[derive(Debug)]
+    Lhs{
+        // The traits NearlyEqTol and NearlyEq are implemented using blanket implementation.
+        // We need to declare the corresponding functions here as methods to expect them.
+
+        fn nearly_eq_tol(&self, other: &Rhs, tolerance: Tolerance<Self, Rhs>) -> bool;
+        fn nearly_ne_tol(&self, other: &Rhs, tolerance: Tolerance<Self, Rhs>) -> bool;
+
+        fn nearly_eq(&self, other: &Rhs) -> bool;
+        fn nearly_ne(&self, other: &Rhs) -> bool;
+    }
+
+    impl EpsTolerance<Rhs> for Lhs {
+        type T = f32;
+        const DEFAULT: f32 = 0.01;
+    }
+
+    impl UlpsTolerance<Rhs> for Lhs {
+        type T = i32;
+        const DEFAULT: i32 = 3;
+    }
+
+    impl NearlyEqEps<Rhs> for Lhs {
+        fn nearly_eq_eps(&self, other: &Rhs, eps: EpsToleranceType<Self, Rhs>) -> bool;
+        fn nearly_ne_eps(&self, other: &Rhs, eps: EpsToleranceType<Self, Rhs>) -> bool;
+    }
+
+    impl NearlyEqUlps<Rhs> for Lhs {
+        fn nearly_eq_ulps(&self, other: &Rhs, ulps: UlpsToleranceType<Self, Rhs>) -> bool;
+        fn nearly_ne_ulps(&self, other: &Rhs, ulps: UlpsToleranceType<Self, Rhs>) -> bool;
+    }
+);
+
+/////////////
+// nearly! //
+/////////////
 
 #[test]
-fn macro_nearly_eq_eps_f32() {
-    assert!(nearly_eq!(0.0_f32, 0.0_f32, eps = 0.0_f32));
-    assert!(nearly_eq!(1.0_f32, 1.0_f32, eps = 0.01_f32));
-    assert!(nearly_eq!(1.0_f32, 1.0000008_f32, eps = 0.000004_f32));
-    assert!(nearly_eq!(1.0_f32, 1.1_f32, eps = 1.11_f32));
-    assert!(!nearly_eq!(1.0_f32, f32::INFINITY, eps = f32::MAX));
-    assert!(!nearly_eq!(1.0_f32, f32::NAN, eps = f32::MAX));
+fn macro_nearly_eq_eps() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq_eps()
+        .with(eq(Rhs), eq(0.1))
+        .times(1)
+        .return_const(true);
+
+    assert!(nearly!(a == b, eps = 0.1));
 }
 
 #[test]
-fn macro_nearly_eq_eps_f64() {
-    assert!(nearly_eq!(0.0_f64, 0.0_f64, eps = 0.0_f64));
-    assert!(nearly_eq!(1.0_f64, 1.0_f64, eps = 0.01_f64));
-    assert!(nearly_eq!(
-        1.0_f64,
-        1.0000000000003_f64,
-        eps = 0.0000000000004_f64
-    ));
-    assert!(nearly_eq!(1.0_f64, 1.1_f64, eps = 1.11_f64));
-    assert!(!nearly_eq!(1.0_f64, f64::INFINITY, eps = f64::MAX));
-    assert!(!nearly_eq!(1.0_f64, f64::NAN, eps = f64::MAX));
+fn macro_nearly_eq_ulps() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq_ulps()
+        .with(eq(Rhs), eq(5))
+        .times(1)
+        .return_const(true);
+
+    assert!(nearly!(a == b, ulps = 5));
 }
 
 #[test]
-fn macro_nearly_eq_ulps_f32() {
-    assert!(nearly_eq!(0.0_f32, 0.0_f32, ulps = 4_i32));
-    assert!(nearly_eq!(1.0_f32, 1.0_f32, ulps = 4_i32));
-    assert!(nearly_eq!(1.0_f32, 1.0000005_f32, ulps = 4_i32));
-    assert!(nearly_eq!(-1.0_f32, -1.0000005_f32, ulps = 4_i32));
-    assert!(!nearly_eq!(1.0_f32, f32::INFINITY, ulps = i32::MAX << 1));
-    assert!(!nearly_eq!(1.0_f32, f32::NAN, ulps = i32::MAX));
-}
+fn macro_nearly_eq_tol() {
+    let mut seq = Sequence::new();
 
-#[test]
-fn macro_nearly_eq_ulps_f64() {
-    assert!(nearly_eq!(0.0_f64, 0.0_f64, ulps = 4_i64));
-    assert!(nearly_eq!(1.0_f64, 1.0_f64, ulps = 4_i64));
-    assert!(nearly_eq!(1.0_f64, 1.0000000000000009_f64, ulps = 4_i64));
-    assert!(nearly_eq!(-1.0_f64, -1.0000000000000009_f64, ulps = 4_i64));
-    assert!(!nearly_eq!(1.0_f64, f64::INFINITY, ulps = i64::MAX << 1));
-    assert!(!nearly_eq!(1.0_f64, f64::NAN, ulps = i64::MAX));
-}
+    let mut a = MockLhs::new();
+    let b = Rhs;
 
-#[test]
-fn macro_nearly_eq_tol_f32() {
-    assert!(nearly_eq!(0.0_f32, 0.0_f32, tol = ToleranceF32::default()));
-    assert!(nearly_eq!(1.0_f32, 1.0_f32, tol = ToleranceF32::default()));
-    assert!(nearly_eq!(
-        1.0_f32,
-        1.0000005_f32,
-        tol = ToleranceF32::default()
-    ));
-    assert!(nearly_eq!(
-        -1.0_f32,
-        -1.0000005_f32,
-        tol = ToleranceF32::default()
-    ));
-    assert!(!nearly_eq!(
-        1.0_f32,
-        f32::INFINITY,
-        tol = ToleranceF32::new(f32::MAX, i32::MAX << 1)
-    ));
-    assert!(!nearly_eq!(
-        1.0_f32,
-        f32::NAN,
-        tol = ToleranceF32::new(f32::MAX, i32::MAX)
-    ));
-}
+    a.expect_nearly_eq_tol()
+        .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
+        .times(1)
+        .in_sequence(&mut seq)
+        .return_const(true);
 
-#[test]
-fn macro_nearly_eq_tol_f64() {
-    assert!(nearly_eq!(0.0_f64, 0.0_f64, tol = ToleranceF64::default()));
-    assert!(nearly_eq!(1.0_f64, 1.0_f64, tol = ToleranceF64::default()));
-    assert!(nearly_eq!(
-        1.0_f64,
-        1.0000000000000009_f64,
-        tol = ToleranceF64::default()
-    ));
-    assert!(nearly_eq!(
-        -1.0_f64,
-        -1.0000000000000009_f64,
-        tol = ToleranceF64::default()
-    ));
-    assert!(!nearly_eq!(
-        1.0_f64,
-        f64::INFINITY,
-        tol = ToleranceF64::new(f64::MAX, i64::MAX << 1)
-    ));
-    assert!(!nearly_eq!(
-        1.0_f64,
-        f64::NAN,
-        tol = ToleranceF64::new(f64::MAX, i64::MAX)
-    ));
-}
-
-#[test]
-fn macro_nearly_eq_eps_ulps_f32() {
-    let default_eps = ToleranceF32::default().eps;
-    let default_ulps = ToleranceF32::default().ulps;
-
-    assert!(nearly_eq!(
-        0.0_f32,
-        0.0_f32,
-        eps = default_eps,
-        ulps = default_ulps
-    ));
-    assert!(nearly_eq!(
-        1.0_f32,
-        1.0_f32,
-        eps = default_eps,
-        ulps = default_ulps
-    ));
-    assert!(nearly_eq!(
-        1.0_f32,
-        1.0000005_f32,
-        eps = default_eps,
-        ulps = default_ulps
-    ));
-    assert!(nearly_eq!(
-        -1.0_f32,
-        -1.0000005_f32,
-        eps = default_eps,
-        ulps = default_ulps
-    ));
-    assert!(!nearly_eq!(
-        1.0_f32,
-        f32::INFINITY,
-        eps = f32::MAX,
-        ulps = i32::MAX << 1
-    ));
-    assert!(!nearly_eq!(
-        1.0_f32,
-        f32::NAN,
-        eps = f32::MAX,
-        ulps = i32::MAX
-    ));
-}
-
-#[test]
-fn macro_nearly_eq_eps_ulps_f64() {
-    let default_eps = ToleranceF64::default().eps;
-    let default_ulps = ToleranceF64::default().ulps;
-
-    assert!(nearly_eq!(
-        0.0_f64,
-        0.0_f64,
-        eps = default_eps,
-        ulps = default_ulps
-    ));
-    assert!(nearly_eq!(
-        1.0_f64,
-        1.0_f64,
-        eps = default_eps,
-        ulps = default_ulps
-    ));
-    assert!(nearly_eq!(
-        1.0_f64,
-        1.0000000000000009_f64,
-        eps = default_eps,
-        ulps = default_ulps
-    ));
-    assert!(nearly_eq!(
-        -1.0_f64,
-        -1.0000000000000009_f64,
-        eps = default_eps,
-        ulps = default_ulps
-    ));
-    assert!(!nearly_eq!(
-        1.0_f64,
-        f64::INFINITY,
-        eps = f64::MAX,
-        ulps = i64::MAX << 1
-    ));
-    assert!(!nearly_eq!(
-        1.0_f64,
-        f64::NAN,
-        eps = f64::MAX,
-        ulps = i64::MAX
-    ));
-}
-
-#[test]
-fn macro_nearly_eq_f32() {
-    assert!(nearly_eq!(0.0_f32, 0.0_f32));
-    assert!(nearly_eq!(1.0_f32, 1.0_f32));
-    assert!(nearly_eq!(1.0_f32, 1.0000005_f32));
-    assert!(nearly_eq!(-1.0_f32, -1.0000005_f32));
-    assert!(!nearly_eq!(1.0_f32, f32::INFINITY));
-    assert!(!nearly_eq!(1.0_f32, f32::NAN));
-}
-
-#[test]
-fn macro_nearly_eq_f64() {
-    assert!(nearly_eq!(0.0_f64, 0.0_f64));
-    assert!(nearly_eq!(1.0_f64, 1.0_f64));
-    assert!(nearly_eq!(1.0_f64, 1.0000000000000009_f64));
-    assert!(nearly_eq!(-1.0_f64, -1.0000000000000009_f64));
-    assert!(!nearly_eq!(1.0_f64, f64::INFINITY));
-    assert!(!nearly_eq!(1.0_f64, f64::NAN));
-}
-
-#[test]
-fn macro_nearly_op_eq_f32() {
-    assert!(!nearly!(1.0_f32 == 1.0000008_f32, eps = 0.0000007_f32));
-    assert!(nearly!(1.0_f32 == 1.0000008_f32, eps = 0.0000009_f32));
-
-    assert!(!nearly!(1.0_f32 == 1.0000008_f32, ulps = 6_i32));
-    assert!(nearly!(1.0_f32 == 1.0000008_f32, ulps = 7_i32));
-
-    assert!(!nearly!(
-        1.0_f32 == 1.0000008_f32,
-        eps = 0.0000007_f32,
-        ulps = 6_i32
-    ));
-    assert!(nearly!(
-        1.0_f32 == 1.0000008_f32,
-        eps = 0.0000009_f32,
-        ulps = 7_i32
-    ));
-
-    assert!(!nearly!(
-        1.0_f32 == 1.0000008_f32,
-        tol = ToleranceF32::new(0.0000007_f32, 6_i32)
-    ));
-    assert!(nearly!(
-        1.0_f32 == 1.0000008_f32,
-        tol = ToleranceF32::new(0.0000009_f32, 7_i32)
-    ));
-
-    assert!(nearly!(1.0_f32 == 1.0000008_f32));
-}
-
-#[test]
-fn macro_nearly_op_eq_f64() {
-    assert!(!nearly!(
-        1.0_f64 == 1.0000000000000016_f64,
-        eps = 0.000000000000001_f64
-    ));
-    assert!(nearly!(
-        1.0_f64 == 1.0000000000000016_f64,
-        eps = 0.000000000000002_f64
-    ));
-
-    assert!(!nearly!(1.0_f64 == 1.0000000000000016_f64, ulps = 6_i64));
-    assert!(nearly!(1.0_f64 == 1.0000000000000016_f64, ulps = 7_i64));
-
-    assert!(!nearly!(
-        1.0_f64 == 1.0000000000000016_f64,
-        eps = 0.000000000000001_f64,
-        ulps = 6_i64
-    ));
-    assert!(nearly!(
-        1.0_f64 == 1.0000000000000016_f64,
-        eps = 0.000000000000002_f64,
-        ulps = 7_i64
-    ));
-
-    assert!(!nearly!(
-        1.0_f64 == 1.0000000000000016_f64,
-        tol = ToleranceF64::new(0.000000000000001_f64, 6_i64)
-    ));
-    assert!(nearly!(
-        1.0_f64 == 1.0000000000000016_f64,
-        tol = ToleranceF64::new(0.000000000000002_f64, 7_i64)
-    ));
-
-    assert!(nearly!(1.0_f64 == 1.0000000000000016_f64));
-}
-
-////////////////
-// nearly_ne! //
-////////////////
-
-#[test]
-fn macro_nearly_ne_eps_f32() {
-    assert!(nearly_ne!(0.0_f32, 0.00001_f32, eps = 0.000005_f32));
-    assert!(nearly_ne!(1.0_f32, -1.0_f32, eps = 0.1_f32));
-    assert!(nearly_ne!(2.3_f32, 5.9_f32, eps = 2.6_f32));
-    assert!(nearly_ne!(1.0_f32, f32::INFINITY, eps = f32::MAX));
-    assert!(nearly_ne!(1.0_f32, f32::NAN, eps = f32::MAX));
-}
-
-#[test]
-fn macro_nearly_ne_eps_f64() {
-    assert!(nearly_ne!(0.0_f64, 0.00001_f64, eps = 0.000005_f64));
-    assert!(nearly_ne!(1.0_f64, -1.0_f64, eps = 0.1_f64));
-    assert!(nearly_ne!(2.3_f64, 5.9_f64, eps = 2.6_f64));
-    assert!(nearly_ne!(1.0_f64, f64::INFINITY, eps = f64::MAX));
-    assert!(nearly_ne!(1.0_f64, f64::NAN, eps = f64::MAX));
-}
-
-#[test]
-fn macro_nearly_ne_ulps_f32() {
-    assert!(nearly_ne!(0.0_f32, 0.00001_f32, ulps = 4_i32));
-    assert!(nearly_ne!(1.0_f32, -1.0_f32, ulps = 100_i32));
-    assert!(nearly_ne!(2.3_f32, 5.9_f32, ulps = 100_i32));
-    assert!(nearly_ne!(1.0_f32, f32::INFINITY, ulps = i32::MAX << 1));
-    assert!(nearly_ne!(1.0_f32, f32::NAN, ulps = i32::MAX));
-}
-
-#[test]
-fn macro_nearly_ne_ulps_f64() {
-    assert!(nearly_ne!(0.0_f64, 0.00001_f64, ulps = 4_i64));
-    assert!(nearly_ne!(1.0_f64, -1.0_f64, ulps = 100_i64));
-    assert!(nearly_ne!(2.3_f64, 5.9_f64, ulps = 100_i64));
-    assert!(nearly_ne!(1.0_f64, f64::INFINITY, ulps = i64::MAX << 1));
-    assert!(nearly_ne!(1.0_f64, f64::NAN, ulps = i64::MAX));
-}
-
-#[test]
-fn macro_nearly_ne_tol_f32() {
-    assert!(nearly_ne!(
-        0.0_f32,
-        0.00001_f32,
-        tol = ToleranceF32::default()
-    ));
-    assert!(nearly_ne!(
-        1.0_f32,
-        -1.0_f32,
-        tol = ToleranceF32::new(0.1_f32, 100_i32)
-    ));
-    assert!(nearly_ne!(
-        2.3_f32,
-        5.9_f32,
-        tol = ToleranceF32::new(2.6_f32, 100_i32)
-    ));
-    assert!(nearly_ne!(
-        1.0_f32,
-        f32::INFINITY,
-        tol = ToleranceF32::new(f32::MAX, i32::MAX << 1)
-    ));
-    assert!(nearly_ne!(
-        1.0_f32,
-        f32::NAN,
-        tol = ToleranceF32::new(f32::MAX, i32::MAX)
-    ));
-}
-
-#[test]
-fn macro_nearly_ne_tol_f64() {
-    assert!(nearly_ne!(
-        0.0_f64,
-        0.00001_f64,
-        tol = ToleranceF64::default()
-    ));
-    assert!(nearly_ne!(
-        1.0_f64,
-        -1.0_f64,
-        tol = ToleranceF64::new(0.1_f64, 100_i64)
-    ));
-    assert!(nearly_ne!(
-        2.3_f64,
-        5.9_f64,
-        tol = ToleranceF64::new(2.6_f64, 100_i64)
-    ));
-    assert!(nearly_ne!(
-        1.0_f64,
-        f64::INFINITY,
-        tol = ToleranceF64::new(f64::MAX, i64::MAX << 1)
-    ));
-    assert!(nearly_ne!(
-        1.0_f64,
-        f64::NAN,
-        tol = ToleranceF64::new(f64::MAX, i64::MAX)
-    ));
-}
-
-#[test]
-fn macro_nearly_ne_eps_ulps_f32() {
-    assert!(nearly_ne!(
-        0.0_f32,
-        0.00001_f32,
-        eps = ToleranceF32::default().eps,
-        ulps = ToleranceF32::default().ulps
-    ));
-    assert!(nearly_ne!(1.0_f32, -1.0_f32, eps = 0.1_f32, ulps = 100_i32));
-    assert!(nearly_ne!(2.3_f32, 5.9_f32, eps = 2.6_f32, ulps = 100_i32));
-    assert!(nearly_ne!(
-        1.0_f32,
-        f32::INFINITY,
-        eps = f32::MAX,
-        ulps = i32::MAX << 1
-    ));
-    assert!(nearly_ne!(
-        1.0_f32,
-        f32::NAN,
-        eps = f32::MAX,
-        ulps = i32::MAX
-    ));
-}
-
-#[test]
-fn macro_nearly_ne_eps_ulps_f64() {
-    assert!(nearly_ne!(
-        0.0_f64,
-        0.00001_f64,
-        eps = ToleranceF64::default().eps,
-        ulps = ToleranceF64::default().ulps
-    ));
-    assert!(nearly_ne!(1.0_f64, -1.0_f64, eps = 0.1_f64, ulps = 100_i64));
-    assert!(nearly_ne!(2.3_f64, 5.9_f64, eps = 2.6_f64, ulps = 100_i64));
-    assert!(nearly_ne!(
-        1.0_f64,
-        f64::INFINITY,
-        eps = f64::MAX,
-        ulps = i64::MAX << 1
-    ));
-    assert!(nearly_ne!(
-        1.0_f64,
-        f64::NAN,
-        eps = f64::MAX,
-        ulps = i64::MAX
-    ));
-}
-
-#[test]
-fn macro_nearly_ne_f32() {
-    assert!(nearly_ne!(0.0_f32, 0.00001_f32));
-    assert!(nearly_ne!(1.0_f32, -1.0_f32));
-    assert!(nearly_ne!(2.3_f32, 5.9_f32));
-    assert!(nearly_ne!(1.0_f32, f32::INFINITY));
-    assert!(nearly_ne!(1.0_f32, f32::NAN));
-}
-
-#[test]
-fn macro_nearly_ne_f64() {
-    assert!(nearly_ne!(0.0_f64, 0.00001_f64));
-    assert!(nearly_ne!(1.0_f64, -1.0_f64));
-    assert!(nearly_ne!(2.3_f64, 5.9_f64));
-    assert!(nearly_ne!(1.0_f64, f64::INFINITY));
-    assert!(nearly_ne!(1.0_f64, f64::NAN));
-}
-
-#[test]
-fn macro_nearly_op_ne_f32() {
-    assert!(nearly!(1.0_f32 != 1.0000008_f32, eps = 0.0000007_f32));
-    assert!(!nearly!(1.0_f32 != 1.0000008_f32, eps = 0.0000009_f32));
-
-    assert!(nearly!(1.0_f32 != 1.0000008_f32, ulps = 6_i32));
-    assert!(!nearly!(1.0_f32 != 1.0000008_f32, ulps = 7_i32));
+    a.expect_nearly_eq_tol()
+        .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
+        .times(1)
+        .in_sequence(&mut seq)
+        .return_const(true);
 
     assert!(nearly!(
-        1.0_f32 != 1.0000008_f32,
-        eps = 0.0000007_f32,
-        ulps = 6_i32
+        a == b,
+        tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5)
     ));
-    assert!(!nearly!(
-        1.0_f32 != 1.0000008_f32,
-        eps = 0.0000009_f32,
-        ulps = 7_i32
-    ));
-
-    assert!(nearly!(
-        1.0_f32 != 1.0000008_f32,
-        tol = ToleranceF32::new(0.0000007_f32, 6_i32)
-    ));
-    assert!(!nearly!(
-        1.0_f32 != 1.0000008_f32,
-        tol = ToleranceF32::new(0.0000009_f32, 7_i32)
-    ));
-
-    assert!(!nearly!(1.0_f32 != 1.0000008_f32));
+    assert!(nearly!(a == b, eps = 0.15, ulps = 7));
 }
 
 #[test]
-fn macro_nearly_op_ne_f64() {
+fn macro_nearly_eq() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq().times(1).return_const(true);
+
+    assert!(nearly!(a == b));
+}
+
+#[test]
+fn macro_nearly_ne_eps() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_ne_eps()
+        .with(eq(Rhs), eq(0.1))
+        .times(1)
+        .return_const(true);
+
+    assert!(nearly!(a != b, eps = 0.1));
+}
+
+#[test]
+fn macro_nearly_ne_ulps() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_ne_ulps()
+        .with(eq(Rhs), eq(5))
+        .times(1)
+        .return_const(true);
+
+    assert!(nearly!(a != b, ulps = 5));
+}
+
+#[test]
+fn macro_nearly_ne_tol() {
+    let mut seq = Sequence::new();
+
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_ne_tol()
+        .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
+        .times(1)
+        .in_sequence(&mut seq)
+        .return_const(true);
+
+    a.expect_nearly_ne_tol()
+        .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
+        .times(1)
+        .in_sequence(&mut seq)
+        .return_const(true);
+
     assert!(nearly!(
-        1.0_f64 != 1.0000000000000016_f64,
-        eps = 0.000000000000001_f64
+        a != b,
+        tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5)
     ));
-    assert!(!nearly!(
-        1.0_f64 != 1.0000000000000016_f64,
-        eps = 0.000000000000002_f64
-    ));
+    assert!(nearly!(a != b, eps = 0.15, ulps = 7));
+}
 
-    assert!(nearly!(1.0_f64 != 1.0000000000000016_f64, ulps = 6_i64));
-    assert!(!nearly!(1.0_f64 != 1.0000000000000016_f64, ulps = 7_i64));
+#[test]
+fn macro_nearly_ne() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
 
-    assert!(nearly!(
-        1.0_f64 != 1.0000000000000016_f64,
-        eps = 0.000000000000001_f64,
-        ulps = 6_i64
-    ));
-    assert!(!nearly!(
-        1.0_f64 != 1.0000000000000016_f64,
-        eps = 0.000000000000002_f64,
-        ulps = 7_i64
-    ));
+    a.expect_nearly_ne().times(1).return_const(true);
 
-    assert!(nearly!(
-        1.0_f64 != 1.0000000000000016_f64,
-        tol = ToleranceF64::new(0.000000000000001_f64, 6_i64)
-    ));
-    assert!(!nearly!(
-        1.0_f64 != 1.0000000000000016_f64,
-        tol = ToleranceF64::new(0.000000000000002_f64, 7_i64)
-    ));
+    assert!(nearly!(a != b));
+}
 
-    assert!(!nearly!(1.0_f64 != 1.0000000000000016_f64));
+////////////////////
+// assert_nearly! //
+////////////////////
+
+#[test]
+fn macro_assert_nearly_eq_eps() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq_eps()
+        .with(eq(Rhs), eq(0.1))
+        .times(1)
+        .return_const(true);
+
+    assert_nearly!(a == b, eps = 0.1);
+}
+
+#[test]
+#[should_panic(expected = r#"assertion failed: `(left nearly_eq_eps right)`
+  left: `MockLhs`,
+ right: `Rhs`,
+   eps: `0.1`"#)]
+fn macro_assert_nearly_eq_eps_panic() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq_eps()
+        .with(eq(Rhs), eq(0.1))
+        .times(1)
+        .return_const(false);
+
+    assert_nearly!(a == b, eps = 0.1);
+}
+
+#[test]
+fn macro_assert_nearly_eq_ulps() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq_ulps()
+        .with(eq(Rhs), eq(5))
+        .times(1)
+        .return_const(true);
+
+    assert_nearly!(a == b, ulps = 5);
+}
+
+#[test]
+#[should_panic(expected = r#"assertion failed: `(left nearly_eq_ulps right)`
+  left: `MockLhs`,
+ right: `Rhs`,
+  ulps: `5`"#)]
+fn macro_assert_nearly_eq_ulps_panic() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq_ulps()
+        .with(eq(Rhs), eq(5))
+        .times(1)
+        .return_const(false);
+
+    assert_nearly!(a == b, ulps = 5);
+}
+
+#[test]
+fn macro_assert_nearly_eq_tol() {
+    let mut seq = Sequence::new();
+
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq_tol()
+        .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
+        .times(1)
+        .in_sequence(&mut seq)
+        .return_const(true);
+
+    a.expect_nearly_eq_tol()
+        .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
+        .times(1)
+        .in_sequence(&mut seq)
+        .return_const(true);
+
+    assert_nearly!(a == b, tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5));
+    assert_nearly!(a == b, eps = 0.15, ulps = 7);
+}
+
+#[test]
+#[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
+  left: `MockLhs`,
+ right: `Rhs`,
+   eps: `0.1`,
+  ulps: `5`"#)]
+fn macro_assert_nearly_eq_tol_panic() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq_tol()
+        .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
+        .times(1)
+        .return_const(false);
+
+    assert_nearly!(a == b, tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5));
+}
+
+#[test]
+#[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
+  left: `MockLhs`,
+ right: `Rhs`,
+   eps: `0.15`,
+  ulps: `7`"#)]
+fn macro_assert_nearly_eq_tol_tuple_panic() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq_tol()
+        .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
+        .times(1)
+        .return_const(false);
+
+    assert_nearly!(a == b, eps = 0.15, ulps = 7);
+}
+
+#[test]
+fn macro_assert_nearly_eq() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq()
+        .with(eq(Rhs))
+        .times(1)
+        .return_const(true);
+
+    assert_nearly!(a == b);
+}
+
+#[test]
+#[should_panic(expected = r#"assertion failed: `(left nearly_eq right)`
+  left: `MockLhs`,
+ right: `Rhs`,
+   eps: `DEFAULT`,
+  ulps: `DEFAULT`"#)]
+fn macro_assert_nearly_eq_panic() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq().times(1).return_const(false);
+
+    assert_nearly!(a == b);
+}
+
+#[test]
+fn macro_assert_nearly_ne_eps() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_ne_eps()
+        .with(eq(Rhs), eq(0.1))
+        .times(1)
+        .return_const(true);
+
+    assert_nearly!(a != b, eps = 0.1);
+}
+
+#[test]
+#[should_panic(expected = r#"assertion failed: `(left nearly_ne_eps right)`
+  left: `MockLhs`,
+ right: `Rhs`,
+   eps: `0.1`"#)]
+fn macro_assert_nearly_ne_eps_panic() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_ne_eps()
+        .with(eq(Rhs), eq(0.1))
+        .times(1)
+        .return_const(false);
+
+    assert_nearly!(a != b, eps = 0.1);
+}
+
+#[test]
+fn macro_assert_nearly_ne_ulps() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_ne_ulps()
+        .with(eq(Rhs), eq(5))
+        .times(1)
+        .return_const(true);
+
+    assert_nearly!(a != b, ulps = 5);
+}
+
+#[test]
+#[should_panic(expected = r#"assertion failed: `(left nearly_ne_ulps right)`
+  left: `MockLhs`,
+ right: `Rhs`,
+  ulps: `5`"#)]
+fn macro_assert_nearly_ne_ulps_panic() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_ne_ulps()
+        .with(eq(Rhs), eq(5))
+        .times(1)
+        .return_const(false);
+
+    assert_nearly!(a != b, ulps = 5);
+}
+
+#[test]
+fn macro_assert_nearly_ne_tol() {
+    let mut seq = Sequence::new();
+
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_ne_tol()
+        .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
+        .times(1)
+        .in_sequence(&mut seq)
+        .return_const(true);
+
+    a.expect_nearly_ne_tol()
+        .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
+        .times(1)
+        .in_sequence(&mut seq)
+        .return_const(true);
+
+    assert_nearly!(a != b, tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5));
+    assert_nearly!(a != b, eps = 0.15, ulps = 7);
+}
+
+#[test]
+#[should_panic(expected = r#"assertion failed: `(left nearly_ne_tol right)`
+  left: `MockLhs`,
+ right: `Rhs`,
+   eps: `0.1`,
+  ulps: `5`"#)]
+fn macro_assert_nearly_ne_tol_panic() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_ne_tol()
+        .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
+        .times(1)
+        .return_const(false);
+
+    assert_nearly!(a != b, tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5));
+}
+
+#[test]
+#[should_panic(expected = r#"assertion failed: `(left nearly_ne_tol right)`
+  left: `MockLhs`,
+ right: `Rhs`,
+   eps: `0.15`,
+  ulps: `7`"#)]
+fn macro_assert_nearly_ne_tol_tuple_panic() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_ne_tol()
+        .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
+        .times(1)
+        .return_const(false);
+
+    assert_nearly!(a != b, eps = 0.15, ulps = 7);
+}
+
+#[test]
+fn macro_assert_nearly_ne() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_ne()
+        .with(eq(Rhs))
+        .times(1)
+        .return_const(true);
+
+    assert_nearly!(a != b);
+}
+
+#[test]
+#[should_panic(expected = r#"assertion failed: `(left nearly_ne right)`
+  left: `MockLhs`,
+ right: `Rhs`,
+   eps: `DEFAULT`,
+  ulps: `DEFAULT`"#)]
+fn macro_assert_nearly_ne_panic() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_ne().times(1).return_const(false);
+
+    assert_nearly!(a != b);
+}
+
+//////////////////////////
+// debug_assert_nearly! //
+//////////////////////////
+
+#[test]
+#[cfg(debug_assertions)]
+fn macro_debug_assert_nearly_eq_eps() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq_eps()
+        .with(eq(Rhs), eq(0.1))
+        .times(1)
+        .return_const(true);
+
+    debug_assert_nearly!(a == b, eps = 0.1);
+}
+
+#[test]
+#[cfg(debug_assertions)]
+#[should_panic(expected = r#"assertion failed: `(left nearly_eq_eps right)`
+  left: `MockLhs`,
+ right: `Rhs`,
+   eps: `0.1`"#)]
+fn macro_debug_assert_nearly_eq_eps_panic() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq_eps()
+        .with(eq(Rhs), eq(0.1))
+        .times(1)
+        .return_const(false);
+
+    debug_assert_nearly!(a == b, eps = 0.1);
+}
+
+#[test]
+#[cfg(not(debug_assertions))]
+fn macro_debug_assert_nearly_eq_eps() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq_eps().times(0);
+    debug_assert_nearly!(a == b, eps = 0.1);
+}
+
+#[test]
+#[cfg(debug_assertions)]
+fn macro_debug_assert_nearly_eq_ulps() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq_ulps()
+        .with(eq(Rhs), eq(5))
+        .times(1)
+        .return_const(true);
+
+    debug_assert_nearly!(a == b, ulps = 5);
+}
+
+#[test]
+#[cfg(debug_assertions)]
+#[should_panic(expected = r#"assertion failed: `(left nearly_eq_ulps right)`
+  left: `MockLhs`,
+ right: `Rhs`,
+  ulps: `5`"#)]
+fn macro_debug_assert_nearly_eq_ulps_panic() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq_ulps()
+        .with(eq(Rhs), eq(5))
+        .times(1)
+        .return_const(false);
+
+    debug_assert_nearly!(a == b, ulps = 5);
+}
+
+#[test]
+#[cfg(not(debug_assertions))]
+fn macro_debug_assert_nearly_eq_ulps() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq_ulps().times(0);
+    debug_assert_nearly!(a == b, ulps = 5);
+}
+
+#[test]
+#[cfg(debug_assertions)]
+fn macro_debug_assert_nearly_eq_tol() {
+    let mut seq = Sequence::new();
+
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq_tol()
+        .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
+        .times(1)
+        .in_sequence(&mut seq)
+        .return_const(true);
+
+    a.expect_nearly_eq_tol()
+        .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
+        .times(1)
+        .in_sequence(&mut seq)
+        .return_const(true);
+
+    debug_assert_nearly!(a == b, tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5));
+    debug_assert_nearly!(a == b, eps = 0.15, ulps = 7);
+}
+
+#[test]
+#[cfg(debug_assertions)]
+#[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
+  left: `MockLhs`,
+ right: `Rhs`,
+   eps: `0.1`,
+  ulps: `5`"#)]
+fn macro_debug_assert_nearly_eq_tol_panic() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq_tol()
+        .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
+        .times(1)
+        .return_const(false);
+
+    debug_assert_nearly!(a == b, tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5));
+}
+
+#[test]
+#[cfg(debug_assertions)]
+#[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
+  left: `MockLhs`,
+ right: `Rhs`,
+   eps: `0.15`,
+  ulps: `7`"#)]
+fn macro_debug_assert_nearly_eq_tol_tuple_panic() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq_tol()
+        .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
+        .times(1)
+        .return_const(false);
+
+    debug_assert_nearly!(a == b, eps = 0.15, ulps = 7);
+}
+
+#[test]
+#[cfg(not(debug_assertions))]
+fn macro_debug_assert_nearly_eq_tol() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq_tol().times(0);
+
+    debug_assert_nearly!(a == b, tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5));
+    debug_assert_nearly!(a == b, eps = 0.15, ulps = 7);
+}
+
+#[test]
+#[cfg(debug_assertions)]
+fn macro_debug_assert_nearly_eq() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq()
+        .with(eq(Rhs))
+        .times(1)
+        .return_const(true);
+
+    debug_assert_nearly!(a == b);
+}
+
+#[test]
+#[cfg(debug_assertions)]
+#[should_panic(expected = r#"assertion failed: `(left nearly_eq right)`
+  left: `MockLhs`,
+ right: `Rhs`,
+   eps: `DEFAULT`,
+  ulps: `DEFAULT`"#)]
+fn macro_debug_assert_nearly_eq_panic() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq().times(1).return_const(false);
+
+    debug_assert_nearly!(a == b);
+}
+
+#[test]
+#[cfg(not(debug_assertions))]
+fn macro_debug_assert_nearly_eq() {
+    let mut a = MockLhs::new();
+    let b = Rhs;
+
+    a.expect_nearly_eq().times(0);
+    debug_assert_nearly!(a == b);
 }

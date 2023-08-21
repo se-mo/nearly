@@ -18,3 +18,6 @@ std = []
 [dependencies]
 paste = "1.0"
 nearly-proc = { path = "../nearly-proc" }
+
+[dev-dependencies]
+mockall = "0.11"
