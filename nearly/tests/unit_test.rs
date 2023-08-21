@@ -1,3 +1,5 @@
+#![allow(clippy::let_unit_value)]
+
 use nearly::Tolerance;
 use nearly::{NearlyEq, NearlyEqEps, NearlyEqTol, NearlyEqUlps};
 
