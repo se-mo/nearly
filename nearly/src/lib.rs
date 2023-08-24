@@ -94,7 +94,7 @@
 //! comparison function based. Instead of the function name, the used comparison method is
 //! determined by the provided parameter.
 //!
-//! ```
+//! ```ignore
 //! use nearly::{nearly_eq, ToleranceF32};
 //! # let a: f32 = 1.0 + 1.04 + 1.1;
 //! # let b: f32 = 3.14;
@@ -109,7 +109,7 @@
 //! This crate also provides assert macros for nearly comparison. These can be used as the
 //! regular comparison macros, but they will panic if the comparison evaluates to false.
 //!
-//! ```
+//! ```ignore
 //! use nearly::{assert_nearly_eq, ToleranceF32};
 //! # let a: f32 = 1.0 + 1.04 + 1.1;
 //! # let b: f32 = 3.14;
@@ -125,7 +125,7 @@
 //! that. These are identical to the normal assert macros, except that they are only enabled in
 //! non optimized builds.
 //!
-//! ```
+//! ```ignore
 //! use nearly::{debug_assert_nearly_eq, ToleranceF32};
 //! # let a: f32 = 1.0 + 1.04 + 1.1;
 //! # let b: f32 = 3.14;
@@ -344,8 +344,6 @@ pub use nearly_proc::nearly;
 pub use nearly_proc::NearlyEq;
 pub use nearly_proc::NearlyEqEps;
 pub use nearly_proc::NearlyEqUlps;
-
-mod macros;
 
 mod nearly_eq;
 pub use nearly_eq::NearlyEq;

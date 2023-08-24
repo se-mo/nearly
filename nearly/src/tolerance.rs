@@ -14,6 +14,11 @@ where
     /// The default epsilon tolerance value for the type implementing this trait.
     /// Used for default [Tolerance](Tolerance::default()).
     const DEFAULT: Self::T;
+
+    /// Returns the default eps tolerance value that is used when comparing self with other.
+    fn default_eps(&self, _other: &Rhs) -> Self::T {
+        Self::DEFAULT
+    }
 }
 
 /// A type definition for convenience.
@@ -32,6 +37,11 @@ where
     /// The default ulps tolerance value for the type implementing this trait.
     /// Used for default [Tolerance](Tolerance::default()).
     const DEFAULT: Self::T;
+
+    /// Returns the default ulps tolerance value that is used when comparing self with other.
+    fn default_ulps(&self, _other: &Rhs) -> Self::T {
+        Self::DEFAULT
+    }
 }
 
 /// A type definition for convenience.

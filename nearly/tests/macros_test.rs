@@ -188,7 +188,7 @@ fn macro_assert_nearly_eq_eps() {
 }
 
 #[test]
-#[should_panic(expected = r#"assertion failed: `(left nearly_eq_eps right)`
+#[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
  right: `Rhs`,
    eps: `0.1`"#)]
@@ -218,7 +218,7 @@ fn macro_assert_nearly_eq_ulps() {
 }
 
 #[test]
-#[should_panic(expected = r#"assertion failed: `(left nearly_eq_ulps right)`
+#[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
  right: `Rhs`,
   ulps: `5`"#)]
@@ -258,7 +258,7 @@ fn macro_assert_nearly_eq_tol() {
 }
 
 #[test]
-#[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
+#[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
  right: `Rhs`,
    eps: `0.1`,
@@ -276,7 +276,7 @@ fn macro_assert_nearly_eq_tol_panic() {
 }
 
 #[test]
-#[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
+#[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
  right: `Rhs`,
    eps: `0.15`,
@@ -307,11 +307,11 @@ fn macro_assert_nearly_eq() {
 }
 
 #[test]
-#[should_panic(expected = r#"assertion failed: `(left nearly_eq right)`
+#[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
  right: `Rhs`,
-   eps: `DEFAULT`,
-  ulps: `DEFAULT`"#)]
+   eps: `0.01`,
+  ulps: `3`"#)]
 fn macro_assert_nearly_eq_panic() {
     let mut a = MockLhs::new();
     let b = Rhs;
@@ -335,7 +335,7 @@ fn macro_assert_nearly_ne_eps() {
 }
 
 #[test]
-#[should_panic(expected = r#"assertion failed: `(left nearly_ne_eps right)`
+#[should_panic(expected = r#"assertion failed: `nearly (left != right)`
   left: `MockLhs`,
  right: `Rhs`,
    eps: `0.1`"#)]
@@ -365,7 +365,7 @@ fn macro_assert_nearly_ne_ulps() {
 }
 
 #[test]
-#[should_panic(expected = r#"assertion failed: `(left nearly_ne_ulps right)`
+#[should_panic(expected = r#"assertion failed: `nearly (left != right)`
   left: `MockLhs`,
  right: `Rhs`,
   ulps: `5`"#)]
@@ -405,7 +405,7 @@ fn macro_assert_nearly_ne_tol() {
 }
 
 #[test]
-#[should_panic(expected = r#"assertion failed: `(left nearly_ne_tol right)`
+#[should_panic(expected = r#"assertion failed: `nearly (left != right)`
   left: `MockLhs`,
  right: `Rhs`,
    eps: `0.1`,
@@ -423,7 +423,7 @@ fn macro_assert_nearly_ne_tol_panic() {
 }
 
 #[test]
-#[should_panic(expected = r#"assertion failed: `(left nearly_ne_tol right)`
+#[should_panic(expected = r#"assertion failed: `nearly (left != right)`
   left: `MockLhs`,
  right: `Rhs`,
    eps: `0.15`,
@@ -454,11 +454,11 @@ fn macro_assert_nearly_ne() {
 }
 
 #[test]
-#[should_panic(expected = r#"assertion failed: `(left nearly_ne right)`
+#[should_panic(expected = r#"assertion failed: `nearly (left != right)`
   left: `MockLhs`,
  right: `Rhs`,
-   eps: `DEFAULT`,
-  ulps: `DEFAULT`"#)]
+   eps: `0.01`,
+  ulps: `3`"#)]
 fn macro_assert_nearly_ne_panic() {
     let mut a = MockLhs::new();
     let b = Rhs;
@@ -488,7 +488,7 @@ fn macro_debug_assert_nearly_eq_eps() {
 
 #[test]
 #[cfg(debug_assertions)]
-#[should_panic(expected = r#"assertion failed: `(left nearly_eq_eps right)`
+#[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
  right: `Rhs`,
    eps: `0.1`"#)]
@@ -530,7 +530,7 @@ fn macro_debug_assert_nearly_eq_ulps() {
 
 #[test]
 #[cfg(debug_assertions)]
-#[should_panic(expected = r#"assertion failed: `(left nearly_eq_ulps right)`
+#[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
  right: `Rhs`,
   ulps: `5`"#)]
@@ -582,7 +582,7 @@ fn macro_debug_assert_nearly_eq_tol() {
 
 #[test]
 #[cfg(debug_assertions)]
-#[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
+#[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
  right: `Rhs`,
    eps: `0.1`,
@@ -601,7 +601,7 @@ fn macro_debug_assert_nearly_eq_tol_panic() {
 
 #[test]
 #[cfg(debug_assertions)]
-#[should_panic(expected = r#"assertion failed: `(left nearly_eq_tol right)`
+#[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
  right: `Rhs`,
    eps: `0.15`,
@@ -646,11 +646,11 @@ fn macro_debug_assert_nearly_eq() {
 
 #[test]
 #[cfg(debug_assertions)]
-#[should_panic(expected = r#"assertion failed: `(left nearly_eq right)`
+#[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
  right: `Rhs`,
-   eps: `DEFAULT`,
-  ulps: `DEFAULT`"#)]
+   eps: `0.01`,
+  ulps: `3`"#)]
 fn macro_debug_assert_nearly_eq_panic() {
     let mut a = MockLhs::new();
     let b = Rhs;
