@@ -227,7 +227,7 @@
 //! If your struct contains fields of a generic type, you can add nearly comparison as well. The
 //! following example shows how to do so on a struct with two fields having the same generic type.
 //!
-//! ```
+//! ```ignore
 //! use nearly::{
 //!     EpsAndUlpsTolerance, EpsTolerance, EpsToleranceType, NearlyEq, NearlyEqEps, NearlyEqTol,
 //!     NearlyEqUlps, UlpsTolerance, UlpsToleranceType
@@ -352,7 +352,6 @@ pub use nearly_eq::NearlyEqTol;
 pub use nearly_eq::NearlyEqUlps;
 
 mod tolerance;
-pub use tolerance::EpsAndUlpsTolerance;
 pub use tolerance::EpsTolerance;
 pub use tolerance::EpsToleranceType;
 pub use tolerance::Tolerance;

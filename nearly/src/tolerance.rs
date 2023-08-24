@@ -49,23 +49,6 @@ where
 /// It specifies the type of the ulps values for the type `Lhs` comparing to the type `Rhs`.
 pub type UlpsToleranceType<Lhs, Rhs = Lhs> = <Lhs as UlpsTolerance<Rhs>>::T;
 
-/// A trait combining the [EpsTolerance] and [UlpsTolerance] traits. It can be used if both an
-/// epsilon tolerance and an ulps tolerance is required.
-///
-/// Besides combining the two traits, this trait does not provide any new functionality.
-pub trait EpsAndUlpsTolerance<Rhs = Self>: EpsTolerance<Rhs> + UlpsTolerance<Rhs>
-where
-    Rhs: ?Sized,
-{
-}
-
-impl<Lhs, Rhs> EpsAndUlpsTolerance<Rhs> for Lhs
-where
-    Lhs: ?Sized + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
-    Rhs: ?Sized,
-{
-}
-
 impl EpsTolerance for f32 {
     type T = f32;
     const DEFAULT: f32 = 1e-6;
@@ -99,7 +82,7 @@ pub type ToleranceF64 = Tolerance<f64>;
 #[derive(Debug)]
 pub struct Tolerance<Lhs, Rhs = Lhs>
 where
-    Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>,
+    Lhs: ?Sized + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
     Rhs: ?Sized,
 {
     pub eps: EpsToleranceType<Lhs, Rhs>,
@@ -108,7 +91,7 @@ where
 
 impl<Lhs, Rhs> Tolerance<Lhs, Rhs>
 where
-    Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>,
+    Lhs: ?Sized + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
     Rhs: ?Sized,
 {
     pub fn new(eps: EpsToleranceType<Lhs, Rhs>, ulps: UlpsToleranceType<Lhs, Rhs>) -> Self {
@@ -118,7 +101,7 @@ where
 
 impl<Lhs, Rhs> Default for Tolerance<Lhs, Rhs>
 where
-    Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>,
+    Lhs: ?Sized + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
     Rhs: ?Sized,
 {
     fn default() -> Self {
@@ -132,7 +115,7 @@ where
 impl<Lhs, Rhs> From<(EpsToleranceType<Lhs, Rhs>, UlpsToleranceType<Lhs, Rhs>)>
     for Tolerance<Lhs, Rhs>
 where
-    Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>,
+    Lhs: ?Sized + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
     Rhs: ?Sized,
 {
     fn from(tuple: (EpsToleranceType<Lhs, Rhs>, UlpsToleranceType<Lhs, Rhs>)) -> Self {
@@ -146,7 +129,7 @@ where
 impl<Lhs, Rhs> From<Tolerance<Lhs, Rhs>>
     for (EpsToleranceType<Lhs, Rhs>, UlpsToleranceType<Lhs, Rhs>)
 where
-    Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>,
+    Lhs: ?Sized + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
     Rhs: ?Sized,
 {
     fn from(val: Tolerance<Lhs, Rhs>) -> Self {
@@ -160,7 +143,7 @@ where
 
 impl<Lhs, Rhs> Clone for Tolerance<Lhs, Rhs>
 where
-    Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>,
+    Lhs: ?Sized + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
     Rhs: ?Sized,
 {
     fn clone(&self) -> Self {
@@ -170,7 +153,7 @@ where
 
 impl<Lhs, Rhs> Copy for Tolerance<Lhs, Rhs>
 where
-    Lhs: ?Sized + EpsAndUlpsTolerance<Rhs>,
+    Lhs: ?Sized + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
     Rhs: ?Sized,
 {
 }

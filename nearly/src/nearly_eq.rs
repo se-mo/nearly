@@ -1,6 +1,5 @@
 use crate::tolerance::{
-    EpsAndUlpsTolerance, EpsTolerance, EpsToleranceType, Tolerance, UlpsTolerance,
-    UlpsToleranceType,
+    EpsTolerance, EpsToleranceType, Tolerance, UlpsTolerance, UlpsToleranceType,
 };
 use crate::ulps::Ulps;
 
@@ -8,7 +7,7 @@ use crate::ulps::Ulps;
 pub trait NearlyEqEps<Rhs = Self, LhsTol = Self, RhsTol = Rhs>
 where
     Rhs: ?Sized,
-    LhsTol: EpsTolerance<RhsTol> + ?Sized,
+    LhsTol: ?Sized + EpsTolerance<RhsTol>,
     RhsTol: ?Sized,
 {
     /// Returns whether `self` is nearly equal to `other` based on an absolute epsilon value `eps`.
@@ -25,7 +24,7 @@ where
 pub trait NearlyEqUlps<Rhs = Self, LhsTol = Self, RhsTol = Rhs>
 where
     Rhs: ?Sized,
-    LhsTol: UlpsTolerance<RhsTol> + ?Sized,
+    LhsTol: ?Sized + UlpsTolerance<RhsTol>,
     RhsTol: ?Sized,
 {
     /// Returns whether `self`is nearly equal to `other` based on an ulps value `ulps`.
@@ -46,7 +45,7 @@ pub trait NearlyEqTol<Rhs = Self, LhsTol = Self, RhsTol = Rhs>:
     NearlyEqEps<Rhs, LhsTol, RhsTol> + NearlyEqUlps<Rhs, LhsTol, RhsTol>
 where
     Rhs: ?Sized,
-    LhsTol: EpsAndUlpsTolerance<RhsTol> + ?Sized,
+    LhsTol: ?Sized + EpsTolerance<RhsTol> + UlpsTolerance<RhsTol>,
     RhsTol: ?Sized,
 {
     /// Returns whether `self` is nearly equal to `other` based on a tolerance `tolerance`.
@@ -75,7 +74,7 @@ pub trait NearlyEq<Rhs = Self, LhsTol = Self, RhsTol = Rhs>:
     NearlyEqTol<Rhs, LhsTol, RhsTol>
 where
     Rhs: ?Sized,
-    LhsTol: EpsAndUlpsTolerance<RhsTol> + ?Sized,
+    LhsTol: ?Sized + EpsTolerance<RhsTol> + UlpsTolerance<RhsTol>,
     RhsTol: ?Sized,
 {
     /// Returns whether `self` is nearly equal to `other` based on the default tolerance for type
@@ -97,7 +96,7 @@ impl<Lhs, Rhs, LhsTol, RhsTol> NearlyEqTol<Rhs, LhsTol, RhsTol> for Lhs
 where
     Lhs: NearlyEqEps<Rhs, LhsTol, RhsTol> + NearlyEqUlps<Rhs, LhsTol, RhsTol> + ?Sized,
     Rhs: ?Sized,
-    LhsTol: EpsAndUlpsTolerance<RhsTol> + ?Sized,
+    LhsTol: ?Sized + EpsTolerance<RhsTol> + UlpsTolerance<RhsTol>,
     RhsTol: ?Sized,
 {
 }
@@ -106,7 +105,7 @@ impl<Lhs, Rhs, LhsTol, RhsTol> NearlyEq<Rhs, LhsTol, RhsTol> for Lhs
 where
     Lhs: NearlyEqEps<Rhs, LhsTol, RhsTol> + NearlyEqUlps<Rhs, LhsTol, RhsTol> + ?Sized,
     Rhs: ?Sized,
-    LhsTol: EpsAndUlpsTolerance<RhsTol>,
+    LhsTol: ?Sized + EpsTolerance<RhsTol> + UlpsTolerance<RhsTol>,
     RhsTol: ?Sized,
 {
 }
