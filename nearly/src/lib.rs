@@ -361,4 +361,3 @@ pub use tolerance::UlpsTolerance;
 pub use tolerance::UlpsToleranceType;
 
 mod ulps;
-pub use ulps::Ulps;

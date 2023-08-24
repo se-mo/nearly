@@ -1,5 +1,5 @@
 /// A trait for ulps based calculations and operations on floating point types.
-pub trait Ulps
+pub(crate) trait Ulps
 where
     Self: Copy,
 {
