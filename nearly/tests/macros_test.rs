@@ -1,8 +1,8 @@
 use mockall::predicate::eq;
 use mockall::{mock, Sequence};
 use nearly::{
-    assert_nearly, debug_assert_nearly, nearly, EpsTolerance, EpsToleranceType, NearlyEqEps,
-    NearlyEqUlps, Tolerance, UlpsTolerance, UlpsToleranceType,
+    assert_nearly, debug_assert_nearly, nearly, EpsTolerance, EpsToleranceType, NearlyEq,
+    NearlyEqEps, NearlyEqTol, NearlyEqUlps, Tolerance, UlpsTolerance, UlpsToleranceType,
 };
 
 #[derive(Debug, PartialEq)]
@@ -10,16 +10,7 @@ struct Rhs;
 
 mock!(
     #[derive(Debug)]
-    Lhs{
-        // The traits NearlyEqTol and NearlyEq are implemented using blanket implementation.
-        // We need to declare the corresponding functions here as methods to expect them.
-
-        fn nearly_eq_tol(&self, other: &Rhs, tolerance: Tolerance<Self, Rhs>) -> bool;
-        fn nearly_ne_tol(&self, other: &Rhs, tolerance: Tolerance<Self, Rhs>) -> bool;
-
-        fn nearly_eq(&self, other: &Rhs) -> bool;
-        fn nearly_ne(&self, other: &Rhs) -> bool;
-    }
+    Lhs{}
 
     impl EpsTolerance<Rhs> for Lhs {
         type T = f32;
@@ -39,6 +30,16 @@ mock!(
     impl NearlyEqUlps<Rhs> for Lhs {
         fn nearly_eq_ulps(&self, other: &Rhs, ulps: UlpsToleranceType<Self, Rhs>) -> bool;
         fn nearly_ne_ulps(&self, other: &Rhs, ulps: UlpsToleranceType<Self, Rhs>) -> bool;
+    }
+
+    impl NearlyEqTol<Rhs> for Lhs {
+        fn nearly_eq_tol(&self, other: &Rhs, tolerance: Tolerance<Self, Rhs>) -> bool;
+        fn nearly_ne_tol(&self, other: &Rhs, tolerance: Tolerance<Self, Rhs>) -> bool;
+    }
+
+    impl NearlyEq<Rhs> for Lhs {
+        fn nearly_eq(&self, other: &Rhs) -> bool;
+        fn nearly_ne(&self, other: &Rhs) -> bool;
     }
 );
 
@@ -103,7 +104,10 @@ fn macro_nearly_eq() {
     let mut a = MockLhs::new();
     let b = Rhs;
 
-    a.expect_nearly_eq().times(1).return_const(true);
+    a.expect_nearly_eq()
+        .with(eq(Rhs))
+        .times(1)
+        .return_const(true);
 
     assert!(nearly!(a == b));
 }
@@ -165,7 +169,10 @@ fn macro_nearly_ne() {
     let mut a = MockLhs::new();
     let b = Rhs;
 
-    a.expect_nearly_ne().times(1).return_const(true);
+    a.expect_nearly_ne()
+        .with(eq(Rhs))
+        .times(1)
+        .return_const(true);
 
     assert!(nearly!(a != b));
 }
@@ -316,7 +323,10 @@ fn macro_assert_nearly_eq_panic() {
     let mut a = MockLhs::new();
     let b = Rhs;
 
-    a.expect_nearly_eq().times(1).return_const(false);
+    a.expect_nearly_eq()
+        .with(eq(Rhs))
+        .times(1)
+        .return_const(false);
 
     assert_nearly!(a == b);
 }
@@ -463,7 +473,10 @@ fn macro_assert_nearly_ne_panic() {
     let mut a = MockLhs::new();
     let b = Rhs;
 
-    a.expect_nearly_ne().times(1).return_const(false);
+    a.expect_nearly_ne()
+        .with(eq(Rhs))
+        .times(1)
+        .return_const(false);
 
     assert_nearly!(a != b);
 }
@@ -655,7 +668,10 @@ fn macro_debug_assert_nearly_eq_panic() {
     let mut a = MockLhs::new();
     let b = Rhs;
 
-    a.expect_nearly_eq().times(1).return_const(false);
+    a.expect_nearly_eq()
+        .with(eq(Rhs))
+        .times(1)
+        .return_const(false);
 
     debug_assert_nearly!(a == b);
 }
@@ -853,7 +869,10 @@ fn macro_debug_assert_nearly_ne_panic() {
     let mut a = MockLhs::new();
     let b = Rhs;
 
-    a.expect_nearly_ne().times(1).return_const(false);
+    a.expect_nearly_ne()
+        .with(eq(Rhs))
+        .times(1)
+        .return_const(false);
 
     debug_assert_nearly!(a != b);
 }

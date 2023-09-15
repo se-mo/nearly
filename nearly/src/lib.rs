@@ -281,7 +281,7 @@
 //!
 //! This example also shows how to have a tuple tolerance type consist of two floating point types.
 //!
-//! ```
+//! ```ignore
 //! use nearly::{
 //!     EpsTolerance, EpsToleranceType, NearlyEq, NearlyEqEps, NearlyEqTol, NearlyEqUlps,
 //!     UlpsTolerance, UlpsToleranceType

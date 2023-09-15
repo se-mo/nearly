@@ -260,9 +260,17 @@ fn derive_nearly_eq_ulps(data: &Data, ident: &Ident) -> proc_macro2::TokenStream
 }
 
 fn derive_nearly_eq(data: &Data, ident: &Ident) -> proc_macro2::TokenStream {
-    let mut stream: proc_macro2::TokenStream = derive_nearly_eq_eps(data, ident);
-    stream.extend(derive_nearly_eq_ulps(data, ident).into_iter());
-    stream
+    let eps_output = derive_nearly_eq_eps(data, ident);
+    let ulps_output = derive_nearly_eq_ulps(data, ident);
+
+    quote!(
+        #eps_output
+        #ulps_output
+        #[automatically_derived]
+        impl ::nearly::NearlyEqTol for #ident {}
+        #[automatically_derived]
+        impl ::nearly::NearlyEq for #ident {}
+    )
 }
 
 pub(crate) fn nearly_eq(input: TokenStream, derive_trait: DeriveTrait) -> TokenStream {

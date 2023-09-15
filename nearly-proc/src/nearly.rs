@@ -158,37 +158,42 @@ fn update_tolerance(tol: NearlyTol, ident: Ident, expr: Expr) -> Result<NearlyTo
     Ok(updated_tol)
 }
 
-fn fn_ident(op: &NearlyOp, tolerance: &NearlyTol) -> Ident {
-    format_ident!("nearly{}{}", op.fn_postfix(), tolerance.fn_postfix())
+fn fn_token_stream(op: &NearlyOp, tolerance: &NearlyTol) -> proc_macro2::TokenStream {
+    let fn_ident = format_ident!("nearly{}{}", op.fn_postfix(), tolerance.fn_postfix());
+    let trait_ident = format_ident!("NearlyEq{}", tolerance.trait_postfix());
+
+    quote!(::nearly::#trait_ident::#fn_ident)
 }
 
 fn standard_macro_output(input: &NearlyMacroInput) -> proc_macro2::TokenStream {
     let left = &input.left;
     let right = &input.right;
-    let fn_ident = fn_ident(&input.op, &input.tolerance);
+    let function = fn_token_stream(&input.op, &input.tolerance);
 
     match &input.tolerance {
-        NearlyTol::Eps(eps) => quote!(#left.#fn_ident(&#right, #eps)),
-        NearlyTol::Ulps(ulps) => quote!(#left.#fn_ident(&#right, #ulps)),
-        NearlyTol::Tol(tol) => quote!(#left.#fn_ident(&#right, #tol)),
-        NearlyTol::EpsAndUlps(eps, ulps) => quote!(#left.#fn_ident(&#right, (#eps, #ulps).into())),
-        NearlyTol::Default => quote!(#left.#fn_ident(&#right)),
+        NearlyTol::Eps(eps) => quote!(#function(&#left, &#right, #eps)),
+        NearlyTol::Ulps(ulps) => quote!(#function(&#left, &#right, #ulps)),
+        NearlyTol::Tol(tol) => quote!(#function(&#left, &#right, #tol)),
+        NearlyTol::EpsAndUlps(eps, ulps) => {
+            quote!(#function(&#left, &#right, (#eps, #ulps).into()))
+        }
+        NearlyTol::Default => quote!(#function(&#left, &#right)),
     }
 }
 
 fn assert_macro_output(input: &NearlyMacroInput) -> proc_macro2::TokenStream {
     let left = &input.left;
     let right = &input.right;
-    let fn_ident = fn_ident(&input.op, &input.tolerance);
+    let function = fn_token_stream(&input.op, &input.tolerance);
     let op_str = input.op.symbol();
 
     match &input.tolerance {
         NearlyTol::Eps(eps) => {
-            quote!(
+            quote!({
                 let left = &#left;
                 let right = &#right;
                 let eps = #eps;
-                if !left.#fn_ident(&right, eps) {
+                if !#function(left, right, eps) {
                     panic!(
                         r#"assertion failed: `nearly (left {} right)`
   left: `{:?}`,
@@ -197,14 +202,14 @@ fn assert_macro_output(input: &NearlyMacroInput) -> proc_macro2::TokenStream {
                         #op_str, left, right, eps
                     )
                 }
-            )
+            })
         }
         NearlyTol::Ulps(ulps) => {
-            quote!(
+            quote!({
                 let left = &#left;
                 let right = &#right;
                 let ulps = #ulps;
-                if !left.#fn_ident(&right, ulps) {
+                if !#function(left, right, ulps) {
                     panic!(
                         r#"assertion failed: `nearly (left {} right)`
   left: `{:?}`,
@@ -213,14 +218,14 @@ fn assert_macro_output(input: &NearlyMacroInput) -> proc_macro2::TokenStream {
                         #op_str, left, right, ulps
                     )
                 }
-            )
+            })
         }
         NearlyTol::Tol(tol) => {
-            quote!(
+            quote!({
                 let left = &#left;
                 let right = &#right;
                 let tol = #tol;
-                if !left.#fn_ident(&right, tol) {
+                if !#function(left, right, tol) {
                     panic!(
                         r#"assertion failed: `nearly (left {} right)`
   left: `{:?}`,
@@ -230,15 +235,15 @@ fn assert_macro_output(input: &NearlyMacroInput) -> proc_macro2::TokenStream {
                         #op_str, left, right, tol.eps, tol.ulps
                     )
                 }
-            )
+            })
         }
         NearlyTol::EpsAndUlps(eps, ulps) => {
-            quote!(
+            quote!({
                 let left = &#left;
                 let right = &#right;
                 let eps = #eps;
                 let ulps = #ulps;
-                if !left.#fn_ident(&right, (eps, ulps).into()) {
+                if !#function(left, right, (eps, ulps).into()) {
                     panic!(
                         r#"assertion failed: `nearly (left {} right)`
   left: `{:?}`,
@@ -248,56 +253,45 @@ fn assert_macro_output(input: &NearlyMacroInput) -> proc_macro2::TokenStream {
                         #op_str, left, right, eps, ulps
                     )
                 }
-            )
+            })
         }
         NearlyTol::Default => {
-            quote!(
+            quote!({
                 let left = &#left;
                 let right = &#right;
-                if !left.#fn_ident(&right) {
-                    use ::nearly::{EpsTolerance, UlpsTolerance};
+                if !#function(left, right) {
                     panic!(
                         r#"assertion failed: `nearly (left {} right)`
   left: `{:?}`,
  right: `{:?}`,
    eps: `{:?}`,
   ulps: `{:?}`"#,
-                        #op_str, left, right, left.default_eps(right), left.default_ulps(right)
+                        #op_str, left, right,
+                        ::nearly::EpsTolerance::default_eps(left, right),
+                        ::nearly::UlpsTolerance::default_ulps(left, right)
                     )
                 }
-            )
+            })
         }
     }
 }
 
+fn debug_assert_macro_output(input: &NearlyMacroInput) -> proc_macro2::TokenStream {
+    let assert_macro_output = assert_macro_output(input);
+    quote!({
+        if cfg!(debug_assertions) {
+            #assert_macro_output
+        }
+    })
+}
+
 pub(crate) fn nearly_macro(input: TokenStream, macro_type: NearlyMacroType) -> TokenStream {
     let nearly_input = parse_macro_input!(input as NearlyMacroInput);
-    let trait_ident = format_ident!("NearlyEq{}", nearly_input.tolerance.trait_postfix());
 
     let output = match macro_type {
-        NearlyMacroType::Standard => {
-            let macro_output = standard_macro_output(&nearly_input);
-            quote!({
-                use ::nearly::#trait_ident;
-                #macro_output
-            })
-        }
-        NearlyMacroType::Assert => {
-            let macro_output = assert_macro_output(&nearly_input);
-            quote!({
-                use ::nearly::#trait_ident;
-                #macro_output
-            })
-        }
-        NearlyMacroType::DebugAssert => {
-            let macro_output = assert_macro_output(&nearly_input);
-            quote!({
-                if cfg!(debug_assertions) {
-                    use ::nearly::#trait_ident;
-                    #macro_output
-                }
-            })
-        }
+        NearlyMacroType::Standard => standard_macro_output(&nearly_input),
+        NearlyMacroType::Assert => assert_macro_output(&nearly_input),
+        NearlyMacroType::DebugAssert => debug_assert_macro_output(&nearly_input),
     };
 
     output.into()

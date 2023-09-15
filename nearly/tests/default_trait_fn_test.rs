@@ -28,6 +28,10 @@ mock!(
     impl NearlyEqUlps<Rhs> for Lhs {
         fn nearly_eq_ulps(&self, other: &Rhs, ulps: UlpsToleranceType<Self, Rhs>) -> bool;
     }
+
+    impl NearlyEqTol<Rhs> for Lhs {}
+
+    impl NearlyEq<Rhs> for Lhs {}
 );
 
 #[test]
