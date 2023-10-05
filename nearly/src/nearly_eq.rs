@@ -164,6 +164,7 @@ macro_rules! impl_nearly_ref {
         where
             Lhs: NearlyEqEps<Rhs> + EpsTolerance<Rhs>,
         {
+            #[inline]
             fn nearly_eq_eps(&self, other: &$rhs, eps: EpsToleranceType<Lhs, Rhs>) -> bool {
                 NearlyEqEps::nearly_eq_eps(*self, *other, eps)
             }
@@ -173,6 +174,7 @@ macro_rules! impl_nearly_ref {
         where
             Lhs: NearlyEqUlps<Rhs> + UlpsTolerance<Rhs>,
         {
+            #[inline]
             fn nearly_eq_ulps(&self, other: &$rhs, ulps: UlpsToleranceType<Lhs, Rhs>) -> bool {
                 NearlyEqUlps::nearly_eq_ulps(*self, *other, ulps)
             }
@@ -559,12 +561,14 @@ impl UlpsTolerance for () {
 }
 
 impl NearlyEqEps for () {
+    #[inline]
     fn nearly_eq_eps(&self, _other: &Self, _eps: EpsToleranceType<Self>) -> bool {
         true
     }
 }
 
 impl NearlyEqUlps for () {
+    #[inline]
     fn nearly_eq_ulps(&self, _other: &Self, _ulps: UlpsToleranceType<Self>) -> bool {
         true
     }
