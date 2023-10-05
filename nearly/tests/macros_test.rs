@@ -6,7 +6,7 @@ use nearly::{
 };
 
 #[derive(Debug, PartialEq)]
-struct Rhs;
+struct Rhs(i32);
 
 mock!(
     #[derive(Debug)]
@@ -50,10 +50,10 @@ mock!(
 #[test]
 fn macro_nearly_eq_eps() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_eps()
-        .with(eq(Rhs), eq(0.1))
+        .with(eq(Rhs(5)), eq(0.1))
         .times(1)
         .return_const(true);
 
@@ -63,10 +63,10 @@ fn macro_nearly_eq_eps() {
 #[test]
 fn macro_nearly_eq_ulps() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_ulps()
-        .with(eq(Rhs), eq(5))
+        .with(eq(Rhs(5)), eq(5))
         .times(1)
         .return_const(true);
 
@@ -78,7 +78,7 @@ fn macro_nearly_eq_tol() {
     let mut seq = Sequence::new();
 
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_tol()
         .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
@@ -102,10 +102,10 @@ fn macro_nearly_eq_tol() {
 #[test]
 fn macro_nearly_eq() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq()
-        .with(eq(Rhs))
+        .with(eq(Rhs(5)))
         .times(1)
         .return_const(true);
 
@@ -115,10 +115,10 @@ fn macro_nearly_eq() {
 #[test]
 fn macro_nearly_ne_eps() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_eps()
-        .with(eq(Rhs), eq(0.1))
+        .with(eq(Rhs(5)), eq(0.1))
         .times(1)
         .return_const(true);
 
@@ -128,10 +128,10 @@ fn macro_nearly_ne_eps() {
 #[test]
 fn macro_nearly_ne_ulps() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_ulps()
-        .with(eq(Rhs), eq(5))
+        .with(eq(Rhs(5)), eq(5))
         .times(1)
         .return_const(true);
 
@@ -143,7 +143,7 @@ fn macro_nearly_ne_tol() {
     let mut seq = Sequence::new();
 
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_tol()
         .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
@@ -167,10 +167,10 @@ fn macro_nearly_ne_tol() {
 #[test]
 fn macro_nearly_ne() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne()
-        .with(eq(Rhs))
+        .with(eq(Rhs(5)))
         .times(1)
         .return_const(true);
 
@@ -184,10 +184,10 @@ fn macro_nearly_ne() {
 #[test]
 fn macro_assert_nearly_eq_eps() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_eps()
-        .with(eq(Rhs), eq(0.1))
+        .with(eq(Rhs(5)), eq(0.1))
         .times(1)
         .return_const(true);
 
@@ -197,14 +197,14 @@ fn macro_assert_nearly_eq_eps() {
 #[test]
 #[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
    eps: `0.1`"#)]
 fn macro_assert_nearly_eq_eps_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_eps()
-        .with(eq(Rhs), eq(0.1))
+        .with(eq(Rhs(5)), eq(0.1))
         .times(1)
         .return_const(false);
 
@@ -214,10 +214,10 @@ fn macro_assert_nearly_eq_eps_panic() {
 #[test]
 fn macro_assert_nearly_eq_ulps() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_ulps()
-        .with(eq(Rhs), eq(5))
+        .with(eq(Rhs(5)), eq(5))
         .times(1)
         .return_const(true);
 
@@ -227,14 +227,14 @@ fn macro_assert_nearly_eq_ulps() {
 #[test]
 #[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
   ulps: `5`"#)]
 fn macro_assert_nearly_eq_ulps_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_ulps()
-        .with(eq(Rhs), eq(5))
+        .with(eq(Rhs(5)), eq(5))
         .times(1)
         .return_const(false);
 
@@ -246,7 +246,7 @@ fn macro_assert_nearly_eq_tol() {
     let mut seq = Sequence::new();
 
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_tol()
         .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
@@ -267,12 +267,12 @@ fn macro_assert_nearly_eq_tol() {
 #[test]
 #[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
    eps: `0.1`,
   ulps: `5`"#)]
 fn macro_assert_nearly_eq_tol_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_tol()
         .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
@@ -285,12 +285,12 @@ fn macro_assert_nearly_eq_tol_panic() {
 #[test]
 #[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
    eps: `0.15`,
   ulps: `7`"#)]
 fn macro_assert_nearly_eq_tol_tuple_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_tol()
         .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
@@ -303,10 +303,10 @@ fn macro_assert_nearly_eq_tol_tuple_panic() {
 #[test]
 fn macro_assert_nearly_eq() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq()
-        .with(eq(Rhs))
+        .with(eq(Rhs(5)))
         .times(1)
         .return_const(true);
 
@@ -316,15 +316,15 @@ fn macro_assert_nearly_eq() {
 #[test]
 #[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
    eps: `0.01`,
   ulps: `3`"#)]
 fn macro_assert_nearly_eq_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq()
-        .with(eq(Rhs))
+        .with(eq(Rhs(5)))
         .times(1)
         .return_const(false);
 
@@ -334,10 +334,10 @@ fn macro_assert_nearly_eq_panic() {
 #[test]
 fn macro_assert_nearly_ne_eps() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_eps()
-        .with(eq(Rhs), eq(0.1))
+        .with(eq(Rhs(5)), eq(0.1))
         .times(1)
         .return_const(true);
 
@@ -347,14 +347,14 @@ fn macro_assert_nearly_ne_eps() {
 #[test]
 #[should_panic(expected = r#"assertion failed: `nearly (left != right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
    eps: `0.1`"#)]
 fn macro_assert_nearly_ne_eps_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_eps()
-        .with(eq(Rhs), eq(0.1))
+        .with(eq(Rhs(5)), eq(0.1))
         .times(1)
         .return_const(false);
 
@@ -364,10 +364,10 @@ fn macro_assert_nearly_ne_eps_panic() {
 #[test]
 fn macro_assert_nearly_ne_ulps() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_ulps()
-        .with(eq(Rhs), eq(5))
+        .with(eq(Rhs(5)), eq(5))
         .times(1)
         .return_const(true);
 
@@ -377,14 +377,14 @@ fn macro_assert_nearly_ne_ulps() {
 #[test]
 #[should_panic(expected = r#"assertion failed: `nearly (left != right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
   ulps: `5`"#)]
 fn macro_assert_nearly_ne_ulps_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_ulps()
-        .with(eq(Rhs), eq(5))
+        .with(eq(Rhs(5)), eq(5))
         .times(1)
         .return_const(false);
 
@@ -396,7 +396,7 @@ fn macro_assert_nearly_ne_tol() {
     let mut seq = Sequence::new();
 
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_tol()
         .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
@@ -417,12 +417,12 @@ fn macro_assert_nearly_ne_tol() {
 #[test]
 #[should_panic(expected = r#"assertion failed: `nearly (left != right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
    eps: `0.1`,
   ulps: `5`"#)]
 fn macro_assert_nearly_ne_tol_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_tol()
         .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
@@ -435,12 +435,12 @@ fn macro_assert_nearly_ne_tol_panic() {
 #[test]
 #[should_panic(expected = r#"assertion failed: `nearly (left != right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
    eps: `0.15`,
   ulps: `7`"#)]
 fn macro_assert_nearly_ne_tol_tuple_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_tol()
         .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
@@ -453,10 +453,10 @@ fn macro_assert_nearly_ne_tol_tuple_panic() {
 #[test]
 fn macro_assert_nearly_ne() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne()
-        .with(eq(Rhs))
+        .with(eq(Rhs(5)))
         .times(1)
         .return_const(true);
 
@@ -466,15 +466,15 @@ fn macro_assert_nearly_ne() {
 #[test]
 #[should_panic(expected = r#"assertion failed: `nearly (left != right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
    eps: `0.01`,
   ulps: `3`"#)]
 fn macro_assert_nearly_ne_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne()
-        .with(eq(Rhs))
+        .with(eq(Rhs(5)))
         .times(1)
         .return_const(false);
 
@@ -489,10 +489,10 @@ fn macro_assert_nearly_ne_panic() {
 #[cfg(debug_assertions)]
 fn macro_debug_assert_nearly_eq_eps() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_eps()
-        .with(eq(Rhs), eq(0.1))
+        .with(eq(Rhs(5)), eq(0.1))
         .times(1)
         .return_const(true);
 
@@ -503,14 +503,14 @@ fn macro_debug_assert_nearly_eq_eps() {
 #[cfg(debug_assertions)]
 #[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
    eps: `0.1`"#)]
 fn macro_debug_assert_nearly_eq_eps_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_eps()
-        .with(eq(Rhs), eq(0.1))
+        .with(eq(Rhs(5)), eq(0.1))
         .times(1)
         .return_const(false);
 
@@ -521,7 +521,7 @@ fn macro_debug_assert_nearly_eq_eps_panic() {
 #[cfg(not(debug_assertions))]
 fn macro_debug_assert_nearly_eq_eps() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_eps().times(0);
     debug_assert_nearly!(a == b, eps = 0.1);
@@ -531,10 +531,10 @@ fn macro_debug_assert_nearly_eq_eps() {
 #[cfg(debug_assertions)]
 fn macro_debug_assert_nearly_eq_ulps() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_ulps()
-        .with(eq(Rhs), eq(5))
+        .with(eq(Rhs(5)), eq(5))
         .times(1)
         .return_const(true);
 
@@ -545,14 +545,14 @@ fn macro_debug_assert_nearly_eq_ulps() {
 #[cfg(debug_assertions)]
 #[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
   ulps: `5`"#)]
 fn macro_debug_assert_nearly_eq_ulps_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_ulps()
-        .with(eq(Rhs), eq(5))
+        .with(eq(Rhs(5)), eq(5))
         .times(1)
         .return_const(false);
 
@@ -563,7 +563,7 @@ fn macro_debug_assert_nearly_eq_ulps_panic() {
 #[cfg(not(debug_assertions))]
 fn macro_debug_assert_nearly_eq_ulps() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_ulps().times(0);
     debug_assert_nearly!(a == b, ulps = 5);
@@ -575,7 +575,7 @@ fn macro_debug_assert_nearly_eq_tol() {
     let mut seq = Sequence::new();
 
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_tol()
         .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
@@ -597,12 +597,12 @@ fn macro_debug_assert_nearly_eq_tol() {
 #[cfg(debug_assertions)]
 #[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
    eps: `0.1`,
   ulps: `5`"#)]
 fn macro_debug_assert_nearly_eq_tol_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_tol()
         .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
@@ -616,12 +616,12 @@ fn macro_debug_assert_nearly_eq_tol_panic() {
 #[cfg(debug_assertions)]
 #[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
    eps: `0.15`,
   ulps: `7`"#)]
 fn macro_debug_assert_nearly_eq_tol_tuple_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_tol()
         .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
@@ -635,7 +635,7 @@ fn macro_debug_assert_nearly_eq_tol_tuple_panic() {
 #[cfg(not(debug_assertions))]
 fn macro_debug_assert_nearly_eq_tol() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq_tol().times(0);
 
@@ -647,10 +647,10 @@ fn macro_debug_assert_nearly_eq_tol() {
 #[cfg(debug_assertions)]
 fn macro_debug_assert_nearly_eq() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq()
-        .with(eq(Rhs))
+        .with(eq(Rhs(5)))
         .times(1)
         .return_const(true);
 
@@ -661,15 +661,15 @@ fn macro_debug_assert_nearly_eq() {
 #[cfg(debug_assertions)]
 #[should_panic(expected = r#"assertion failed: `nearly (left == right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
    eps: `0.01`,
   ulps: `3`"#)]
 fn macro_debug_assert_nearly_eq_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq()
-        .with(eq(Rhs))
+        .with(eq(Rhs(5)))
         .times(1)
         .return_const(false);
 
@@ -680,7 +680,7 @@ fn macro_debug_assert_nearly_eq_panic() {
 #[cfg(not(debug_assertions))]
 fn macro_debug_assert_nearly_eq() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_eq().times(0);
     debug_assert_nearly!(a == b);
@@ -690,10 +690,10 @@ fn macro_debug_assert_nearly_eq() {
 #[cfg(debug_assertions)]
 fn macro_debug_assert_nearly_ne_eps() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_eps()
-        .with(eq(Rhs), eq(0.1))
+        .with(eq(Rhs(5)), eq(0.1))
         .times(1)
         .return_const(true);
 
@@ -704,14 +704,14 @@ fn macro_debug_assert_nearly_ne_eps() {
 #[cfg(debug_assertions)]
 #[should_panic(expected = r#"assertion failed: `nearly (left != right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
    eps: `0.1`"#)]
 fn macro_debug_assert_nearly_ne_eps_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_eps()
-        .with(eq(Rhs), eq(0.1))
+        .with(eq(Rhs(5)), eq(0.1))
         .times(1)
         .return_const(false);
 
@@ -722,7 +722,7 @@ fn macro_debug_assert_nearly_ne_eps_panic() {
 #[cfg(not(debug_assertions))]
 fn macro_debug_assert_nearly_ne_eps() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_eps().times(0);
     debug_assert_nearly!(a != b, eps = 0.1);
@@ -732,10 +732,10 @@ fn macro_debug_assert_nearly_ne_eps() {
 #[cfg(debug_assertions)]
 fn macro_debug_assert_nearly_ne_ulps() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_ulps()
-        .with(eq(Rhs), eq(5))
+        .with(eq(Rhs(5)), eq(5))
         .times(1)
         .return_const(true);
 
@@ -746,14 +746,14 @@ fn macro_debug_assert_nearly_ne_ulps() {
 #[cfg(debug_assertions)]
 #[should_panic(expected = r#"assertion failed: `nearly (left != right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
   ulps: `5`"#)]
 fn macro_debug_assert_nearly_ne_ulps_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_ulps()
-        .with(eq(Rhs), eq(5))
+        .with(eq(Rhs(5)), eq(5))
         .times(1)
         .return_const(false);
 
@@ -764,7 +764,7 @@ fn macro_debug_assert_nearly_ne_ulps_panic() {
 #[cfg(not(debug_assertions))]
 fn macro_debug_assert_nearly_ne_ulps() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_ulps().times(0);
     debug_assert_nearly!(a != b, ulps = 5);
@@ -776,7 +776,7 @@ fn macro_debug_assert_nearly_ne_tol() {
     let mut seq = Sequence::new();
 
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_tol()
         .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
@@ -798,12 +798,12 @@ fn macro_debug_assert_nearly_ne_tol() {
 #[cfg(debug_assertions)]
 #[should_panic(expected = r#"assertion failed: `nearly (left != right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
    eps: `0.1`,
   ulps: `5`"#)]
 fn macro_debug_assert_nearly_ne_tol_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_tol()
         .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
@@ -817,12 +817,12 @@ fn macro_debug_assert_nearly_ne_tol_panic() {
 #[cfg(debug_assertions)]
 #[should_panic(expected = r#"assertion failed: `nearly (left != right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
    eps: `0.15`,
   ulps: `7`"#)]
 fn macro_debug_assert_nearly_ne_tol_tuple_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_tol()
         .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
@@ -836,7 +836,7 @@ fn macro_debug_assert_nearly_ne_tol_tuple_panic() {
 #[cfg(not(debug_assertions))]
 fn macro_debug_assert_nearly_ne_tol() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne_tol().times(0);
 
@@ -848,10 +848,10 @@ fn macro_debug_assert_nearly_ne_tol() {
 #[cfg(debug_assertions)]
 fn macro_debug_assert_nearly_ne() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne()
-        .with(eq(Rhs))
+        .with(eq(Rhs(5)))
         .times(1)
         .return_const(true);
 
@@ -862,15 +862,15 @@ fn macro_debug_assert_nearly_ne() {
 #[cfg(debug_assertions)]
 #[should_panic(expected = r#"assertion failed: `nearly (left != right)`
   left: `MockLhs`,
- right: `Rhs`,
+ right: `Rhs(5)`,
    eps: `0.01`,
   ulps: `3`"#)]
 fn macro_debug_assert_nearly_ne_panic() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne()
-        .with(eq(Rhs))
+        .with(eq(Rhs(5)))
         .times(1)
         .return_const(false);
 
@@ -881,7 +881,7 @@ fn macro_debug_assert_nearly_ne_panic() {
 #[cfg(not(debug_assertions))]
 fn macro_debug_assert_nearly_ne() {
     let mut a = MockLhs::new();
-    let b = Rhs;
+    let b = Rhs(5);
 
     a.expect_nearly_ne().times(0);
     debug_assert_nearly!(a != b);
