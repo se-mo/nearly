@@ -502,9 +502,9 @@ macro_rules! impl_nearly_tuple {
     ($lhs:ident, $rhs:ident, $idx: tt) => {
         impl_nearly_tuple!(@impl $lhs, $rhs, $idx);
     };
-    ($lhs:ident $( $lhsTail:ident )+, $rhs:ident $( $rhsTail:ident )+, $idx:tt $( $idxTail:tt )+) => {
-        impl_nearly_tuple!($( $lhsTail )+, $( $rhsTail )+, $( $idxTail )+);
-        impl_nearly_tuple!(@impl $lhs $( $lhsTail )+, $rhs $( $rhsTail )+, $idx $( $idxTail )+);
+    ($lhs:ident $( $lhs_tail:ident )+, $rhs:ident $( $rhs_tail:ident )+, $idx:tt $( $idx_tail:tt )+) => {
+        impl_nearly_tuple!($( $lhs_tail )+, $( $rhs_tail )+, $( $idx_tail )+);
+        impl_nearly_tuple!(@impl $lhs $( $lhs_tail )+, $rhs $( $rhs_tail )+, $idx $( $idx_tail )+);
     };
     (@impl $( $lhs: ident )+, $( $rhs: ident )+, $( $idx: tt )+) => {
         impl<Lhs, Rhs> NearlyEqEps<($($rhs,)+), Lhs, Rhs> for ($($lhs,)+)
