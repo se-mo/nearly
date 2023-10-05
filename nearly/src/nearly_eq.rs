@@ -550,16 +550,6 @@ impl_nearly_tuple!(
 // unit //
 //////////
 
-impl EpsTolerance for () {
-    type T = ();
-    const DEFAULT: () = ();
-}
-
-impl UlpsTolerance for () {
-    type T = ();
-    const DEFAULT: () = ();
-}
-
 impl NearlyEqEps for () {
     #[inline]
     fn nearly_eq_eps(&self, _other: &Self, _eps: EpsToleranceType<Self>) -> bool {

@@ -69,6 +69,16 @@ impl UlpsTolerance for f64 {
     const DEFAULT: i64 = 4;
 }
 
+impl EpsTolerance for () {
+    type T = ();
+    const DEFAULT: () = ();
+}
+
+impl UlpsTolerance for () {
+    type T = ();
+    const DEFAULT: () = ();
+}
+
 /// Tolerance type used when comparing values of type [f32].
 pub type ToleranceF32 = Tolerance<f32>;
 
