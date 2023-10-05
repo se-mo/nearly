@@ -1,459 +1,980 @@
-use nearly::{NearlyEq, NearlyEqEps, NearlyEqTol, NearlyEqUlps};
-use nearly::{ToleranceF32, ToleranceF64};
+use mockall::predicate::eq;
+use mockall::{mock, Sequence};
+use nearly::{
+    EpsTolerance, EpsToleranceType, NearlyEq, NearlyEqEps, NearlyEqTol, NearlyEqUlps, Tolerance,
+    UlpsTolerance, UlpsToleranceType,
+};
 use paste::paste;
 
-static A_ARRAY_F32: [f32; 12] = [
-    1.0000008, 1.0, 1.0, 1.0000008, 1.0, 1.0000008, 1.0, 1.0, 1.0, 1.0000008, 1.0, 1.0000008,
-];
-static B_ARRAY_F32: [f32; 12] = [
-    1.0, 1.0000008, 1.0, 1.0, 1.0, 1.0000008, 1.0, 1.0000008, 1.0, 1.0, 1.0, 1.0000008,
-];
-static C_ARRAY_F32: [f32; 12] = [
-    1.1, 1.0, 1.0, 1.0000008, 1.0, 1.0000008, 1.0, 1.0, 1.1, 1.0000008, 1.0, 1.0000008,
-];
+#[derive(Debug, PartialEq)]
+struct Rhs(i32);
 
-static A_ARRAY_F64: [f64; 12] = [
-    1.0000000000000016,
-    1.0,
-    1.0,
-    1.0000000000000016,
-    1.0,
-    1.0000000000000016,
-    1.0,
-    1.0,
-    1.0,
-    1.0000000000000016,
-    1.0,
-    1.0000000000000016,
-];
-static B_ARRAY_F64: [f64; 12] = [
-    1.0,
-    1.0000000000000016,
-    1.0,
-    1.0,
-    1.0,
-    1.0000000000000016,
-    1.0,
-    1.0000000000000016,
-    1.0,
-    1.0,
-    1.0,
-    1.0000000000000016,
-];
-static C_ARRAY_F64: [f64; 12] = [
-    1.1,
-    1.0,
-    1.0,
-    1.0000000000000016,
-    1.0,
-    1.0000000000000016,
-    1.0,
-    1.0,
-    1.1,
-    1.0000000000000016,
-    1.0,
-    1.0000000000000016,
-];
+mock!(
+    #[derive(Debug)]
+    Lhs{}
 
-macro_rules! get_value {
-    (f32, "a", $size: tt) => {
-        tuple_from_array!(A_ARRAY_F32, $size)
+    impl EpsTolerance<Rhs> for Lhs {
+        type T = f32;
+        const DEFAULT: f32 = 0.01;
+    }
+
+    impl UlpsTolerance<Rhs> for Lhs {
+        type T = i32;
+        const DEFAULT: i32 = 3;
+    }
+
+    impl NearlyEqEps<Rhs> for Lhs {
+        fn nearly_eq_eps(&self, other: &Rhs, eps: EpsToleranceType<Self, Rhs>) -> bool;
+        fn nearly_ne_eps(&self, other: &Rhs, eps: EpsToleranceType<Self, Rhs>) -> bool;
+    }
+
+    impl NearlyEqUlps<Rhs> for Lhs {
+        fn nearly_eq_ulps(&self, other: &Rhs, ulps: UlpsToleranceType<Self, Rhs>) -> bool;
+        fn nearly_ne_ulps(&self, other: &Rhs, ulps: UlpsToleranceType<Self, Rhs>) -> bool;
+    }
+
+    impl NearlyEqTol<Rhs> for Lhs {
+        fn nearly_eq_tol(&self, other: &Rhs, tolerance: Tolerance<Self, Rhs>) -> bool;
+        fn nearly_ne_tol(&self, other: &Rhs, tolerance: Tolerance<Self, Rhs>) -> bool;
+    }
+
+    impl NearlyEq<Rhs> for Lhs {
+        fn nearly_eq(&self, other: &Rhs) -> bool;
+        fn nearly_ne(&self, other: &Rhs) -> bool;
+    }
+);
+
+macro_rules! lhs_type {
+    (1) => {
+        (MockLhs,)
     };
-    (f32, "b", $size: tt) => {
-        tuple_from_array!(B_ARRAY_F32, $size)
+    (2) => {
+        (MockLhs, MockLhs)
     };
-    (f32, "c", $size: tt) => {
-        tuple_from_array!(C_ARRAY_F32, $size)
+    (3) => {
+        (MockLhs, MockLhs, MockLhs)
     };
-    (f64, "a", $size: tt) => {
-        tuple_from_array!(A_ARRAY_F64, $size)
+    (4) => {
+        (MockLhs, MockLhs, MockLhs, MockLhs)
     };
-    (f64, "b", $size: tt) => {
-        tuple_from_array!(B_ARRAY_F64, $size)
+    (5) => {
+        (MockLhs, MockLhs, MockLhs, MockLhs, MockLhs)
     };
-    (f64, "c", $size: tt) => {
-        tuple_from_array!(C_ARRAY_F64, $size)
+    (6) => {
+        (MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs)
+    };
+    (7) => {
+        (
+            MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs,
+        )
+    };
+    (8) => {
+        (
+            MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs,
+        )
+    };
+    (9) => {
+        (
+            MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs,
+        )
+    };
+    (10) => {
+        (
+            MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs,
+            MockLhs,
+        )
+    };
+    (11) => {
+        (
+            MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs,
+            MockLhs, MockLhs,
+        )
+    };
+    (12) => {
+        (
+            MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs, MockLhs,
+            MockLhs, MockLhs, MockLhs,
+        )
     };
 }
 
-macro_rules! tuple_from_array {
-    ($arr: expr, 1) => {
-        ($arr[0],)
+macro_rules! rhs_type {
+    (1) => {
+        (Rhs,)
     };
-    ($arr: expr, 2) => {
-        ($arr[0], $arr[1])
+    (2) => {
+        (Rhs, Rhs)
     };
-    ($arr: expr, 3) => {
-        ($arr[0], $arr[1], $arr[2])
+    (3) => {
+        (Rhs, Rhs, Rhs)
     };
-    ($arr: expr, 4) => {
-        ($arr[0], $arr[1], $arr[2], $arr[3])
+    (4) => {
+        (Rhs, Rhs, Rhs, Rhs)
     };
-    ($arr: expr, 5) => {
-        ($arr[0], $arr[1], $arr[2], $arr[3], $arr[4])
+    (5) => {
+        (Rhs, Rhs, Rhs, Rhs, Rhs)
     };
-    ($arr: expr, 6) => {
-        ($arr[0], $arr[1], $arr[2], $arr[3], $arr[4], $arr[5])
+    (6) => {
+        (Rhs, Rhs, Rhs, Rhs, Rhs, Rhs)
     };
-    ($arr: expr, 7) => {
+    (7) => {
+        (Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs)
+    };
+    (8) => {
+        (Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs)
+    };
+    (9) => {
+        (Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs)
+    };
+    (10) => {
+        (Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs)
+    };
+    (11) => {
+        (Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs)
+    };
+    (12) => {
+        (Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs, Rhs)
+    };
+}
+
+macro_rules! lhs_value {
+    (1) => {
+        (MockLhs::new(),)
+    };
+    (2) => {
+        (MockLhs::new(), MockLhs::new())
+    };
+    (3) => {
+        (MockLhs::new(), MockLhs::new(), MockLhs::new())
+    };
+    (4) => {
         (
-            $arr[0], $arr[1], $arr[2], $arr[3], $arr[4], $arr[5], $arr[6],
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
         )
     };
-    ($arr: expr, 8) => {
+    (5) => {
         (
-            $arr[0], $arr[1], $arr[2], $arr[3], $arr[4], $arr[5], $arr[6], $arr[7],
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
         )
     };
-    ($arr: expr, 9) => {
+    (6) => {
         (
-            $arr[0], $arr[1], $arr[2], $arr[3], $arr[4], $arr[5], $arr[6], $arr[7], $arr[8],
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
         )
     };
-    ($arr: expr, 10) => {
+    (7) => {
         (
-            $arr[0], $arr[1], $arr[2], $arr[3], $arr[4], $arr[5], $arr[6], $arr[7], $arr[8],
-            $arr[9],
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
         )
     };
-    ($arr: expr, 11) => {
+    (8) => {
         (
-            $arr[0], $arr[1], $arr[2], $arr[3], $arr[4], $arr[5], $arr[6], $arr[7], $arr[8],
-            $arr[9], $arr[10],
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
         )
     };
-    ($arr: expr, 12) => {
+    (9) => {
         (
-            $arr[0], $arr[1], $arr[2], $arr[3], $arr[4], $arr[5], $arr[6], $arr[7], $arr[8],
-            $arr[9], $arr[10], $arr[11],
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
         )
     };
+    (10) => {
+        (
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+        )
+    };
+    (11) => {
+        (
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+        )
+    };
+    (12) => {
+        (
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+            MockLhs::new(),
+        )
+    };
+}
+
+macro_rules! rhs_value {
+    (1) => {
+        (Rhs(0),)
+    };
+    (2) => {
+        (Rhs(0), Rhs(1))
+    };
+    (3) => {
+        (Rhs(0), Rhs(1), Rhs(2))
+    };
+    (4) => {
+        (Rhs(0), Rhs(1), Rhs(2), Rhs(3))
+    };
+    (5) => {
+        (Rhs(0), Rhs(1), Rhs(2), Rhs(3), Rhs(4))
+    };
+    (6) => {
+        (Rhs(0), Rhs(1), Rhs(2), Rhs(3), Rhs(4), Rhs(5))
+    };
+    (7) => {
+        (Rhs(0), Rhs(1), Rhs(2), Rhs(3), Rhs(4), Rhs(5), Rhs(6))
+    };
+    (8) => {
+        (
+            Rhs(0),
+            Rhs(1),
+            Rhs(2),
+            Rhs(3),
+            Rhs(4),
+            Rhs(5),
+            Rhs(6),
+            Rhs(7),
+        )
+    };
+    (9) => {
+        (
+            Rhs(0),
+            Rhs(1),
+            Rhs(2),
+            Rhs(3),
+            Rhs(4),
+            Rhs(5),
+            Rhs(6),
+            Rhs(7),
+            Rhs(8),
+        )
+    };
+    (10) => {
+        (
+            Rhs(0),
+            Rhs(1),
+            Rhs(2),
+            Rhs(3),
+            Rhs(4),
+            Rhs(5),
+            Rhs(6),
+            Rhs(7),
+            Rhs(8),
+            Rhs(9),
+        )
+    };
+    (11) => {
+        (
+            Rhs(0),
+            Rhs(1),
+            Rhs(2),
+            Rhs(3),
+            Rhs(4),
+            Rhs(5),
+            Rhs(6),
+            Rhs(7),
+            Rhs(8),
+            Rhs(9),
+            Rhs(10),
+        )
+    };
+    (12) => {
+        (
+            Rhs(0),
+            Rhs(1),
+            Rhs(2),
+            Rhs(3),
+            Rhs(4),
+            Rhs(5),
+            Rhs(6),
+            Rhs(7),
+            Rhs(8),
+            Rhs(9),
+            Rhs(10),
+            Rhs(11),
+        )
+    };
+}
+
+macro_rules! expect_call {
+    ($tuple: ident, $seq: ident, $func: ident, $ret: expr, $tol: expr, $idx: tt) => {
+        expect_call!(@impl $tuple, $seq, $func, $ret, $tol, $idx);
+    };
+    ($tuple: ident, $seq: ident, $func: ident, $ret: expr, $tol: expr, $idx: tt $( $idx_tail: tt )+) => {
+        expect_call!($tuple, $seq, $func, $ret, $tol, $( $idx_tail )+);
+        expect_call!(@impl $tuple, $seq, $func, $ret, $tol, $idx);
+    };
+    (@impl $tuple: ident, $seq: ident, $func: ident, $ret: expr, $tol: expr, $( $idx: tt )+) => {
+        $($tuple.$idx.$func()
+            .with(eq(Rhs($idx)), eq($tol))
+            .times(1)
+            .in_sequence(&mut $seq)
+            .return_const($ret))+;
+    }
+}
+
+macro_rules! expect_no_call {
+    ($tuple: ident, $func: ident, $idx: tt) => {
+        expect_no_call!(@impl $tuple, $func, $idx);
+    };
+    ($tuple: ident, $func: ident, $idx: tt $( $idx_tail: tt )+) => {
+        expect_no_call!($tuple, $func, $( $idx_tail )+);
+        expect_no_call!(@impl $tuple, $func, $idx);
+    };
+    (@impl $tuple: ident, $func: ident, $( $idx: tt )+) => {
+        $($tuple.$idx.$func().times(0);)+
+    }
+}
+
+macro_rules! checkpoint {
+    ($tuple: ident, $idx: tt) => {
+        checkpoint!(@impl $tuple, $idx);
+    };
+    ($tuple: ident, $idx: tt $( $idx_tail: tt )+) => {
+        checkpoint!($tuple, $( $idx_tail )+);
+        checkpoint!(@impl $tuple, $idx);
+    };
+    (@impl $tuple: ident, $( $idx: tt )+) => {
+        $($tuple.$idx.checkpoint();)+
+    }
 }
 
 macro_rules! impl_test {
-    ($macro: ident, $type:ident, $size: tt) => {
-        $macro!($type, $size);
-    };
-    ($macro: ident, $type:ident $( $typeTail:ident )+, $size:tt $( $sizeTail:tt )+) => {
-        impl_test!($macro, $( $typeTail )+, $( $sizeTail )+);
-        $macro!($type $( $typeTail )+, $size);
-    };
-}
-
-macro_rules! impl_test_f32 {
-    ($( $type: ident )+, $size: tt) => {
+    ($func: ident, $tol: expr) => {
         paste! {
             #[test]
-            fn [<nearly_eq_eps_tuple $size _f32>]() {
-                let a: ($($type,)+) = get_value!(f32, "a", $size);
-                let b: ($($type,)+) = get_value!(f32, "b", $size);
-                assert_ne!(a, b);
+            fn [<$func _tuple_1>]() {
+                let mut a: lhs_type!(1) = lhs_value!(1);
+                let b: rhs_type!(1) = rhs_value!(1);
+                let mut seq = Sequence::new();
 
-                assert!(!a.nearly_eq_eps(&b, 0.0000007));
-                assert!(!b.nearly_eq_eps(&a, 0.0000007));
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 0);
+                assert!(a.$func(&b, $tol));
+                checkpoint!(a, 0);
 
-                assert!(a.nearly_eq_eps(&b, 0.0000009));
-                assert!(b.nearly_eq_eps(&a, 0.0000009));
-
-                assert!(a.nearly_eq_eps(&b, 0.0000011));
-                assert!(b.nearly_eq_eps(&a, 0.0000011));
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0);
             }
 
             #[test]
-            fn [<nearly_ne_eps_tuple $size _f32>]() {
-                let a: ($($type,)+) = get_value!(f32, "a", $size);
-                let b: ($($type,)+) = get_value!(f32, "b", $size);
-                assert_ne!(a, b);
+            fn [<$func _tuple_2>]() {
+                let mut a: lhs_type!(2) = lhs_value!(2);
+                let b: rhs_type!(2) = rhs_value!(2);
+                let mut seq = Sequence::new();
 
-                assert!(a.nearly_ne_eps(&b, 0.0000007));
-                assert!(b.nearly_ne_eps(&a, 0.0000007));
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1);
+                assert!(a.$func(&b, $tol));
+                checkpoint!(a, 0 1);
 
-                assert!(!a.nearly_ne_eps(&b, 0.0000009));
-                assert!(!b.nearly_ne_eps(&a, 0.0000009));
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
+                expect_no_call!(a, [<expect_$func>], 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1);
 
-                assert!(!a.nearly_ne_eps(&b, 0.0000011));
-                assert!(!b.nearly_ne_eps(&a, 0.0000011));
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 1);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1);
             }
 
             #[test]
-            fn [<nearly_eq_ulps_tuple $size _f32>]() {
-                let a: ($($type,)+) = get_value!(f32, "a", $size);
-                let b: ($($type,)+) = get_value!(f32, "b", $size);
-                assert_ne!(a, b);
+            fn [<$func _tuple_3>]() {
+                let mut a: lhs_type!(3) = lhs_value!(3);
+                let b: rhs_type!(3) = rhs_value!(3);
+                let mut seq = Sequence::new();
 
-                assert!(!a.nearly_eq_ulps(&b, 6));
-                assert!(!b.nearly_eq_ulps(&a, 6));
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2);
+                assert!(a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2);
 
-                assert!(a.nearly_eq_ulps(&b, 7));
-                assert!(b.nearly_eq_ulps(&a, 7));
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
+                expect_no_call!(a, [<expect_$func>], 0 1);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2);
 
-                assert!(a.nearly_eq_ulps(&b, 8));
-                assert!(b.nearly_eq_ulps(&a, 8));
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 2);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
+                expect_no_call!(a, [<expect_$func>], 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2);
             }
 
             #[test]
-            fn [<nearly_ne_ulps_tuple $size _f32>]() {
-                let a: ($($type,)+) = get_value!(f32, "a", $size);
-                let b: ($($type,)+) = get_value!(f32, "b", $size);
-                assert_ne!(a, b);
+            fn [<$func _tuple_4>]() {
+                let mut a: lhs_type!(4) = lhs_value!(4);
+                let b: rhs_type!(4) = rhs_value!(4);
+                let mut seq = Sequence::new();
 
-                assert!(a.nearly_ne_ulps(&b, 6));
-                assert!(b.nearly_ne_ulps(&a, 6));
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3);
+                assert!(a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3);
 
-                assert!(!a.nearly_ne_ulps(&b, 7));
-                assert!(!b.nearly_ne_ulps(&a, 7));
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
+                expect_no_call!(a, [<expect_$func>], 0 1 2);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3);
 
-                assert!(!a.nearly_ne_ulps(&b, 8));
-                assert!(!b.nearly_ne_ulps(&a, 8));
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 3);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
+                expect_no_call!(a, [<expect_$func>], 0 1);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
+                expect_no_call!(a, [<expect_$func>], 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3);
             }
 
             #[test]
-            fn [<nearly_eq_tol_tuple $size _f32>]() {
-                let a: ($($type,)+) = get_value!(f32, "a", $size);
-                let b: ($($type,)+) = get_value!(f32, "b", $size);
-                assert_ne!(a, b);
+            fn [<$func _tuple_5>]() {
+                let mut a: lhs_type!(5) = lhs_value!(5);
+                let b: rhs_type!(5) = rhs_value!(5);
+                let mut seq = Sequence::new();
 
-                assert!(!a.nearly_eq_tol(&b, ToleranceF32::new(0.0, 6)));
-                assert!(!a.nearly_eq_tol(&b, ToleranceF32::new(0.0000007, 0)));
-                assert!(!b.nearly_eq_tol(&a, ToleranceF32::new(0.0, 6)));
-                assert!(!b.nearly_eq_tol(&a, ToleranceF32::new(0.0000007, 0)));
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4);
+                assert!(a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4);
 
-                assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.0, 7)));
-                assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.0000009, 0)));
-                assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.0, 7)));
-                assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.0000009, 0)));
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4);
 
-                assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.0, 8)));
-                assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.0000011, 0)));
-                assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.0, 8)));
-                assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.0000011, 0)));
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 4);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
+                expect_no_call!(a, [<expect_$func>], 0 1 2);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
+                expect_no_call!(a, [<expect_$func>], 0 1);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
+                expect_no_call!(a, [<expect_$func>], 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4);
             }
 
             #[test]
-            fn [<nearly_ne_tol_tuple $size _f32>]() {
-                let a: ($($type,)+) = get_value!(f32, "a", $size);
-                let b: ($($type,)+) = get_value!(f32, "b", $size);
-                assert_ne!(a, b);
+            fn [<$func _tuple_6>]() {
+                let mut a: lhs_type!(6) = lhs_value!(6);
+                let b: rhs_type!(6) = rhs_value!(6);
+                let mut seq = Sequence::new();
 
-                assert!(a.nearly_ne_tol(&b, ToleranceF32::new(0.0, 6)));
-                assert!(a.nearly_ne_tol(&b, ToleranceF32::new(0.0000007, 0)));
-                assert!(b.nearly_ne_tol(&a, ToleranceF32::new(0.0, 6)));
-                assert!(b.nearly_ne_tol(&a, ToleranceF32::new(0.0000007, 0)));
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5);
+                assert!(a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5);
 
-                assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.0, 7)));
-                assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.0000009, 0)));
-                assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.0, 7)));
-                assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.0000009, 0)));
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5);
 
-                assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.0, 8)));
-                assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.0000011, 0)));
-                assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.0, 8)));
-                assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.0000011, 0)));
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 5);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
+                expect_no_call!(a, [<expect_$func>], 0 1 2);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
+                expect_no_call!(a, [<expect_$func>], 0 1);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
+                expect_no_call!(a, [<expect_$func>], 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5);
             }
 
             #[test]
-            fn [<nearly_eq_tuple $size _f32>]() {
-                {
-                    let a: ($($type,)+) = get_value!(f32, "a", $size);
-                    let b: ($($type,)+) = get_value!(f32, "b", $size);
-                    assert_ne!(a, b);
+            fn [<$func _tuple_7>]() {
+                let mut a: lhs_type!(7) = lhs_value!(7);
+                let b: rhs_type!(7) = rhs_value!(7);
+                let mut seq = Sequence::new();
 
-                    assert!(a.nearly_eq(&b));
-                    assert!(b.nearly_eq(&a));
-                }
-                {
-                    let a: ($($type,)+) = get_value!(f32, "a", $size);
-                    let c: ($($type,)+) = get_value!(f32, "c", $size);
-                    assert_ne!(a, c);
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5 6);
+                assert!(a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6);
 
-                    assert!(!a.nearly_eq(&c));
-                    assert!(!c.nearly_eq(&a));
-                }
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 6);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 6);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 5 6);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5 6);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
+                expect_no_call!(a, [<expect_$func>], 0 1 2);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5 6);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
+                expect_no_call!(a, [<expect_$func>], 0 1);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5 6);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
+                expect_no_call!(a, [<expect_$func>], 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5 6);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6);
             }
 
             #[test]
-            fn [<nearly_ne_tuple $size _f32>]() {
-                {
-                    let a: ($($type,)+) = get_value!(f32, "a", $size);
-                    let b: ($($type,)+) = get_value!(f32, "b", $size);
-                    assert_ne!(a, b);
+            fn [<$func _tuple_8>]() {
+                let mut a: lhs_type!(8) = lhs_value!(8);
+                let b: rhs_type!(8) = rhs_value!(8);
+                let mut seq = Sequence::new();
 
-                    assert!(!a.nearly_ne(&b));
-                    assert!(!b.nearly_ne(&a));
-                }
-                {
-                    let a: ($($type,)+) = get_value!(f32, "a", $size);
-                    let c: ($($type,)+) = get_value!(f32, "c", $size);
-                    assert_ne!(a, c);
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5 6 7);
+                assert!(a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7);
 
-                    assert!(a.nearly_ne(&c));
-                    assert!(c.nearly_ne(&a));
-                }
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 7);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 7);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 6);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 6 7);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 5 6 7);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5 6 7);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
+                expect_no_call!(a, [<expect_$func>], 0 1 2);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5 6 7);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
+                expect_no_call!(a, [<expect_$func>], 0 1);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5 6 7);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
+                expect_no_call!(a, [<expect_$func>], 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5 6 7);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7);
+            }
+
+            #[test]
+            fn [<$func _tuple_9>]() {
+                let mut a: lhs_type!(9) = lhs_value!(9);
+                let b: rhs_type!(9) = rhs_value!(9);
+                let mut seq = Sequence::new();
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5 6 7 8);
+                assert!(a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8);
+
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 8);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 8);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 7);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 7 8);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 6);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 6 7 8);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 5 6 7 8);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5 6 7 8);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
+                expect_no_call!(a, [<expect_$func>], 0 1 2);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5 6 7 8);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
+                expect_no_call!(a, [<expect_$func>], 0 1);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5 6 7 8);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
+                expect_no_call!(a, [<expect_$func>], 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5 6 7 8);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8);
+            }
+
+            #[test]
+            fn [<$func _tuple_10>]() {
+                let mut a: lhs_type!(10) = lhs_value!(10);
+                let b: rhs_type!(10) = rhs_value!(10);
+                let mut seq = Sequence::new();
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5 6 7 8 9);
+                assert!(a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
+
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 9);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7 8);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 9);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 8);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 8 9);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 7);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 7 8 9);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 6);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 6 7 8 9);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 5 6 7 8 9);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5 6 7 8 9);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
+                expect_no_call!(a, [<expect_$func>], 0 1 2);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5 6 7 8 9);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
+                expect_no_call!(a, [<expect_$func>], 0 1);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5 6 7 8 9);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
+                expect_no_call!(a, [<expect_$func>], 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5 6 7 8 9);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
+            }
+
+            #[test]
+            fn [<$func _tuple_11>]() {
+                let mut a: lhs_type!(11) = lhs_value!(11);
+                let b: rhs_type!(11) = rhs_value!(11);
+                let mut seq = Sequence::new();
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5 6 7 8 9 10);
+                assert!(a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
+
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 10);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7 8 9);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 10);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 9);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7 8);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 9 10);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 8);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 8 9 10);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 7);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 7 8 9 10);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 6);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 6 7 8 9 10);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 5 6 7 8 9 10);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5 6 7 8 9 10);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
+                expect_no_call!(a, [<expect_$func>], 0 1 2);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5 6 7 8 9 10);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
+                expect_no_call!(a, [<expect_$func>], 0 1);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5 6 7 8 9 10);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
+                expect_no_call!(a, [<expect_$func>], 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5 6 7 8 9 10);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
+            }
+
+            #[test]
+            fn [<$func _tuple_12>]() {
+                let mut a: lhs_type!(12) = lhs_value!(12);
+                let b: rhs_type!(12) = rhs_value!(12);
+                let mut seq = Sequence::new();
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5 6 7 8 9 10 11);
+                assert!(a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
+
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 11);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7 8 9 10);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 11);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 10);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7 8 9);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 10 11);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 9);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7 8);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 9 10 11);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 8);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 8 9 10 11);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 7);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 7 8 9 10 11);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 6);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 6 7 8 9 10 11);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 5 6 7 8 9 10 11);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
+                expect_no_call!(a, [<expect_$func>], 0 1 2 3);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5 6 7 8 9 10 11);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
+                expect_no_call!(a, [<expect_$func>], 0 1 2);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5 6 7 8 9 10 11);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
+                expect_no_call!(a, [<expect_$func>], 0 1);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5 6 7 8 9 10 11);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
+                expect_no_call!(a, [<expect_$func>], 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
+
+                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5 6 7 8 9 10 11);
+                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
+                assert!(!a.$func(&b, $tol));
+                checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
             }
         }
-    }
+    };
 }
 
-macro_rules! impl_test_f64 {
-    ($( $type: ident )+, $size: tt) => {
-        paste! {
-            #[test]
-            fn [<nearly_eq_eps_tuple $size _f64>]() {
-                let a: ($($type,)+) = get_value!(f64, "a", $size);
-                let b: ($($type,)+) = get_value!(f64, "b", $size);
-                assert_ne!(a, b);
-
-                assert!(!a.nearly_eq_eps(&b, 0.000000000000001));
-                assert!(!b.nearly_eq_eps(&a, 0.000000000000001));
-
-                assert!(a.nearly_eq_eps(&b, 0.0000000000000016));
-                assert!(b.nearly_eq_eps(&a, 0.0000000000000016));
-
-                assert!(a.nearly_eq_eps(&b, 0.000000000000002));
-                assert!(b.nearly_eq_eps(&a, 0.000000000000002));
-            }
-
-            #[test]
-            fn [<nearly_ne_eps_tuple $size _f64>]() {
-                let a: ($($type,)+) = get_value!(f64, "a", $size);
-                let b: ($($type,)+) = get_value!(f64, "b", $size);
-                assert_ne!(a, b);
-
-                assert!(a.nearly_ne_eps(&b, 0.000000000000001));
-                assert!(b.nearly_ne_eps(&a, 0.000000000000001));
-
-                assert!(!a.nearly_ne_eps(&b, 0.0000000000000016));
-                assert!(!b.nearly_ne_eps(&a, 0.0000000000000016));
-
-                assert!(!a.nearly_ne_eps(&b, 0.000000000000002));
-                assert!(!b.nearly_ne_eps(&a, 0.000000000000002));
-            }
-
-            #[test]
-            fn [<nearly_eq_ulps_tuple $size _f64>]() {
-                let a: ($($type,)+) = get_value!(f64, "a", $size);
-                let b: ($($type,)+) = get_value!(f64, "b", $size);
-                assert_ne!(a, b);
-
-                assert!(!a.nearly_eq_ulps(&b, 6));
-                assert!(!b.nearly_eq_ulps(&a, 6));
-
-                assert!(a.nearly_eq_ulps(&b, 7));
-                assert!(b.nearly_eq_ulps(&a, 7));
-
-                assert!(a.nearly_eq_ulps(&b, 8));
-                assert!(b.nearly_eq_ulps(&a, 8));
-            }
-
-            #[test]
-            fn [<nearly_ne_ulps_tuple $size _f64>]() {
-                let a: ($($type,)+) = get_value!(f64, "a", $size);
-                let b: ($($type,)+) = get_value!(f64, "b", $size);
-                assert_ne!(a, b);
-
-                assert!(a.nearly_ne_ulps(&b, 6));
-                assert!(b.nearly_ne_ulps(&a, 6));
-
-                assert!(!a.nearly_ne_ulps(&b, 7));
-                assert!(!b.nearly_ne_ulps(&a, 7));
-
-                assert!(!a.nearly_ne_ulps(&b, 8));
-                assert!(!b.nearly_ne_ulps(&a, 8));
-            }
-
-            #[test]
-            fn [<nearly_eq_tol_tuple $size _f64>]() {
-                let a: ($($type,)+) = get_value!(f64, "a", $size);
-                let b: ($($type,)+) = get_value!(f64, "b", $size);
-                assert_ne!(a, b);
-
-                assert!(!a.nearly_eq_tol(&b, ToleranceF64::new(0.0, 6)));
-                assert!(!a.nearly_eq_tol(&b, ToleranceF64::new(0.000000000000001, 0)));
-                assert!(!b.nearly_eq_tol(&a, ToleranceF64::new(0.0, 6)));
-                assert!(!b.nearly_eq_tol(&a, ToleranceF64::new(0.000000000000001, 0)));
-
-                assert!(a.nearly_eq_tol(&b, ToleranceF64::new(0.0, 7)));
-                assert!(a.nearly_eq_tol(&b, ToleranceF64::new(0.0000000000000016, 0)));
-                assert!(b.nearly_eq_tol(&a, ToleranceF64::new(0.0, 7)));
-                assert!(b.nearly_eq_tol(&a, ToleranceF64::new(0.0000000000000016, 0)));
-
-                assert!(a.nearly_eq_tol(&b, ToleranceF64::new(0.0, 8)));
-                assert!(a.nearly_eq_tol(&b, ToleranceF64::new(0.000000000000002, 0)));
-                assert!(b.nearly_eq_tol(&a, ToleranceF64::new(0.0, 8)));
-                assert!(b.nearly_eq_tol(&a, ToleranceF64::new(0.000000000000002, 0)));
-            }
-
-            #[test]
-            fn [<nearly_ne_tol_tuple $size _f64>]() {
-                let a: ($($type,)+) = get_value!(f64, "a", $size);
-                let b: ($($type,)+) = get_value!(f64, "b", $size);
-                assert_ne!(a, b);
-
-                assert!(a.nearly_ne_tol(&b, ToleranceF64::new(0.0, 6)));
-                assert!(a.nearly_ne_tol(&b, ToleranceF64::new(0.000000000000001, 0)));
-                assert!(b.nearly_ne_tol(&a, ToleranceF64::new(0.0, 6)));
-                assert!(b.nearly_ne_tol(&a, ToleranceF64::new(0.000000000000001, 0)));
-
-                assert!(!a.nearly_ne_tol(&b, ToleranceF64::new(0.0, 7)));
-                assert!(!a.nearly_ne_tol(&b, ToleranceF64::new(0.0000000000000016, 0)));
-                assert!(!b.nearly_ne_tol(&a, ToleranceF64::new(0.0, 7)));
-                assert!(!b.nearly_ne_tol(&a, ToleranceF64::new(0.0000000000000016, 0)));
-
-                assert!(!a.nearly_ne_tol(&b, ToleranceF64::new(0.0, 8)));
-                assert!(!a.nearly_ne_tol(&b, ToleranceF64::new(0.000000000000002, 0)));
-                assert!(!b.nearly_ne_tol(&a, ToleranceF64::new(0.0, 8)));
-                assert!(!b.nearly_ne_tol(&a, ToleranceF64::new(0.000000000000002, 0)));
-            }
-
-            #[test]
-            fn [<nearly_eq_tuple $size _f64>]() {
-                {
-                    let a: ($($type,)+) = get_value!(f64, "a", $size);
-                    let b: ($($type,)+) = get_value!(f64, "b", $size);
-                    assert_ne!(a, b);
-
-                    assert!(a.nearly_eq(&b));
-                    assert!(b.nearly_eq(&a));
-                }
-                {
-                    let a: ($($type,)+) = get_value!(f64, "a", $size);
-                    let c: ($($type,)+) = get_value!(f64, "c", $size);
-                    assert_ne!(a, c);
-
-                    assert!(!a.nearly_eq(&c));
-                    assert!(!c.nearly_eq(&a));
-                }
-            }
-
-            #[test]
-            fn [<nearly_ne_tuple $size _f64>]() {
-                {
-                    let a: ($($type,)+) = get_value!(f64, "a", $size);
-                    let b: ($($type,)+) = get_value!(f64, "b", $size);
-                    assert_ne!(a, b);
-
-                    assert!(!a.nearly_ne(&b));
-                    assert!(!b.nearly_ne(&a));
-                }
-                {
-                    let a: ($($type,)+) = get_value!(f64, "a", $size);
-                    let c: ($($type,)+) = get_value!(f64, "c", $size);
-                    assert_ne!(a, c);
-
-                    assert!(a.nearly_ne(&c));
-                    assert!(c.nearly_ne(&a));
-                }
-            }
-        }
-    }
-}
-
-impl_test!(
-    impl_test_f32,
-    f32 f32 f32 f32 f32 f32 f32 f32 f32 f32 f32 f32,
-    12 11 10 9 8 7 6 5 4 3 2 1);
-
-impl_test!(
-    impl_test_f64,
-    f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64 f64,
-    12 11 10 9 8 7 6 5 4 3 2 1);
+impl_test!(nearly_eq_eps, 0.1);
+impl_test!(nearly_eq_ulps, 5);
