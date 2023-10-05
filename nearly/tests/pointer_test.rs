@@ -1,332 +1,159 @@
-#[cfg(feature = "std")]
-mod std_types {
-    use nearly::{NearlyEq, NearlyEqEps, NearlyEqTol, NearlyEqUlps};
-    use nearly::{ToleranceF32, ToleranceF64};
-    use paste::paste;
+#![cfg(feature = "std")]
 
-    use std::boxed::Box;
-    use std::rc::Rc;
-    use std::sync::Arc;
+use mockall::mock;
+use mockall::predicate::eq;
+use nearly::{
+    EpsTolerance, EpsToleranceType, NearlyEq, NearlyEqEps, NearlyEqTol, NearlyEqUlps, Tolerance,
+    UlpsTolerance, UlpsToleranceType,
+};
+use paste::paste;
+use std::boxed::Box;
+use std::pin::Pin;
+use std::rc::Rc;
+use std::sync::Arc;
 
-    use std::pin::Pin;
+#[derive(Debug, PartialEq)]
+struct Rhs(i32);
 
-    macro_rules! impl_test_f32 {
-        ($ptr: ty, $name: expr, [$($ref:tt)*]) => {
-            paste! {
-                #[test]
-                fn [<nearly_eq_eps_ $name _f32>]() {
-                    let a: $ptr = $ptr::new($($ref)* 1.0_f32);
-                    let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
-                    assert_ne!(a, b);
+mock!(
+    #[derive(Debug)]
+    Lhs{}
 
-                    assert!(!a.nearly_eq_eps(&b, 0.0000007));
-                    assert!(!b.nearly_eq_eps(&a, 0.0000007));
-
-                    assert!(a.nearly_eq_eps(&b, 0.0000009));
-                    assert!(b.nearly_eq_eps(&a, 0.0000009));
-
-                    assert!(a.nearly_eq_eps(&b, 0.0000011));
-                    assert!(b.nearly_eq_eps(&a, 0.0000011));
-                }
-
-                #[test]
-                fn [<nearly_ne_eps_ $name _f32>]() {
-                    let a: $ptr = $ptr::new($($ref)* 1.0_f32);
-                    let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
-                    assert_ne!(a, b);
-
-                    assert!(a.nearly_ne_eps(&b, 0.0000007));
-                    assert!(b.nearly_ne_eps(&a, 0.0000007));
-
-                    assert!(!a.nearly_ne_eps(&b, 0.0000009));
-                    assert!(!b.nearly_ne_eps(&a, 0.0000009));
-
-                    assert!(!a.nearly_ne_eps(&b, 0.0000011));
-                    assert!(!b.nearly_ne_eps(&a, 0.0000011));
-                }
-
-                #[test]
-                fn [<nearly_eq_ulps_ $name _f32>]() {
-                    let a: $ptr = $ptr::new($($ref)* 1.0_f32);
-                    let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
-                    assert_ne!(a, b);
-
-                    assert!(!a.nearly_eq_ulps(&b, 6));
-                    assert!(!b.nearly_eq_ulps(&a, 6));
-
-                    assert!(a.nearly_eq_ulps(&b, 7));
-                    assert!(b.nearly_eq_ulps(&a, 7));
-
-                    assert!(a.nearly_eq_ulps(&b, 8));
-                    assert!(b.nearly_eq_ulps(&a, 8));
-                }
-
-                #[test]
-                fn [<nearly_ne_ulps_ $name _f32>]() {
-                    let a: $ptr = $ptr::new($($ref)* 1.0_f32);
-                    let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
-                    assert_ne!(a, b);
-
-                    assert!(a.nearly_ne_ulps(&b, 6));
-                    assert!(b.nearly_ne_ulps(&a, 6));
-
-                    assert!(!a.nearly_ne_ulps(&b, 7));
-                    assert!(!b.nearly_ne_ulps(&a, 7));
-
-                    assert!(!a.nearly_ne_ulps(&b, 8));
-                    assert!(!b.nearly_ne_ulps(&a, 8));
-                }
-
-                #[test]
-                fn [<nearly_eq_tol_ $name _f32>]() {
-                    let a: $ptr = $ptr::new($($ref)* 1.0_f32);
-                    let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
-                    assert_ne!(a, b);
-
-                    assert!(!a.nearly_eq_tol(&b, ToleranceF32::new(0.0, 6)));
-                    assert!(!a.nearly_eq_tol(&b, ToleranceF32::new(0.0000007, 0)));
-                    assert!(!b.nearly_eq_tol(&a, ToleranceF32::new(0.0, 6)));
-                    assert!(!b.nearly_eq_tol(&a, ToleranceF32::new(0.0000007, 0)));
-
-                    assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.0, 7)));
-                    assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.0000009, 0)));
-                    assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.0, 7)));
-                    assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.0000009, 0)));
-
-                    assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.0, 8)));
-                    assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.0000011, 0)));
-                    assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.0, 8)));
-                    assert!(b.nearly_eq_tol(&a, ToleranceF32::new(0.0000011, 0)));
-                }
-
-                #[test]
-                fn [<nearly_ne_tol_ $name _f32>]() {
-                    let a: $ptr = $ptr::new($($ref)* 1.0_f32);
-                    let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
-                    assert_ne!(a, b);
-
-                    assert!(a.nearly_ne_tol(&b, ToleranceF32::new(0.0, 6)));
-                    assert!(a.nearly_ne_tol(&b, ToleranceF32::new(0.0000007, 0)));
-                    assert!(b.nearly_ne_tol(&a, ToleranceF32::new(0.0, 6)));
-                    assert!(b.nearly_ne_tol(&a, ToleranceF32::new(0.0000007, 0)));
-
-                    assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.0, 7)));
-                    assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.0000009, 0)));
-                    assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.0, 7)));
-                    assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.0000009, 0)));
-
-                    assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.0, 8)));
-                    assert!(!a.nearly_ne_tol(&b, ToleranceF32::new(0.0000011, 0)));
-                    assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.0, 8)));
-                    assert!(!b.nearly_ne_tol(&a, ToleranceF32::new(0.0000011, 0)));
-                }
-
-                #[test]
-                fn [<nearly_eq_ $name _f32>]() {
-                    {
-                        let a: $ptr = $ptr::new($($ref)* 1.0_f32);
-                        let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
-                        assert_ne!(a, b);
-
-                        assert!(a.nearly_eq(&b));
-                        assert!(b.nearly_eq(&a));
-                    }
-                    {
-                        let a: $ptr = $ptr::new($($ref)* 1.0_f32);
-                        let b: $ptr = $ptr::new($($ref)* 1.1_f32);
-                        assert_ne!(a, b);
-
-                        assert!(!a.nearly_eq(&b));
-                        assert!(!b.nearly_eq(&a));
-                    }
-                }
-
-                #[test]
-                fn [<nearly_ne_ $name _f32>]() {
-                    {
-                        let a: $ptr = $ptr::new($($ref)* 1.0_f32);
-                        let b: $ptr = $ptr::new($($ref)* 1.0000008_f32);
-                        assert_ne!(a, b);
-
-                        assert!(!a.nearly_ne(&b));
-                        assert!(!b.nearly_ne(&a));
-                    }
-                    {
-                        let a: $ptr = $ptr::new($($ref)* 1.0_f32);
-                        let b: $ptr = $ptr::new($($ref)* 1.1_f32);
-                        assert_ne!(a, b);
-
-                        assert!(a.nearly_ne(&b));
-                        assert!(b.nearly_ne(&a));
-                    }
-                }
-            }
-        };
+    impl EpsTolerance<Rhs> for Lhs {
+        type T = f32;
+        const DEFAULT: f32 = 0.01;
     }
 
-    macro_rules! impl_test_f64 {
-        ($ptr: ty, $name: expr, [$($ref:tt)*]) => {
-            paste! {
-                #[test]
-                fn [<nearly_eq_eps_ $name _f64>]() {
-                    let a: $ptr = $ptr::new($($ref)* 1.0_f64);
-                    let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
-                    assert_ne!(a, b);
-
-                    assert!(!a.nearly_eq_eps(&b, 0.000000000000001));
-                    assert!(!b.nearly_eq_eps(&a, 0.000000000000001));
-
-                    assert!(a.nearly_eq_eps(&b, 0.0000000000000016));
-                    assert!(b.nearly_eq_eps(&a, 0.0000000000000016));
-
-                    assert!(a.nearly_eq_eps(&b, 0.0000000000004));
-                    assert!(b.nearly_eq_eps(&a, 0.0000000000004));
-                }
-
-                #[test]
-                fn [<nearly_ne_eps_ $name _f64>]() {
-                    let a: $ptr = $ptr::new($($ref)* 1.0_f64);
-                    let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
-                    assert_ne!(a, b);
-
-                    assert!(a.nearly_ne_eps(&b, 0.000000000000001));
-                    assert!(b.nearly_ne_eps(&a, 0.000000000000001));
-
-                    assert!(!a.nearly_ne_eps(&b, 0.0000000000000016));
-                    assert!(!b.nearly_ne_eps(&a, 0.0000000000000016));
-
-                    assert!(!a.nearly_ne_eps(&b, 0.000000000000002));
-                    assert!(!b.nearly_ne_eps(&a, 0.000000000000002));
-                }
-
-                #[test]
-                fn [<nearly_eq_ulps_ $name _f64>]() {
-                    let a: $ptr = $ptr::new($($ref)* 1.0_f64);
-                    let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
-                    assert_ne!(a, b);
-
-                    assert!(!a.nearly_eq_ulps(&b, 6));
-                    assert!(!b.nearly_eq_ulps(&a, 6));
-
-                    assert!(a.nearly_eq_ulps(&b, 7));
-                    assert!(b.nearly_eq_ulps(&a, 7));
-
-                    assert!(a.nearly_eq_ulps(&b, 8));
-                    assert!(b.nearly_eq_ulps(&a, 8));
-                }
-
-                #[test]
-                fn [<nearly_ne_ulps_ $name _f64>]() {
-                    let a: $ptr = $ptr::new($($ref)* 1.0_f64);
-                    let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
-                    assert_ne!(a, b);
-
-                    assert!(a.nearly_ne_ulps(&b, 6));
-                    assert!(b.nearly_ne_ulps(&a, 6));
-
-                    assert!(!a.nearly_ne_ulps(&b, 7));
-                    assert!(!b.nearly_ne_ulps(&a, 7));
-
-                    assert!(!a.nearly_ne_ulps(&b, 8));
-                    assert!(!b.nearly_ne_ulps(&a, 8));
-                }
-
-                #[test]
-                fn [<nearly_eq_tol_ $name _f64>]() {
-                    let a: $ptr = $ptr::new($($ref)* 1.0_f64);
-                    let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
-                    assert_ne!(a, b);
-
-                    assert!(!a.nearly_eq_tol(&b, ToleranceF64::new(0.0, 6)));
-                    assert!(!a.nearly_eq_tol(&b, ToleranceF64::new(0.000000000000001, 0)));
-                    assert!(!b.nearly_eq_tol(&a, ToleranceF64::new(0.0, 6)));
-                    assert!(!b.nearly_eq_tol(&a, ToleranceF64::new(0.000000000000001, 0)));
-
-                    assert!(a.nearly_eq_tol(&b, ToleranceF64::new(0.0, 7)));
-                    assert!(a.nearly_eq_tol(&b, ToleranceF64::new(0.0000000000000016, 0)));
-                    assert!(b.nearly_eq_tol(&a, ToleranceF64::new(0.0, 7)));
-                    assert!(b.nearly_eq_tol(&a, ToleranceF64::new(0.0000000000000016, 0)));
-
-                    assert!(a.nearly_eq_tol(&b, ToleranceF64::new(0.0, 8)));
-                    assert!(a.nearly_eq_tol(&b, ToleranceF64::new(0.000000000000002, 0)));
-                    assert!(b.nearly_eq_tol(&a, ToleranceF64::new(0.0, 8)));
-                    assert!(b.nearly_eq_tol(&a, ToleranceF64::new(0.000000000000002, 0)));
-                }
-
-                #[test]
-                fn [<nearly_ne_tol_ $name _f64>]() {
-                    let a: $ptr = $ptr::new($($ref)* 1.0_f64);
-                    let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
-                    assert_ne!(a, b);
-
-                    assert!(a.nearly_ne_tol(&b, ToleranceF64::new(0.0, 6)));
-                    assert!(a.nearly_ne_tol(&b, ToleranceF64::new(0.000000000000001, 0)));
-                    assert!(b.nearly_ne_tol(&a, ToleranceF64::new(0.0, 6)));
-                    assert!(b.nearly_ne_tol(&a, ToleranceF64::new(0.000000000000001, 0)));
-
-                    assert!(!a.nearly_ne_tol(&b, ToleranceF64::new(0.0, 7)));
-                    assert!(!a.nearly_ne_tol(&b, ToleranceF64::new(0.0000000000000016, 0)));
-                    assert!(!b.nearly_ne_tol(&a, ToleranceF64::new(0.0, 7)));
-                    assert!(!b.nearly_ne_tol(&a, ToleranceF64::new(0.0000000000000016, 0)));
-
-                    assert!(!a.nearly_ne_tol(&b, ToleranceF64::new(0.0, 8)));
-                    assert!(!a.nearly_ne_tol(&b, ToleranceF64::new(0.000000000000002, 0)));
-                    assert!(!b.nearly_ne_tol(&a, ToleranceF64::new(0.0, 8)));
-                    assert!(!b.nearly_ne_tol(&a, ToleranceF64::new(0.000000000000002, 0)));
-                }
-
-                #[test]
-                fn [<nearly_eq_ $name _f64>]() {
-                    {
-                        let a: $ptr = $ptr::new($($ref)* 1.0_f64);
-                        let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
-                        assert_ne!(a, b);
-
-                        assert!(a.nearly_eq(&b));
-                        assert!(b.nearly_eq(&a));
-                    }
-                    {
-                        let a: $ptr = $ptr::new($($ref)* 1.0_f64);
-                        let b: $ptr = $ptr::new($($ref)* 1.1_f64);
-                        assert_ne!(a, b);
-
-                        assert!(!a.nearly_eq(&b));
-                        assert!(!b.nearly_eq(&a));
-                    }
-                }
-
-                #[test]
-                fn [<nearly_ne_ $name _f64>]() {
-                    {
-                        let a: $ptr = $ptr::new($($ref)* 1.0_f64);
-                        let b: $ptr = $ptr::new($($ref)* 1.0000000000000016_f64);
-                        assert_ne!(a, b);
-
-                        assert!(!a.nearly_ne(&b));
-                        assert!(!b.nearly_ne(&a));
-                    }
-                    {
-                        let a: $ptr = $ptr::new($($ref)* 1.0_f64);
-                        let b: $ptr = $ptr::new($($ref)* 1.1_f64);
-                        assert_ne!(a, b);
-
-                        assert!(a.nearly_ne(&b));
-                        assert!(b.nearly_ne(&a));
-                    }
-                }
-            }
-        };
+    impl UlpsTolerance<Rhs> for Lhs {
+        type T = i32;
+        const DEFAULT: i32 = 3;
     }
 
-    impl_test_f32!(Arc::<f32>, "arc", []);
-    impl_test_f64!(Arc::<f64>, "arc", []);
+    impl NearlyEqEps<Rhs> for Lhs {
+        fn nearly_eq_eps(&self, other: &Rhs, eps: EpsToleranceType<Self, Rhs>) -> bool;
+        fn nearly_ne_eps(&self, other: &Rhs, eps: EpsToleranceType<Self, Rhs>) -> bool;
+    }
 
-    impl_test_f32!(Box::<f32>, "box", []);
-    impl_test_f64!(Box::<f64>, "box", []);
+    impl NearlyEqUlps<Rhs> for Lhs {
+        fn nearly_eq_ulps(&self, other: &Rhs, ulps: UlpsToleranceType<Self, Rhs>) -> bool;
+        fn nearly_ne_ulps(&self, other: &Rhs, ulps: UlpsToleranceType<Self, Rhs>) -> bool;
+    }
 
-    impl_test_f32!(Rc::<f32>, "rc", []);
-    impl_test_f64!(Rc::<f64>, "rc", []);
+    impl NearlyEqTol<Rhs> for Lhs {
+        fn nearly_eq_tol(&self, other: &Rhs, tolerance: Tolerance<Self, Rhs>) -> bool;
+        fn nearly_ne_tol(&self, other: &Rhs, tolerance: Tolerance<Self, Rhs>) -> bool;
+    }
 
-    impl_test_f32!(Pin::<&f32>, "pin", [&]);
-    impl_test_f64!(Pin::<&f64>, "pin", [&]);
+    impl NearlyEq<Rhs> for Lhs {
+        fn nearly_eq(&self, other: &Rhs) -> bool;
+        fn nearly_ne(&self, other: &Rhs) -> bool;
+    }
+);
+
+macro_rules! get_type {
+    ($inner: ty, arc) => {
+        Arc<$inner>
+    };
+    ($inner: ty, box) => {
+        Box<$inner>
+    };
+    ($inner: ty, rc) => {
+        Rc<$inner>
+    };
+    ($inner: ty, pin) => {
+        Pin<&$inner>
+    };
 }
+
+macro_rules! lhs_type {
+    ($ptr: tt) => {
+        get_type!(MockLhs, $ptr)
+    };
+}
+
+macro_rules! rhs_type {
+    ($ptr: tt) => {
+        get_type!(Rhs, $ptr)
+    };
+}
+
+macro_rules! lhs_value {
+    ($value: ident, pin) => {
+        <lhs_type!(pin)>::new(&$value)
+    };
+    ($value: ident, $ptr: tt) => {
+        <lhs_type!($ptr)>::new($value)
+    };
+}
+
+macro_rules! rhs_value {
+    (pin) => {
+        <rhs_type!(pin)>::new(&Rhs(5))
+    };
+    ($ptr: tt) => {
+        <rhs_type!($ptr)>::new(Rhs(5))
+    };
+}
+
+macro_rules! impl_test {
+    ($ptr: tt) => {
+        paste! {
+            #[test]
+            fn [<nearly_eq_eps_ $ptr>]() {
+                let b: rhs_type!($ptr) = rhs_value!($ptr);
+
+                {
+                    let mut a_val = MockLhs::new();
+                    a_val.expect_nearly_eq_eps()
+                        .with(eq(Rhs(5)), eq(0.1))
+                        .times(1)
+                        .return_const(true);
+                    let a: lhs_type!($ptr) = lhs_value!(a_val, $ptr);
+
+                    assert!(a.nearly_eq_eps(&b, 0.1));
+                }
+                {
+                    let mut a_val = MockLhs::new();
+                    a_val.expect_nearly_eq_eps()
+                        .with(eq(Rhs(5)), eq(0.1))
+                        .times(1)
+                        .return_const(false);
+                    let a: lhs_type!($ptr) = lhs_value!(a_val, $ptr);
+
+                    assert!(!a.nearly_eq_eps(&b, 0.1));
+                }
+            }
+
+            #[test]
+            fn [<nearly_eq_ulps_ $ptr>]() {
+                let b: rhs_type!($ptr) = rhs_value!($ptr);
+
+                {
+                    let mut a_val = MockLhs::new();
+                    a_val.expect_nearly_eq_ulps()
+                        .with(eq(Rhs(5)), eq(5))
+                        .times(1)
+                        .return_const(true);
+                    let a: lhs_type!($ptr) = lhs_value!(a_val, $ptr);
+
+                    assert!(a.nearly_eq_ulps(&b, 5));
+                }
+                {
+                    let mut a_val = MockLhs::new();
+                    a_val.expect_nearly_eq_ulps()
+                        .with(eq(Rhs(5)), eq(5))
+                        .times(1)
+                        .return_const(false);
+                    let a: lhs_type!($ptr) = lhs_value!(a_val, $ptr);
+
+                    assert!(!a.nearly_eq_ulps(&b, 5));
+                }
+            }
+        }
+    };
+}
+
+impl_test!(arc);
+impl_test!(box);
+impl_test!(rc);
+impl_test!(pin);
