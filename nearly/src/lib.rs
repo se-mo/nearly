@@ -336,6 +336,7 @@
 //! between the types itself, as shown in the first examples.
 //!
 
+
 #![cfg_attr(not(feature = "std"), no_std)]
 
 /// Asserts that the given comparison is nearly true using the provided tolerance.
@@ -367,7 +368,7 @@
 /// // use epsilon and ulps based comparison with default tolerance
 /// assert_nearly!(a == b);
 /// ```
-pub use nearly_proc::assert_nearly;
+pub use nearly_macros::assert_nearly;
 
 /// Asserts that the given comparison is nearly true using the provided tolerance.
 ///
@@ -400,7 +401,7 @@ pub use nearly_proc::assert_nearly;
 /// // use epsilon and ulps based comparison with default tolerance
 /// debug_assert_nearly!(a == b);
 /// ```
-pub use nearly_proc::debug_assert_nearly;
+pub use nearly_macros::debug_assert_nearly;
 
 /// Returns whether the given comparison is nearly true using the provided tolerance.
 ///
@@ -428,7 +429,7 @@ pub use nearly_proc::debug_assert_nearly;
 /// // use epsilon and ulps based comparison with default tolerance
 /// let eq: bool = nearly!(a == b);
 /// ```
-pub use nearly_proc::nearly;
+pub use nearly_macros::nearly;
 
 /// Derives the all nearly traits for a custom type.
 ///
@@ -489,7 +490,7 @@ pub use nearly_proc::nearly;
 /// assert_nearly!(a == b, ulps = (8, 12, 8));
 /// ```
 ///
-pub use nearly_proc::NearlyEq;
+pub use nearly_macros::NearlyEq;
 
 /// Derives the [NearlyEqEps] trait for a custom type.
 ///
@@ -538,7 +539,7 @@ pub use nearly_proc::NearlyEq;
 /// assert_nearly!(a == b, eps = (0.0001, 0.000001, 0.0001));
 /// ```
 ///
-pub use nearly_proc::NearlyEqEps;
+pub use nearly_macros::NearlyEqEps;
 
 /// Derives the [NearlyEqUlps] trait for a custom type.
 ///
@@ -587,7 +588,7 @@ pub use nearly_proc::NearlyEqEps;
 /// assert_nearly!(a == b, ulps = (8, 12, 8));
 /// ```
 ///
-pub use nearly_proc::NearlyEqUlps;
+pub use nearly_macros::NearlyEqUlps;
 
 mod nearly_eq;
 pub use nearly_eq::NearlyEq;

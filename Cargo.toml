@@ -1,5 +1,5 @@
 [workspace]
-members = ["nearly", "nearly-proc"]
+members = ["nearly", "nearly-macros"]
 
 [workspace.package]
 edition = "2021"

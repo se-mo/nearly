@@ -1,5 +1,5 @@
 [package]
-name = "nearly-proc"
+name = "nearly-macros"
 version = "0.1.0-pre"
 description = "Procedural macros for nearly"
 readme = "README.md"

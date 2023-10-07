@@ -1,4 +1,5 @@
-//! This crate provides proc macros for the [nearly](https://docs.rs/nearly/latest/nearly/) crate.
+//! This crate provides procedural macros for the
+//! [nearly](https://docs.rs/nearly/latest/nearly/) crate.
 
 use proc_macro::TokenStream;
 use proc_macro_error::proc_macro_error;
