@@ -1,48 +1,10 @@
 use mockall::predicate::eq;
-use mockall::{mock, Sequence};
-use nearly::{
-    EpsTolerance, EpsToleranceType, NearlyEq, NearlyEqEps, NearlyEqTol, NearlyEqUlps, Tolerance,
-    UlpsTolerance, UlpsToleranceType,
-};
+use mockall::Sequence;
+use nearly::{NearlyEqEps, NearlyEqUlps};
 use paste::paste;
 
-#[derive(Debug, PartialEq)]
-struct Rhs(i32);
-
-mock!(
-    #[derive(Debug)]
-    Lhs{}
-
-    impl EpsTolerance<Rhs> for Lhs {
-        type T = f32;
-        const DEFAULT: f32 = 0.01;
-    }
-
-    impl UlpsTolerance<Rhs> for Lhs {
-        type T = i32;
-        const DEFAULT: i32 = 3;
-    }
-
-    impl NearlyEqEps<Rhs> for Lhs {
-        fn nearly_eq_eps(&self, other: &Rhs, eps: EpsToleranceType<Self, Rhs>) -> bool;
-        fn nearly_ne_eps(&self, other: &Rhs, eps: EpsToleranceType<Self, Rhs>) -> bool;
-    }
-
-    impl NearlyEqUlps<Rhs> for Lhs {
-        fn nearly_eq_ulps(&self, other: &Rhs, ulps: UlpsToleranceType<Self, Rhs>) -> bool;
-        fn nearly_ne_ulps(&self, other: &Rhs, ulps: UlpsToleranceType<Self, Rhs>) -> bool;
-    }
-
-    impl NearlyEqTol<Rhs> for Lhs {
-        fn nearly_eq_tol(&self, other: &Rhs, tolerance: Tolerance<Self, Rhs>) -> bool;
-        fn nearly_ne_tol(&self, other: &Rhs, tolerance: Tolerance<Self, Rhs>) -> bool;
-    }
-
-    impl NearlyEq<Rhs> for Lhs {
-        fn nearly_eq(&self, other: &Rhs) -> bool;
-        fn nearly_ne(&self, other: &Rhs) -> bool;
-    }
-);
+mod common;
+use common::{MockLhs, Rhs};
 
 macro_rules! checkpoint {
     ($container: expr) => {
