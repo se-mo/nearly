@@ -1,7 +1,7 @@
 [package]
 name = "nearly"
 version = "0.3.0-pre"
-description = "A library to compare IEEE floating point primitives"
+description = "A library to compare IEEE floating point types"
 edition.workspace = true
 authors.workspace = true
 repository.workspace = true

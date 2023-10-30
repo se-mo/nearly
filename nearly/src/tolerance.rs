@@ -3,15 +3,17 @@ use core::fmt::Debug;
 #[cfg(feature = "std")]
 use std::fmt::Debug;
 
-/// A trait specifying the tolerance used for absolute epsilon based comparisons for the type
-/// implementing this trait comparing to `Rhs`.
+/// A trait specifying the tolerance used for absolute epsilon based comparisons.
+///
+/// This tolerance if for the type implementing this trait comparing to `Rhs`.
 pub trait EpsTolerance<Rhs = Self>
 where
     Rhs: ?Sized,
 {
-    /// The type of the epsilon tolerance values for the type implementing this trait.
+    /// The type of the epsilon tolerance values.
     type T: Debug + Copy;
-    /// The default epsilon tolerance value for the type implementing this trait.
+
+    /// The default epsilon tolerance value.
     /// Used for default [Tolerance](Tolerance::default()).
     const DEFAULT: Self::T;
 
@@ -26,15 +28,17 @@ where
 /// It specifies the type of the epsilon values for the type `Lhs` comparing to the type `Rhs`.
 pub type EpsToleranceType<Lhs, Rhs = Lhs> = <Lhs as EpsTolerance<Rhs>>::T;
 
-/// A trait specifying the tolerance used for ulps based comparisons for the type
-/// implementing this trait comparing to `Rhs`.
+/// A trait specifying the tolerance used for ulps based comparisons.
+///
+/// This tolerance if for the type implementing this trait comparing to `Rhs`.
 pub trait UlpsTolerance<Rhs = Self>
 where
     Rhs: ?Sized,
 {
-    /// The type of the ulps tolerance values for the type implementing this trait.
+    /// The type of the ulps tolerance values.
     type T: Debug + Copy;
-    /// The default ulps tolerance value for the type implementing this trait.
+
+    /// The default ulps tolerance value.
     /// Used for default [Tolerance](Tolerance::default()).
     const DEFAULT: Self::T;
 
@@ -86,6 +90,7 @@ pub type ToleranceF32 = Tolerance<f32>;
 pub type ToleranceF64 = Tolerance<f64>;
 
 /// A tolerance data type that is used for nearly comparisons based on a tolerance value.
+///
 /// This data type combines an absolute epsilon value that will be used for comparisons based on
 /// absolute epsilon values and an ulps value that will be used for comparisons based on
 /// ulps values.

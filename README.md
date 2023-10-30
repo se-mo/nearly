@@ -14,56 +14,110 @@
 [ci-badge]: https://img.shields.io/github/actions/workflow/status/se-mo/nearly/ci.yml?label=ci&style=flat-square&logo=github
 [ci-url]: https://github.com/se-mo/nearly/actions/workflows/ci.yml
 
-Compare IEEE floating point primitives by nearly comparisons.
+Compare IEEE floating point types by nearly comparisons.
 
-The issue in directly compare floating point primitives is, that they might be identical from a
-logical point of view but because they have limited precision, they are not identical bit by bit.
-
-Consider the following example, where a and b should be identical, but they are not:
+When comparing floating point types, because of their limited precision, they might not be
+exactly identical. Consider the following example, where a and b appear to be identical, but
+they are not:
 
 ```rust
 let a: f32 = 1.0 + 1.04 + 1.1;
 let b: f32 = 3.14;
 
-assert!(a != b);
+assert!(a == b); // <-- PANICS
 ```
 
-This crate provides functionality to solve this problem and offers traits and macros to compare
-the floating point primitive types `f32` and `f64`.
+This crate provides macros to perform a comparison with some tolerance.
+
+```rust
+use nearly::nearly;
+assert!(nearly!(a == b)); // <-- OK
+```
 
 ## Usage
 
-The default usage uses first an absolute difference comparison and second a ulps (unit of least
-precision) comparison both with default tolerance values.
+The easiest way to use nearly comparisons is by invoking the `nearly!` macro. The macro returns a boolean whether the comparison is true or false by using the provided tolerance.
 
-Implemented for the types `f32` and `f64` are trait functions you can use to do the comparison.
+The comparison can be:
+  - `a == b` for testing whether a is nearly equal to b
+  - `a != b` for testing whether a is not nearly equal to b
+
+The tolerance used can be:
+  - `eps` for an absolute epsilon tolerance
+  - `ulps` for an ulps based tolerance
+  - `tol` for an absolute epsilon and ulps based tolerance
+  - `default` for an absolute epsilon and ulps based tolerance using default values
+
+Here are some example calls:
 
 ```rust
-use nearly::NearlyEq;
-assert!(a.nearly_eq(&b));
+use nearly::nearly;
+use nearly::ToleranceF32;
+
+let a: f32 = 1.0 + 1.04 + 1.1;
+let b: f32 = 3.14;
+
+// use absolute epsilon tolerance
+nearly!(a == b, eps = 0.001);
+
+// use ulps based tolerance
+nearly!(a == b, ulps = 5);
+
+// use absolute epsilon and ulps based tolerance
+nearly!(a == b, eps = 0.001, ulps = 5);
+nearly!(a == b, tol = ToleranceF32::new(0.001, 5));
+
+// use default absolute epsilon and default ulps based tolerance
+nearly!(a == b);
 ```
 
-An alternative way to invoke a nearly comparison is by using the macros this crate provides.
-There are macros returning the comparison result as a boolean, assert macros that panic if the
-comparison evaluates to false and debug assert macros that are only enabled in non optimized builds
+There is also an `assert_nearly!` and `debug_assert_nearly!` macros you can use that panic if the nearly comparison evaluates to false. The signature is the same as for the `nearly!` macro.
 
 ```rust
-use nearly::nearly_eq;
-assert!( nearly_eq!(a, b) );
+use nearly::{assert_nearly, debug_assert_nearly};
 
-use nearly::assert_nearly_eq;
-assert_nearly_eq!(a, b);
+assert_nearly!(a == b, eps = 0.001);
+assert_nearly!(a == b, ulps = 5);
+assert_nearly!(a == b, eps = 0.001, ulps = 5);
+assert_nearly!(a == b, tol = ToleranceF32::new(0.001, 5));
+assert_nearly!(a == b);
 
-use nearly::debug_assert_nearly_eq;
-debug_assert_nearly_eq!(a, b);
+debug_assert_nearly!(a == b, eps = 0.001);
+debug_assert_nearly!(a == b, ulps = 5);
+debug_assert_nearly!(a == b, eps = 0.001, ulps = 5);
+debug_assert_nearly!(a == b, tol = ToleranceF32::new(0.001, 5));
+debug_assert_nearly!(a == b);
 ```
+
+## Derive the nearly traits
+
+The easiest way to add nearly comparison to your own types is by deriving the nearly traits.
+ 
+```rust
+use nearly::{assert_nearly, NearlyEq};
+
+#[derive(NearlyEq)]
+struct Point {
+    x: f32,
+    y: f32,
+}
+
+let a = Point { x: 1.23, y: 4.56 };
+let b = Point { x: 1.23, y: 4.567 };
+
+assert_nearly!(a == b, eps = 0.01);
+```
+ 
+To use the `assert_nearly!` and `debug_assert_nearly!` macros, your type must also implement the Debug trait.
+
+You can derive the following traits:
+  - `NearlyEqEps`: enables nearly support with absolute epsilon
+    tolerance
+  - `NearlyEqUlps`: enables nearly support with ulps based
+    tolerance
+  - `NearlyEq`: enables nearly support with absolute epsilon and ulps
+    based tolerances
 
 ## Documentation
 
-For information on how to:
-
-- use comparison based on non default tolerance values
-- use absolute or ulps difference explicitly
-- implement the crate traits to enable nearly comparison for your own types
-
-see the detailed documentation here: https://docs.rs/nearly
+For a more detailed documentation see: https://docs.rs/nearly

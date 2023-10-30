@@ -38,8 +38,9 @@ where
 }
 
 /// A trait for nearly equality comparison based on a tolerance including an absolute epsilon value
-/// and an ulps value. See [Tolerance].
+/// and an ulps value.
 ///
+/// See [Tolerance].
 /// This trait combines the traits [NearlyEqEps] and [NearlyEqUlps].
 pub trait NearlyEqTol<Rhs = Self, LhsTol = Self, RhsTol = Rhs>:
     NearlyEqEps<Rhs, LhsTol, RhsTol> + NearlyEqUlps<Rhs, LhsTol, RhsTol>
@@ -67,8 +68,8 @@ where
 }
 
 /// A trait for nearly equality comparison based on a default tolerance.
-/// This trait is a convenience trait to use nearly equality comparison with a default tolerances.
 ///
+/// This trait is a convenience trait to use nearly equality comparison with a default tolerances.
 /// This is the same as using the [NearlyEqTol] trait with [Tolerance::default()].
 pub trait NearlyEq<Rhs = Self, LhsTol = Self, RhsTol = Rhs>:
     NearlyEqTol<Rhs, LhsTol, RhsTol>
