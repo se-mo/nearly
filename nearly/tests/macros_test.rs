@@ -81,13 +81,13 @@ fn macro_nearly_eq_tol() {
     let b = Rhs(5);
 
     a.expect_nearly_eq_tol()
-        .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
         .times(1)
         .in_sequence(&mut seq)
         .return_const(true);
 
     a.expect_nearly_eq_tol()
-        .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.15, 7)))
         .times(1)
         .in_sequence(&mut seq)
         .return_const(true);
@@ -146,13 +146,13 @@ fn macro_nearly_ne_tol() {
     let b = Rhs(5);
 
     a.expect_nearly_ne_tol()
-        .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
         .times(1)
         .in_sequence(&mut seq)
         .return_const(true);
 
     a.expect_nearly_ne_tol()
-        .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.15, 7)))
         .times(1)
         .in_sequence(&mut seq)
         .return_const(true);
@@ -249,13 +249,13 @@ fn macro_assert_nearly_eq_tol() {
     let b = Rhs(5);
 
     a.expect_nearly_eq_tol()
-        .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
         .times(1)
         .in_sequence(&mut seq)
         .return_const(true);
 
     a.expect_nearly_eq_tol()
-        .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.15, 7)))
         .times(1)
         .in_sequence(&mut seq)
         .return_const(true);
@@ -275,7 +275,7 @@ fn macro_assert_nearly_eq_tol_panic() {
     let b = Rhs(5);
 
     a.expect_nearly_eq_tol()
-        .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
         .times(1)
         .return_const(false);
 
@@ -293,7 +293,7 @@ fn macro_assert_nearly_eq_tol_tuple_panic() {
     let b = Rhs(5);
 
     a.expect_nearly_eq_tol()
-        .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.15, 7)))
         .times(1)
         .return_const(false);
 
@@ -399,13 +399,13 @@ fn macro_assert_nearly_ne_tol() {
     let b = Rhs(5);
 
     a.expect_nearly_ne_tol()
-        .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
         .times(1)
         .in_sequence(&mut seq)
         .return_const(true);
 
     a.expect_nearly_ne_tol()
-        .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.15, 7)))
         .times(1)
         .in_sequence(&mut seq)
         .return_const(true);
@@ -425,7 +425,7 @@ fn macro_assert_nearly_ne_tol_panic() {
     let b = Rhs(5);
 
     a.expect_nearly_ne_tol()
-        .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
         .times(1)
         .return_const(false);
 
@@ -443,7 +443,7 @@ fn macro_assert_nearly_ne_tol_tuple_panic() {
     let b = Rhs(5);
 
     a.expect_nearly_ne_tol()
-        .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.15, 7)))
         .times(1)
         .return_const(false);
 
@@ -578,13 +578,13 @@ fn macro_debug_assert_nearly_eq_tol() {
     let b = Rhs(5);
 
     a.expect_nearly_eq_tol()
-        .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
         .times(1)
         .in_sequence(&mut seq)
         .return_const(true);
 
     a.expect_nearly_eq_tol()
-        .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.15, 7)))
         .times(1)
         .in_sequence(&mut seq)
         .return_const(true);
@@ -605,7 +605,7 @@ fn macro_debug_assert_nearly_eq_tol_panic() {
     let b = Rhs(5);
 
     a.expect_nearly_eq_tol()
-        .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
         .times(1)
         .return_const(false);
 
@@ -624,7 +624,7 @@ fn macro_debug_assert_nearly_eq_tol_tuple_panic() {
     let b = Rhs(5);
 
     a.expect_nearly_eq_tol()
-        .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.15, 7)))
         .times(1)
         .return_const(false);
 
@@ -779,13 +779,13 @@ fn macro_debug_assert_nearly_ne_tol() {
     let b = Rhs(5);
 
     a.expect_nearly_ne_tol()
-        .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
         .times(1)
         .in_sequence(&mut seq)
         .return_const(true);
 
     a.expect_nearly_ne_tol()
-        .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.15, 7)))
         .times(1)
         .in_sequence(&mut seq)
         .return_const(true);
@@ -806,7 +806,7 @@ fn macro_debug_assert_nearly_ne_tol_panic() {
     let b = Rhs(5);
 
     a.expect_nearly_ne_tol()
-        .withf(|_, tol| tol.eps == 0.1 && tol.ulps == 5)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
         .times(1)
         .return_const(false);
 
@@ -825,7 +825,7 @@ fn macro_debug_assert_nearly_ne_tol_tuple_panic() {
     let b = Rhs(5);
 
     a.expect_nearly_ne_tol()
-        .withf(|_, tol| tol.eps == 0.15 && tol.ulps == 7)
+        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.15, 7)))
         .times(1)
         .return_const(false);
 

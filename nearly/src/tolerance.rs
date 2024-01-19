@@ -152,6 +152,27 @@ where
     }
 }
 
+impl<Lhs, Rhs> PartialEq for Tolerance<Lhs, Rhs>
+where
+    Lhs: ?Sized + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
+    Rhs: ?Sized,
+    EpsToleranceType<Lhs, Rhs>: PartialEq,
+    UlpsToleranceType<Lhs, Rhs>: PartialEq,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.eps == other.eps && self.ulps == other.ulps
+    }
+}
+
+impl<Lhs, Rhs> Eq for Tolerance<Lhs, Rhs>
+where
+    Lhs: ?Sized + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
+    Rhs: ?Sized,
+    EpsToleranceType<Lhs, Rhs>: Eq,
+    UlpsToleranceType<Lhs, Rhs>: Eq,
+{
+}
+
 // We have to implement Copy and Clone explicitly, since derive
 // of these traits doesn't work because of the generics used.
 // See related issue: https://github.com/rust-lang/rust/issues/108894
@@ -251,5 +272,21 @@ mod tests {
         let tolerance_2 = tolerance;
         assert_eq!(tolerance.eps, tolerance_2.eps);
         assert_eq!(tolerance.ulps, tolerance_2.ulps);
+    }
+
+    #[test]
+    fn equal_f32() {
+        let tolerance = Tolerance::<f32>::new(0.01, 5);
+        assert_eq!(tolerance, Tolerance::<f32>::new(0.01, 5));
+        assert_ne!(tolerance, Tolerance::<f32>::new(0.02, 5));
+        assert_ne!(tolerance, Tolerance::<f32>::new(0.01, 10));
+    }
+
+    #[test]
+    fn equal_f64() {
+        let tolerance = Tolerance::<f64>::new(0.01, 5);
+        assert_eq!(tolerance, Tolerance::<f64>::new(0.01, 5));
+        assert_ne!(tolerance, Tolerance::<f64>::new(0.02, 5));
+        assert_ne!(tolerance, Tolerance::<f64>::new(0.01, 10));
     }
 }
