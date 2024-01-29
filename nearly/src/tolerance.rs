@@ -1,7 +1,7 @@
 #[cfg(not(feature = "std"))]
-use core::fmt::Debug;
+use core::fmt::{Debug, Display, Formatter, Result};
 #[cfg(feature = "std")]
-use std::fmt::Debug;
+use std::fmt::{Debug, Display, Formatter, Result};
 
 /// A trait specifying the tolerance used for absolute epsilon based comparisons.
 ///
@@ -94,7 +94,6 @@ pub type ToleranceF64 = Tolerance<f64>;
 /// This data type combines an absolute epsilon value that will be used for comparisons based on
 /// absolute epsilon values and an ulps value that will be used for comparisons based on
 /// ulps values.
-#[derive(Debug)]
 pub struct Tolerance<Lhs, Rhs = Lhs>
 where
     Lhs: ?Sized + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
@@ -173,6 +172,18 @@ where
 {
 }
 
+impl<Lhs, Rhs> Display for Tolerance<Lhs, Rhs>
+where
+    Lhs: ?Sized + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
+    Rhs: ?Sized,
+    EpsToleranceType<Lhs, Rhs>: Display,
+    UlpsToleranceType<Lhs, Rhs>: Display,
+{
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        write!(f, "(eps: {}, ulps: {})", self.eps, self.ulps)
+    }
+}
+
 // We have to implement Copy and Clone explicitly, since derive
 // of these traits doesn't work because of the generics used.
 // See related issue: https://github.com/rust-lang/rust/issues/108894
@@ -192,6 +203,22 @@ where
     Lhs: ?Sized + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
     Rhs: ?Sized,
 {
+}
+
+// We implement the Debug trait explicitly. Deriving the Debug trait would add
+// a trait bound to Lhs and Rhs to also implement Debug. This is not required.
+// We only need the Debug trait bound for the corresponding eps and ulps values.
+impl<Lhs, Rhs> Debug for Tolerance<Lhs, Rhs>
+where
+    Lhs: ?Sized + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
+    Rhs: ?Sized,
+{
+    fn fmt(&self, f: &mut Formatter) -> Result {
+        f.debug_struct("Tolerance")
+            .field("eps", &self.eps)
+            .field("ulps", &self.ulps)
+            .finish()
+    }
 }
 
 #[cfg(test)]
