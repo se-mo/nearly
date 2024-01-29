@@ -96,7 +96,7 @@ The easiest way to add nearly comparison to your own types is by deriving the ne
 ```rust
 use nearly::{assert_nearly, NearlyEq};
 
-#[derive(NearlyEq)]
+#[derive(Debug, NearlyEq)]
 struct Point {
     x: f32,
     y: f32,
