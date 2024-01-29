@@ -34,6 +34,12 @@ pub fn nearly_eq_ulps_derive(input: TokenStream) -> TokenStream {
     derive::nearly_eq(input, derive::DeriveTrait::NearlyEqUlps)
 }
 
+#[proc_macro_derive(NearlyEqTol)]
+#[proc_macro_error]
+pub fn nearly_eq_tol_derive(input: TokenStream) -> TokenStream {
+    derive::nearly_eq(input, derive::DeriveTrait::NearlyEqTol)
+}
+
 #[proc_macro_derive(NearlyEq)]
 #[proc_macro_error]
 pub fn nearly_eq_derive(input: TokenStream) -> TokenStream {
