@@ -181,9 +181,14 @@ macro_rules! impl_nearly_ref {
             }
         }
 
-        impl<Lhs: ?Sized, Rhs: ?Sized> NearlyEqTol<$rhs, Lhs, Rhs> for $lhs where
-            Lhs: NearlyEqTol<Rhs> + EpsTolerance<Rhs> + UlpsTolerance<Rhs>
+        impl<Lhs: ?Sized, Rhs: ?Sized> NearlyEqTol<$rhs, Lhs, Rhs> for $lhs
+        where
+            Lhs: NearlyEqTol<Rhs> + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
         {
+            #[inline]
+            fn nearly_eq_tol(&self, other: &$rhs, tolerance: Tolerance<Lhs, Rhs>) -> bool {
+                NearlyEqTol::nearly_eq_tol(*self, *other, tolerance)
+            }
         }
 
         impl<Lhs: ?Sized, Rhs: ?Sized> NearlyEq<$rhs, Lhs, Rhs> for $lhs where
@@ -242,6 +247,17 @@ macro_rules! impl_nearly_collection {
         where
             Lhs: NearlyEqTol<Rhs> + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
         {
+            fn nearly_eq_tol(
+                &self,
+                other: &$rhs,
+                tolerance: Tolerance<Lhs, Rhs>
+            ) -> bool {
+                self.len() == other.len()
+                    && self
+                        .iter()
+                        .zip(other.iter())
+                        .all(|(a, b)| NearlyEqTol::nearly_eq_tol(a, b, tolerance))
+            }
         }
 
         impl<Lhs, Rhs, $($vars)*> NearlyEq<$rhs, Lhs, Rhs> for $lhs
@@ -348,6 +364,18 @@ mod map {
         Lhs: NearlyEqTol<Rhs> + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
         S: BuildHasher,
     {
+        fn nearly_eq_tol(
+            &self,
+            other: &HashMap<K, Rhs, S>,
+            tolerance: Tolerance<Lhs, Rhs>,
+        ) -> bool {
+            self.len() == other.len()
+                && self.iter().all(|(key, v_lhs)| {
+                    other.get(key).map_or(false, |v_rhs| {
+                        NearlyEqTol::nearly_eq_tol(v_lhs, v_rhs, tolerance)
+                    })
+                })
+        }
     }
 
     impl<K, Lhs, Rhs, S> NearlyEq<HashMap<K, Rhs, S>, Lhs, Rhs> for HashMap<K, Lhs, S>
@@ -395,6 +423,13 @@ mod map {
         K: PartialEq,
         Lhs: NearlyEqTol<Rhs> + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
     {
+        fn nearly_eq_tol(&self, other: &BTreeMap<K, Rhs>, tolerance: Tolerance<Lhs, Rhs>) -> bool {
+            self.len() == other.len()
+                && self
+                    .iter()
+                    .zip(other)
+                    .all(|(a, b)| a.0 == b.0 && NearlyEqTol::nearly_eq_tol(a.1, b.1, tolerance))
+        }
     }
 
     impl<K, Lhs, Rhs> NearlyEq<BTreeMap<K, Rhs>, Lhs, Rhs> for BTreeMap<K, Lhs>
@@ -438,9 +473,14 @@ mod pointer {
                 }
             }
 
-            impl<Lhs, Rhs> NearlyEqTol<$rhs, Lhs, Rhs> for $lhs where
-                Lhs: NearlyEqTol<Rhs> + EpsTolerance<Rhs> + UlpsTolerance<Rhs>
+            impl<Lhs, Rhs> NearlyEqTol<$rhs, Lhs, Rhs> for $lhs
+            where
+                Lhs: NearlyEqTol<Rhs> + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
             {
+                #[inline]
+                fn nearly_eq_tol(&self, other: &$rhs, tolerance: Tolerance<Lhs, Rhs>) -> bool {
+                    NearlyEqTol::nearly_eq_tol(&**self, &**other, tolerance)
+                }
             }
 
             impl<Lhs, Rhs> NearlyEq<$rhs, Lhs, Rhs> for $lhs where
@@ -485,10 +525,19 @@ mod pointer {
         }
     }
 
-    impl<Lhs: Deref, Rhs: Deref> NearlyEqTol<Pin<Rhs>, Lhs::Target, Rhs::Target> for Pin<Lhs> where
+    impl<Lhs: Deref, Rhs: Deref> NearlyEqTol<Pin<Rhs>, Lhs::Target, Rhs::Target> for Pin<Lhs>
+    where
         Lhs::Target:
-            NearlyEqTol<Rhs::Target> + EpsTolerance<Rhs::Target> + UlpsTolerance<Rhs::Target>
+            NearlyEqTol<Rhs::Target> + EpsTolerance<Rhs::Target> + UlpsTolerance<Rhs::Target>,
     {
+        #[inline]
+        fn nearly_eq_tol(
+            &self,
+            other: &Pin<Rhs>,
+            tolerance: Tolerance<Lhs::Target, Rhs::Target>,
+        ) -> bool {
+            Lhs::Target::nearly_eq_tol(self, other, tolerance)
+        }
     }
 
     impl<Lhs: Deref, Rhs: Deref> NearlyEq<Pin<Rhs>, Lhs::Target, Rhs::Target> for Pin<Lhs> where
@@ -532,6 +581,9 @@ macro_rules! impl_nearly_tuple {
         where
             Lhs: NearlyEqTol<Rhs> + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
         {
+            fn nearly_eq_tol(&self, other: &($($rhs,)+), tolerance: Tolerance<Lhs, Rhs>) -> bool {
+                $( self.$idx.nearly_eq_tol(&other.$idx, tolerance) )&&+
+            }
         }
 
         impl<Lhs, Rhs> NearlyEq<($($rhs,)+), Lhs, Rhs> for ($($lhs,)+)

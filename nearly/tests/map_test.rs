@@ -1,7 +1,7 @@
 #![cfg(feature = "std")]
 
 use mockall::predicate::eq;
-use nearly::{NearlyEqEps, NearlyEqUlps};
+use nearly::{NearlyEqEps, NearlyEqTol, NearlyEqUlps, Tolerance};
 use paste::paste;
 use std::collections::{BTreeMap, HashMap};
 
@@ -218,6 +218,69 @@ macro_rules! impl_test {
             }
 
             #[test]
+            fn [<nearly_eq_tol_ $lhs _ $rhs>]() {
+                let mut a: lhs_type!($lhs) = lhs_value!($lhs);
+                let b: rhs_type!($rhs)  = rhs_value!($rhs);
+
+                get_element!(a, 0).expect_nearly_eq_tol()
+                    .with(eq(Rhs(3)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
+                    .times(1)
+                    .return_const(true);
+                get_element!(a, 1).expect_nearly_eq_tol()
+                    .with(eq(Rhs(7)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
+                    .times(1)
+                    .return_const(true);
+                get_element!(a, 2).expect_nearly_eq_tol()
+                    .with(eq(Rhs(11)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
+                    .times(1)
+                    .return_const(true);
+
+                assert!(a.nearly_eq_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+
+                checkpoint!(a);
+                get_element!(a, 0).expect_nearly_eq_tol()
+                    .with(eq(Rhs(3)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
+                    .times(1)
+                    .return_const(false);
+                get_element!(a, 1).expect_nearly_eq_tol()
+                    .with(eq(Rhs(7)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
+                    .return_const(true);
+                get_element!(a, 2).expect_nearly_eq_tol()
+                    .with(eq(Rhs(11)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
+                    .return_const(true);
+
+                assert!(!a.nearly_eq_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+
+                checkpoint!(a);
+                get_element!(a, 0).expect_nearly_eq_tol()
+                    .with(eq(Rhs(3)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
+                    .return_const(true);
+                get_element!(a, 1).expect_nearly_eq_tol()
+                    .with(eq(Rhs(7)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
+                    .times(1)
+                    .return_const(false);
+                get_element!(a, 2).expect_nearly_eq_tol()
+                    .with(eq(Rhs(11)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
+                    .return_const(true);
+
+                assert!(!a.nearly_eq_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+
+                checkpoint!(a);
+                get_element!(a, 0).expect_nearly_eq_tol()
+                    .with(eq(Rhs(3)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
+                    .return_const(true);
+                get_element!(a, 1).expect_nearly_eq_tol()
+                    .with(eq(Rhs(7)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
+                    .return_const(true);
+                get_element!(a, 2).expect_nearly_eq_tol()
+                    .with(eq(Rhs(11)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
+                    .times(1)
+                    .return_const(false);
+
+                assert!(!a.nearly_eq_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+            }
+
+            #[test]
             fn [<nearly_eq_eps_different_length_ $lhs _ $rhs>]() {
                 {
                     let mut a: lhs_type!($lhs) = lhs_value!($lhs);
@@ -268,6 +331,33 @@ macro_rules! impl_test {
                     get_element!(a, 1).expect_nearly_eq_ulps().times(0);
 
                     assert!(!a.nearly_eq_ulps(&b, 5));
+                }
+            }
+
+            #[test]
+            fn [<nearly_eq_tol_different_length_ $lhs _ $rhs>]() {
+                {
+                    let mut a: lhs_type!($lhs) = lhs_value!($lhs);
+                    let b: rhs_type!($rhs)  = rhs_value_short!($rhs);
+
+                    assert!(a.len() > b.len());
+
+                    get_element!(a, 0).expect_nearly_eq_tol().times(0);
+                    get_element!(a, 1).expect_nearly_eq_tol().times(0);
+                    get_element!(a, 2).expect_nearly_eq_tol().times(0);
+
+                    assert!(!a.nearly_eq_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+                }
+                {
+                    let mut a: lhs_type!($lhs) = lhs_value_short!($lhs);
+                    let b: rhs_type!($rhs)  = rhs_value!($rhs);
+
+                    assert!(a.len() < b.len());
+
+                    get_element!(a, 0).expect_nearly_eq_tol().times(0);
+                    get_element!(a, 1).expect_nearly_eq_tol().times(0);
+
+                    assert!(!a.nearly_eq_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
                 }
             }
         }

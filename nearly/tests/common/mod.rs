@@ -1,6 +1,6 @@
 use mockall::mock;
 use nearly::{
-    EpsTolerance, EpsToleranceType, NearlyEq, NearlyEqEps, NearlyEqTol, NearlyEqUlps,
+    EpsTolerance, EpsToleranceType, NearlyEq, NearlyEqEps, NearlyEqTol, NearlyEqUlps, Tolerance,
     UlpsTolerance, UlpsToleranceType,
 };
 
@@ -28,7 +28,9 @@ mock!(
         fn nearly_eq_ulps(&self, other: &Rhs, ulps: UlpsToleranceType<Self, Rhs>) -> bool;
     }
 
-    impl NearlyEqTol<Rhs> for Lhs {}
+    impl NearlyEqTol<Rhs> for Lhs {
+        fn nearly_eq_tol(&self, other: &Rhs, tolerance: Tolerance<Self, Rhs>) -> bool;
+    }
 
     impl NearlyEq<Rhs> for Lhs {}
 );

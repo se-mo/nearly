@@ -1,7 +1,7 @@
 #![cfg(feature = "std")]
 
 use mockall::predicate::eq;
-use nearly::{NearlyEqEps, NearlyEqUlps};
+use nearly::{NearlyEqEps, NearlyEqTol, NearlyEqUlps, Tolerance};
 use paste::paste;
 use std::boxed::Box;
 use std::pin::Pin;
@@ -108,6 +108,32 @@ macro_rules! impl_test {
                     let a: lhs_type!($ptr) = lhs_value!(a_val, $ptr);
 
                     assert!(!a.nearly_eq_ulps(&b, 5));
+                }
+            }
+
+            #[test]
+            fn [<nearly_eq_tol_ $ptr>]() {
+                let b: rhs_type!($ptr) = rhs_value!($ptr);
+
+                {
+                    let mut a_val = MockLhs::new();
+                    a_val.expect_nearly_eq_tol()
+                        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
+                        .times(1)
+                        .return_const(true);
+                    let a: lhs_type!($ptr) = lhs_value!(a_val, $ptr);
+
+                    assert!(a.nearly_eq_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+                }
+                {
+                    let mut a_val = MockLhs::new();
+                    a_val.expect_nearly_eq_tol()
+                        .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
+                        .times(1)
+                        .return_const(false);
+                    let a: lhs_type!($ptr) = lhs_value!(a_val, $ptr);
+
+                    assert!(!a.nearly_eq_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
                 }
             }
         }

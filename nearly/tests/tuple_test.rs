@@ -1,6 +1,6 @@
 use mockall::predicate::eq;
 use mockall::Sequence;
-use nearly::{NearlyEqEps, NearlyEqUlps};
+use nearly::{NearlyEqEps, NearlyEqTol, NearlyEqUlps, Tolerance};
 use paste::paste;
 
 mod common;
@@ -940,3 +940,4 @@ macro_rules! impl_test {
 
 impl_test!(nearly_eq_eps, 0.1);
 impl_test!(nearly_eq_ulps, 5);
+impl_test!(nearly_eq_tol, Tolerance::<MockLhs, Rhs>::new(0.1, 5));
