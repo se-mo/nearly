@@ -17,7 +17,7 @@
 //! # let a: f32 = 1.0 + 1.04 + 1.1;
 //! # let b: f32 = 3.14;
 //! use nearly::nearly;
-//! assert!(nearly!(a == b)); // <-- OK
+//! assert!( nearly!(a == b) ); // <-- OK
 //! ```
 //!
 //! # Usage
@@ -83,10 +83,9 @@
 //! macro. The macro use is recommended, though.
 //!
 //! ```
+//! # let a: f32 = 1.0 + 1.04 + 1.1;
+//! # let b: f32 = 3.14;
 //! use nearly::{NearlyEqEps, NearlyEqUlps, NearlyEqTol, NearlyEq, ToleranceF32};
-//!
-//! let a: f32 = 1.0 + 1.04 + 1.1;
-//! let b: f32 = 3.14;
 //!
 //! assert!(a.nearly_eq_eps(&b, 0.001));
 //! assert!(a.nearly_eq_ulps(&b, 5));
@@ -99,6 +98,7 @@
 //! ## Derive the nearly traits
 //!
 //! The easiest way to add nearly comparison to your own types is by deriving the nearly traits.
+//! Just derive [NearlyEq](nearly_macros::NearlyEq) to get full support on your type.
 //!
 //! ```
 //! use nearly::{assert_nearly, NearlyEq};
@@ -123,8 +123,10 @@
 //!     tolerance
 //!   - [NearlyEqUlps](nearly_macros::NearlyEqUlps): enables nearly support with ulps based
 //!     tolerance
+//!   - [NearlyEqTol][nearly_macros::NearlyEqTol]: enables nearly support with absolute epsilon
+//!     and ulps based tolerances
 //!   - [NearlyEq](nearly_macros::NearlyEq): enables nearly support with absolute epsilon and ulps
-//!     based tolerances
+//!     based tolerances with default values
 //!  
 //! ## Implement the nearly traits
 //!
@@ -166,18 +168,15 @@
 //! These implementations specify how our struct is checked for nearly equality. In this
 //! example we simply call the nearly equality for each field. Since our fields are of type [f32],
 //! we can utilize the nearly comparison implementation this crate provides.
-//!
-//! Note that we only have to add an implementation for [nearly_eq_eps](NearlyEqEps::nearly_eq_eps)
-//! and [nearly_eq_ulps](NearlyEqUlps::nearly_eq_ulps). The traits [NearlyEqTol] and [NearlyEq] only
-//! have to be implemented without any function implementation.
-//!
+//! 
 //! ```
 //! # use nearly::{EpsTolerance, UlpsTolerance};
 //! # struct Point { x: f32, y: f32 }
 //! # impl EpsTolerance for Point { type T = f32; const DEFAULT: f32 = 0.0001; }
 //! # impl UlpsTolerance for Point { type T = i32; const DEFAULT: i32 = 10; }
 //! use nearly::{
-//!     EpsToleranceType, NearlyEq, NearlyEqEps, NearlyEqTol, NearlyEqUlps, UlpsToleranceType
+//!     EpsToleranceType, NearlyEq, NearlyEqEps, NearlyEqTol, NearlyEqUlps, Tolerance,
+//!     UlpsToleranceType
 //! };
 //!
 //! impl NearlyEqEps for Point {
@@ -188,11 +187,18 @@
 //!
 //! impl NearlyEqUlps for Point {
 //!     fn nearly_eq_ulps(&self, other: &Self, ulps: UlpsToleranceType<Self>) -> bool {
-//!         self.x.nearly_eq_ulps(&other.y, ulps) && self.y.nearly_eq_ulps(&other.y, ulps)
+//!         self.x.nearly_eq_ulps(&other.x, ulps) && self.y.nearly_eq_ulps(&other.y, ulps)
 //!     }
 //! }
 //!
-//! impl NearlyEqTol for Point {}
+//! impl NearlyEqTol for Point {
+//!     fn nearly_eq_tol(&self, other: &Self, tolerance: Tolerance<Self>) -> bool {
+//!         self.x.nearly_eq_tol(&other.x, (tolerance.eps, tolerance.ulps).into()) &&
+//!         self.y.nearly_eq_tol(&other.y, (tolerance.eps, tolerance.ulps).into())
+//!     }
+//! }
+//! 
+//! // use provided trait implementation
 //! impl NearlyEq for Point {}
 //! ```
 //!
@@ -207,7 +213,7 @@
 //! ```
 //! use nearly::{
 //!     assert_nearly, EpsTolerance, EpsToleranceType, NearlyEq, NearlyEqEps, NearlyEqTol,
-//!     NearlyEqUlps, UlpsTolerance, UlpsToleranceType
+//!     NearlyEqUlps, Tolerance, UlpsTolerance, UlpsToleranceType
 //! };
 //!
 //! #[derive(Debug)]
@@ -256,7 +262,17 @@
 //!     }
 //! }
 //!
-//! impl<T> NearlyEqTol<B<T>> for A<T> where T: NearlyEqTol + EpsTolerance + UlpsTolerance {}
+//! impl<T> NearlyEqTol<B<T>> for A<T>
+//! where
+//!     T: NearlyEqTol + EpsTolerance + UlpsTolerance
+//! {
+//!     fn nearly_eq_tol(&self, other: &B<T>, tolerance: Tolerance<Self, B<T>>) -> bool {
+//!         self.x.nearly_eq_tol(&other.u, (tolerance.eps, tolerance.ulps).into()) &&
+//!         self.y.nearly_eq_tol(&other.v, (tolerance.eps, tolerance.ulps).into())
+//!     }
+//! }
+//! 
+//! // use provided trait implementation
 //! impl<T> NearlyEq<B<T>> for A<T> where T: NearlyEq + EpsTolerance + UlpsTolerance {}
 //!
 //!
@@ -556,7 +572,7 @@ pub use nearly_macros::NearlyEqUlps;
 /// ```
 pub use nearly_macros::NearlyEqTol;
 
-/// Derives the all nearly traits for a custom type.
+/// Derives all nearly traits for a custom type.
 ///
 /// The derived traits are: [NearlyEqEps], [NearlyEqUlps], [NearlyEqTol] and [NearlyEq].
 /// This trait can be derived for structs with named or unnamed fields as well as enums.

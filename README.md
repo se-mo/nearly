@@ -36,7 +36,8 @@ assert!(nearly!(a == b)); // <-- OK
 
 ## Usage
 
-The easiest way to use nearly comparisons is by invoking the `nearly!` macro. The macro returns a boolean whether the comparison is true or false by using the provided tolerance.
+The easiest way to use nearly comparisons is by invoking the `nearly!` macro. The macro returns
+a boolean whether the comparison is true or false by using the provided tolerance.
 
 The comparison can be:
   - `a == b` for testing whether a is nearly equal to b
@@ -51,8 +52,7 @@ The tolerance used can be:
 Here are some example calls:
 
 ```rust
-use nearly::nearly;
-use nearly::ToleranceF32;
+use nearly::{nearly, ToleranceF32};
 
 let a: f32 = 1.0 + 1.04 + 1.1;
 let b: f32 = 3.14;
@@ -71,7 +71,8 @@ nearly!(a == b, tol = ToleranceF32::new(0.001, 5));
 nearly!(a == b);
 ```
 
-There is also an `assert_nearly!` and `debug_assert_nearly!` macros you can use that panic if the nearly comparison evaluates to false. The signature is the same as for the `nearly!` macro.
+There is also an `assert_nearly!` and `debug_assert_nearly!` macros you can use that panic if the
+nearly comparison evaluates to false. The signature is the same as for the `nearly!` macro.
 
 ```rust
 use nearly::{assert_nearly, debug_assert_nearly};
@@ -92,6 +93,7 @@ debug_assert_nearly!(a == b);
 ## Derive the nearly traits
 
 The easiest way to add nearly comparison to your own types is by deriving the nearly traits.
+Just derive `NearlyEq` to get full support on your type.
  
 ```rust
 use nearly::{assert_nearly, NearlyEq};
@@ -115,9 +117,7 @@ You can derive the following traits:
     tolerance
   - `NearlyEqUlps`: enables nearly support with ulps based
     tolerance
+  - `NearlyEqTol`: enables nearly support with absolute epsilon
+    and ulps based tolerances
   - `NearlyEq`: enables nearly support with absolute epsilon and ulps
-    based tolerances
-
-## Documentation
-
-For a more detailed documentation see: https://docs.rs/nearly
+    based tolerances with default values
