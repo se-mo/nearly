@@ -168,7 +168,7 @@
 //! These implementations specify how our struct is checked for nearly equality. In this
 //! example we simply call the nearly equality for each field. Since our fields are of type [f32],
 //! we can utilize the nearly comparison implementation this crate provides.
-//! 
+//!
 //! ```
 //! # use nearly::{EpsTolerance, UlpsTolerance};
 //! # struct Point { x: f32, y: f32 }
@@ -192,12 +192,12 @@
 //! }
 //!
 //! impl NearlyEqTol for Point {
-//!     fn nearly_eq_tol(&self, other: &Self, tolerance: Tolerance<Self>) -> bool {
-//!         self.x.nearly_eq_tol(&other.x, (tolerance.eps, tolerance.ulps).into()) &&
-//!         self.y.nearly_eq_tol(&other.y, (tolerance.eps, tolerance.ulps).into())
+//!     fn nearly_eq_tol(&self, other: &Self, tol: Tolerance<Self>) -> bool {
+//!         self.x.nearly_eq_tol(&other.x, (tol.eps, tol.ulps).into()) &&
+//!         self.y.nearly_eq_tol(&other.y, (tol.eps, tol.ulps).into())
 //!     }
 //! }
-//! 
+//!
 //! // use provided trait implementation
 //! impl NearlyEq for Point {}
 //! ```
@@ -266,12 +266,12 @@
 //! where
 //!     T: NearlyEqTol + EpsTolerance + UlpsTolerance
 //! {
-//!     fn nearly_eq_tol(&self, other: &B<T>, tolerance: Tolerance<Self, B<T>>) -> bool {
-//!         self.x.nearly_eq_tol(&other.u, (tolerance.eps, tolerance.ulps).into()) &&
-//!         self.y.nearly_eq_tol(&other.v, (tolerance.eps, tolerance.ulps).into())
+//!     fn nearly_eq_tol(&self, other: &B<T>, tol: Tolerance<Self, B<T>>) -> bool {
+//!         self.x.nearly_eq_tol(&other.u, (tol.eps, tol.ulps).into()) &&
+//!         self.y.nearly_eq_tol(&other.v, (tol.eps, tol.ulps).into())
 //!     }
 //! }
-//! 
+//!
 //! // use provided trait implementation
 //! impl<T> NearlyEq<B<T>> for A<T> where T: NearlyEq + EpsTolerance + UlpsTolerance {}
 //!

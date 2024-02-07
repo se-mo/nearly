@@ -29,7 +29,7 @@ mock!(
     }
 
     impl NearlyEqTol<Rhs> for Lhs {
-        fn nearly_eq_tol(&self, other: &Rhs, tolerance: Tolerance<Self, Rhs>) -> bool;
+        fn nearly_eq_tol(&self, other: &Rhs, tol: Tolerance<Self, Rhs>) -> bool;
     }
 
     impl NearlyEq<Rhs> for Lhs {}

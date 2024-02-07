@@ -1186,7 +1186,7 @@ mod nearly_eq_tol {
         }
 
         impl NearlyEqTol for A {
-            fn nearly_eq_tol(&self, other: &Self, tolerance: Tolerance<Self>) -> bool;
+            fn nearly_eq_tol(&self, other: &Self, tol: Tolerance<Self>) -> bool;
         }
     );
 
@@ -1212,7 +1212,7 @@ mod nearly_eq_tol {
         }
 
         impl NearlyEqTol for B {
-            fn nearly_eq_tol(&self, other: &Self, tolerance: Tolerance<Self>) -> bool;
+            fn nearly_eq_tol(&self, other: &Self, tol: Tolerance<Self>) -> bool;
         }
     );
 
@@ -1406,7 +1406,7 @@ mod nearly_eq_tol {
 
         let eps = (0.1_f32, 0.01_f64, (0.2_f32, 0.02_f64));
         let ulps = (5_i32, 10_i64, (6_i32, 12_i64));
-        let tolerance = Tolerance::<NamedStructDifferentType>::new(eps, ulps);
+        let tol = Tolerance::<NamedStructDifferentType>::new(eps, ulps);
 
         a.x.expect_nearly_eq_tol()
             .with(always(), eq(Tolerance::<MockA>::new(0.1_f32, 5_i32)))
@@ -1427,7 +1427,7 @@ mod nearly_eq_tol {
             .times(1)
             .return_const(true);
 
-        assert!(a.nearly_eq_tol(&b, tolerance));
+        assert!(a.nearly_eq_tol(&b, tol));
 
         a.x.checkpoint();
         a.y.checkpoint();
@@ -1442,7 +1442,7 @@ mod nearly_eq_tol {
         a.z.a.expect_nearly_eq_tol().times(0);
         a.z.b.expect_nearly_eq_tol().times(0);
 
-        assert!(!a.nearly_eq_tol(&b, tolerance));
+        assert!(!a.nearly_eq_tol(&b, tol));
 
         a.x.checkpoint();
         a.y.checkpoint();
@@ -1460,7 +1460,7 @@ mod nearly_eq_tol {
         a.z.a.expect_nearly_eq_tol().times(0);
         a.z.b.expect_nearly_eq_tol().times(0);
 
-        assert!(!a.nearly_eq_tol(&b, tolerance));
+        assert!(!a.nearly_eq_tol(&b, tol));
 
         a.x.checkpoint();
         a.y.checkpoint();
@@ -1482,7 +1482,7 @@ mod nearly_eq_tol {
             .return_const(false);
         a.z.b.expect_nearly_eq_tol().times(0);
 
-        assert!(!a.nearly_eq_tol(&b, tolerance));
+        assert!(!a.nearly_eq_tol(&b, tol));
 
         a.x.checkpoint();
         a.y.checkpoint();
@@ -1508,7 +1508,7 @@ mod nearly_eq_tol {
             .times(1)
             .return_const(false);
 
-        assert!(!a.nearly_eq_tol(&b, tolerance));
+        assert!(!a.nearly_eq_tol(&b, tol));
     }
 
     #[derive(NearlyEqTol)]
@@ -1532,7 +1532,7 @@ mod nearly_eq_tol {
 
         let eps = (0.1_f32, 0.01_f64, (0.2_f32, 0.02_f64));
         let ulps = (5_i32, 10_i64, (6_i32, 12_i64));
-        let tolerance = Tolerance::<UnnamedStructDifferentType>::new(eps, ulps);
+        let tol = Tolerance::<UnnamedStructDifferentType>::new(eps, ulps);
 
         a.0.expect_nearly_eq_tol()
             .with(always(), eq(Tolerance::<MockA>::new(0.1_f32, 5_i32)))
@@ -1553,7 +1553,7 @@ mod nearly_eq_tol {
             .times(1)
             .return_const(true);
 
-        assert!(a.nearly_eq_tol(&b, tolerance));
+        assert!(a.nearly_eq_tol(&b, tol));
 
         a.0.checkpoint();
         a.1.checkpoint();
@@ -1568,7 +1568,7 @@ mod nearly_eq_tol {
         a.2 .0.expect_nearly_eq_tol().times(0);
         a.2 .1.expect_nearly_eq_tol().times(0);
 
-        assert!(!a.nearly_eq_tol(&b, tolerance));
+        assert!(!a.nearly_eq_tol(&b, tol));
 
         a.0.checkpoint();
         a.1.checkpoint();
@@ -1586,7 +1586,7 @@ mod nearly_eq_tol {
         a.2 .0.expect_nearly_eq_tol().times(0);
         a.2 .1.expect_nearly_eq_tol().times(0);
 
-        assert!(!a.nearly_eq_tol(&b, tolerance));
+        assert!(!a.nearly_eq_tol(&b, tol));
 
         a.0.checkpoint();
         a.1.checkpoint();
@@ -1608,7 +1608,7 @@ mod nearly_eq_tol {
             .return_const(false);
         a.2 .1.expect_nearly_eq_tol().times(0);
 
-        assert!(!a.nearly_eq_tol(&b, tolerance));
+        assert!(!a.nearly_eq_tol(&b, tol));
 
         a.0.checkpoint();
         a.1.checkpoint();
@@ -1634,7 +1634,7 @@ mod nearly_eq_tol {
             .times(1)
             .return_const(false);
 
-        assert!(!a.nearly_eq_tol(&b, tolerance));
+        assert!(!a.nearly_eq_tol(&b, tol));
     }
 
     #[derive(NearlyEqTol)]
@@ -1722,14 +1722,14 @@ mod nearly_eq_tol {
 
         let eps = (0.1_f32, 0.01_f64);
         let ulps = (5_i32, 10_i64);
-        let tolerance = Tolerance::<EnumDifferentType>::new(eps, ulps);
+        let tol = Tolerance::<EnumDifferentType>::new(eps, ulps);
 
         inner_value!(a, EnumDifferentType::X)
             .expect_nearly_eq_tol()
             .with(always(), eq(Tolerance::<MockA>::new(0.1_f32, 5_i32)))
             .times(1)
             .return_const(true);
-        assert!(a.nearly_eq_tol(&b, tolerance));
+        assert!(a.nearly_eq_tol(&b, tol));
 
         inner_value!(a, EnumDifferentType::X).checkpoint();
         inner_value!(a, EnumDifferentType::X)
@@ -1737,23 +1737,23 @@ mod nearly_eq_tol {
             .with(always(), eq(Tolerance::<MockA>::new(0.1_f32, 5_i32)))
             .times(1)
             .return_const(false);
-        assert!(!a.nearly_eq_tol(&b, tolerance));
+        assert!(!a.nearly_eq_tol(&b, tol));
 
         inner_value!(b, EnumDifferentType::X)
             .expect_nearly_eq_tol()
             .times(0);
 
-        assert!(!b.nearly_eq_tol(&c, tolerance));
-        assert!(c.nearly_eq_tol(&d, tolerance));
-        assert!(!b.nearly_eq_tol(&e, tolerance));
-        assert!(!c.nearly_eq_tol(&e, tolerance));
+        assert!(!b.nearly_eq_tol(&c, tol));
+        assert!(c.nearly_eq_tol(&d, tol));
+        assert!(!b.nearly_eq_tol(&e, tol));
+        assert!(!c.nearly_eq_tol(&e, tol));
 
         inner_value!(e, EnumDifferentType::Z)
             .expect_nearly_eq_tol()
             .with(always(), eq(Tolerance::<MockB>::new(0.01_f64, 10_i64)))
             .times(1)
             .return_const(true);
-        assert!(e.nearly_eq_tol(&f, tolerance));
+        assert!(e.nearly_eq_tol(&f, tol));
 
         inner_value!(e, EnumDifferentType::Z).checkpoint();
         inner_value!(e, EnumDifferentType::Z)
@@ -1761,7 +1761,7 @@ mod nearly_eq_tol {
             .with(always(), eq(Tolerance::<MockB>::new(0.01_f64, 10_i64)))
             .times(1)
             .return_const(false);
-        assert!(!e.nearly_eq_tol(&f, tolerance));
+        assert!(!e.nearly_eq_tol(&f, tol));
     }
 }
 
@@ -1794,7 +1794,7 @@ mod nearly_eq {
         }
 
         impl NearlyEqTol for A {
-            fn nearly_eq_tol(&self, other: &Self, tolerance: Tolerance<Self>) -> bool;
+            fn nearly_eq_tol(&self, other: &Self, tol: Tolerance<Self>) -> bool;
         }
 
         impl NearlyEq for A {
@@ -1824,7 +1824,7 @@ mod nearly_eq {
         }
 
         impl NearlyEqTol for B {
-            fn nearly_eq_tol(&self, other: &Self, tolerance: Tolerance<Self>) -> bool;
+            fn nearly_eq_tol(&self, other: &Self, tol: Tolerance<Self>) -> bool;
         }
 
         impl NearlyEq for B {

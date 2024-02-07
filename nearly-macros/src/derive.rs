@@ -215,7 +215,7 @@ fn fn_impl_struct<T: ToTokens>(
                 quote!(#(self.#fields.#func(&other.#fields, ulps))&&*)
             }
             DeriveTrait::NearlyEqTol => {
-                quote!(#(self.#fields.#func(&other.#fields, (tolerance.eps, tolerance.ulps).into()))&&*)
+                quote!(#(self.#fields.#func(&other.#fields, (tol.eps, tol.ulps).into()))&&*)
             }
             DeriveTrait::NearlyEq => panic!("invalid derive trait"),
         };
@@ -236,7 +236,7 @@ fn fn_impl_struct<T: ToTokens>(
             quote!(#(self.#fields.#func(&other.#fields, ulps.#indices))&&*)
         }
         DeriveTrait::NearlyEqTol => {
-            quote!(#(self.#fields.#func(&other.#fields, (tolerance.eps.#indices, tolerance.ulps.#indices).into()))&&*)
+            quote!(#(self.#fields.#func(&other.#fields, (tol.eps.#indices, tol.ulps.#indices).into()))&&*)
         }
         DeriveTrait::NearlyEq => panic!("invalid derive trait"),
     }
@@ -264,7 +264,7 @@ fn fn_impl_enum(
             }
             DeriveTrait::NearlyEqTol => {
                 quote!(#((#enum_ident::#idents(self_val), #enum_ident::#idents(other_val)) => {
-                    self_val.#func(&other_val, (tolerance.eps, tolerance.ulps).into())
+                    self_val.#func(&other_val, (tol.eps, tol.ulps).into())
                 })*)
             }
             DeriveTrait::NearlyEq => panic!("invalid derive trait"),
@@ -290,7 +290,7 @@ fn fn_impl_enum(
             }
             DeriveTrait::NearlyEqTol => {
                 quote!(#((#enum_ident::#idents(self_val), #enum_ident::#idents(other_val)) => {
-                    self_val.#func(&other_val, (tolerance.eps.#indices, tolerance.ulps.#indices).into())
+                    self_val.#func(&other_val, (tol.eps.#indices, tol.ulps.#indices).into())
                 })*)
             }
             DeriveTrait::NearlyEq => panic!("invalid derive trait"),
@@ -378,7 +378,7 @@ fn derive_nearly_eq_tol(data: &Data, ident: &Ident) -> proc_macro2::TokenStream 
         #ulps_output
         #[automatically_derived]
         impl ::nearly::NearlyEqTol for #ident {
-            fn nearly_eq_tol(&self, other: &Self, tolerance: ::nearly::Tolerance<Self>) -> bool {
+            fn nearly_eq_tol(&self, other: &Self, tol: ::nearly::Tolerance<Self>) -> bool {
                 #fn_output
             }
         }
