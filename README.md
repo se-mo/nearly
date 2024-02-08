@@ -31,7 +31,7 @@ This crate provides macros to perform a comparison with some tolerance.
 
 ```rust
 use nearly::nearly;
-assert!(nearly!(a == b)); // <-- OK
+assert!( nearly!(a == b) ); // <-- OK
 ```
 
 ## Usage
