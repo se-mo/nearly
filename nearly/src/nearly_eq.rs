@@ -387,7 +387,11 @@ mod map {
         K: PartialEq,
         Lhs: NearlyEqEps<Rhs> + EpsTolerance<Rhs>,
     {
-        fn nearly_eq_eps(&self, other: &BTreeMap<K, Rhs>, eps: &EpsToleranceType<Lhs, Rhs>) -> bool {
+        fn nearly_eq_eps(
+            &self,
+            other: &BTreeMap<K, Rhs>,
+            eps: &EpsToleranceType<Lhs, Rhs>,
+        ) -> bool {
             self.len() == other.len()
                 && self
                     .iter()

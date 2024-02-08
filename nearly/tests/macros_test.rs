@@ -92,10 +92,7 @@ fn macro_nearly_eq_tol() {
         .in_sequence(&mut seq)
         .return_const(true);
 
-    assert!(nearly!(
-        a == b,
-        tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5)
-    ));
+    assert!(nearly!(a == b, tol = Tolerance::new(0.1, 5)));
     assert!(nearly!(a == b, eps = 0.15, ulps = 7));
 }
 
@@ -157,10 +154,7 @@ fn macro_nearly_ne_tol() {
         .in_sequence(&mut seq)
         .return_const(true);
 
-    assert!(nearly!(
-        a != b,
-        tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5)
-    ));
+    assert!(nearly!(a != b, tol = Tolerance::new(0.1, 5)));
     assert!(nearly!(a != b, eps = 0.15, ulps = 7));
 }
 
@@ -260,7 +254,7 @@ fn macro_assert_nearly_eq_tol() {
         .in_sequence(&mut seq)
         .return_const(true);
 
-    assert_nearly!(a == b, tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5));
+    assert_nearly!(a == b, tol = Tolerance::new(0.1, 5));
     assert_nearly!(a == b, eps = 0.15, ulps = 7);
 }
 
@@ -279,7 +273,7 @@ fn macro_assert_nearly_eq_tol_panic() {
         .times(1)
         .return_const(false);
 
-    assert_nearly!(a == b, tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5));
+    assert_nearly!(a == b, tol = Tolerance::new(0.1, 5));
 }
 
 #[test]
@@ -410,7 +404,7 @@ fn macro_assert_nearly_ne_tol() {
         .in_sequence(&mut seq)
         .return_const(true);
 
-    assert_nearly!(a != b, tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5));
+    assert_nearly!(a != b, tol = Tolerance::new(0.1, 5));
     assert_nearly!(a != b, eps = 0.15, ulps = 7);
 }
 
@@ -429,7 +423,7 @@ fn macro_assert_nearly_ne_tol_panic() {
         .times(1)
         .return_const(false);
 
-    assert_nearly!(a != b, tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5));
+    assert_nearly!(a != b, tol = Tolerance::new(0.1, 5));
 }
 
 #[test]
@@ -589,7 +583,7 @@ fn macro_debug_assert_nearly_eq_tol() {
         .in_sequence(&mut seq)
         .return_const(true);
 
-    debug_assert_nearly!(a == b, tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5));
+    debug_assert_nearly!(a == b, tol = Tolerance::new(0.1, 5));
     debug_assert_nearly!(a == b, eps = 0.15, ulps = 7);
 }
 
@@ -609,7 +603,7 @@ fn macro_debug_assert_nearly_eq_tol_panic() {
         .times(1)
         .return_const(false);
 
-    debug_assert_nearly!(a == b, tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5));
+    debug_assert_nearly!(a == b, tol = Tolerance::new(0.1, 5));
 }
 
 #[test]
@@ -639,7 +633,7 @@ fn macro_debug_assert_nearly_eq_tol() {
 
     a.expect_nearly_eq_tol().times(0);
 
-    debug_assert_nearly!(a == b, tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5));
+    debug_assert_nearly!(a == b, tol = Tolerance::new(0.1, 5));
     debug_assert_nearly!(a == b, eps = 0.15, ulps = 7);
 }
 
@@ -790,7 +784,7 @@ fn macro_debug_assert_nearly_ne_tol() {
         .in_sequence(&mut seq)
         .return_const(true);
 
-    debug_assert_nearly!(a != b, tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5));
+    debug_assert_nearly!(a != b, tol = Tolerance::new(0.1, 5));
     debug_assert_nearly!(a != b, eps = 0.15, ulps = 7);
 }
 
@@ -810,7 +804,7 @@ fn macro_debug_assert_nearly_ne_tol_panic() {
         .times(1)
         .return_const(false);
 
-    debug_assert_nearly!(a != b, tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5));
+    debug_assert_nearly!(a != b, tol = Tolerance::new(0.1, 5));
 }
 
 #[test]
@@ -840,7 +834,7 @@ fn macro_debug_assert_nearly_ne_tol() {
 
     a.expect_nearly_ne_tol().times(0);
 
-    debug_assert_nearly!(a != b, tol = Tolerance::<MockLhs, Rhs>::new(0.1, 5));
+    debug_assert_nearly!(a != b, tol = Tolerance::new(0.1, 5));
     debug_assert_nearly!(a != b, eps = 0.15, ulps = 7);
 }
 

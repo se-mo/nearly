@@ -83,12 +83,6 @@ impl UlpsTolerance for () {
     const DEFAULT: () = ();
 }
 
-/// Tolerance type used when comparing values of type [f32].
-pub type ToleranceF32 = Tolerance<f32>;
-
-/// Tolerance type used when comparing values of type [f64].
-pub type ToleranceF64 = Tolerance<f64>;
-
 /// A tolerance data type that is used for nearly comparisons based on a tolerance value.
 ///
 /// This data type combines an absolute epsilon value that will be used for comparisons based on

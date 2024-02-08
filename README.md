@@ -52,7 +52,7 @@ The tolerance used can be:
 Here are some example calls:
 
 ```rust
-use nearly::{nearly, ToleranceF32};
+use nearly::{nearly, Tolerance};
 
 let a: f32 = 1.0 + 1.04 + 1.1;
 let b: f32 = 3.14;
@@ -65,7 +65,7 @@ nearly!(a == b, ulps = 5);
 
 // use absolute epsilon and ulps based tolerance
 nearly!(a == b, eps = 0.001, ulps = 5);
-nearly!(a == b, tol = ToleranceF32::new(0.001, 5));
+nearly!(a == b, tol = Tolerance::new(0.001, 5));
 
 // use default absolute epsilon and default ulps based tolerance
 nearly!(a == b);
@@ -75,18 +75,18 @@ There is also an `assert_nearly!` and `debug_assert_nearly!` macros you can use 
 nearly comparison evaluates to false. The signature is the same as for the `nearly!` macro.
 
 ```rust
-use nearly::{assert_nearly, debug_assert_nearly};
+use nearly::{assert_nearly, debug_assert_nearly, Tolerance};
 
 assert_nearly!(a == b, eps = 0.001);
 assert_nearly!(a == b, ulps = 5);
 assert_nearly!(a == b, eps = 0.001, ulps = 5);
-assert_nearly!(a == b, tol = ToleranceF32::new(0.001, 5));
+assert_nearly!(a == b, tol = Tolerance::new(0.001, 5));
 assert_nearly!(a == b);
 
 debug_assert_nearly!(a == b, eps = 0.001);
 debug_assert_nearly!(a == b, ulps = 5);
 debug_assert_nearly!(a == b, eps = 0.001, ulps = 5);
-debug_assert_nearly!(a == b, tol = ToleranceF32::new(0.001, 5));
+debug_assert_nearly!(a == b, tol = Tolerance::new(0.001, 5));
 debug_assert_nearly!(a == b);
 ```
 

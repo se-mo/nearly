@@ -38,7 +38,7 @@
 //! Here are some example calls:
 //!
 //! ```
-//! use nearly::{nearly, ToleranceF32};
+//! use nearly::{nearly, Tolerance};
 //!
 //! let a: f32 = 1.0 + 1.04 + 1.1;
 //! let b: f32 = 3.14;
@@ -51,7 +51,7 @@
 //!
 //! // use absolute epsilon and ulps based tolerance
 //! nearly!(a == b, eps = 0.001, ulps = 5);
-//! nearly!(a == b, tol = ToleranceF32::new(0.001, 5));
+//! nearly!(a == b, tol = Tolerance::new(0.001, 5));
 //!
 //! // use default absolute epsilon and default ulps based tolerance
 //! nearly!(a == b);
@@ -64,18 +64,18 @@
 //! ```
 //! # let a: f32 = 1.0 + 1.04 + 1.1;
 //! # let b: f32 = 3.14;
-//! use nearly::{assert_nearly, debug_assert_nearly, ToleranceF32};
+//! use nearly::{assert_nearly, debug_assert_nearly, Tolerance};
 //!
 //! assert_nearly!(a == b, eps = 0.001);
 //! assert_nearly!(a == b, ulps = 5);
 //! assert_nearly!(a == b, eps = 0.001, ulps = 5);
-//! assert_nearly!(a == b, tol = ToleranceF32::new(0.001, 5));
+//! assert_nearly!(a == b, tol = Tolerance::new(0.001, 5));
 //! assert_nearly!(a == b);
 //!
 //! debug_assert_nearly!(a == b, eps = 0.001);
 //! debug_assert_nearly!(a == b, ulps = 5);
 //! debug_assert_nearly!(a == b, eps = 0.001, ulps = 5);
-//! debug_assert_nearly!(a == b, tol = ToleranceF32::new(0.001, 5));
+//! debug_assert_nearly!(a == b, tol = Tolerance::new(0.001, 5));
 //! debug_assert_nearly!(a == b);
 //! ```
 //!
@@ -85,11 +85,11 @@
 //! ```
 //! # let a: f32 = 1.0 + 1.04 + 1.1;
 //! # let b: f32 = 3.14;
-//! use nearly::{NearlyEqEps, NearlyEqUlps, NearlyEqTol, NearlyEq, ToleranceF32};
+//! use nearly::{NearlyEqEps, NearlyEqUlps, NearlyEqTol, NearlyEq, Tolerance};
 //!
 //! assert!(a.nearly_eq_eps(&b, &0.001));
 //! assert!(a.nearly_eq_ulps(&b, &5));
-//! assert!(a.nearly_eq_tol(&b, &ToleranceF32::new(0.001, 5)));
+//! assert!(a.nearly_eq_tol(&b, &Tolerance::new(0.001, 5)));
 //! assert!(a.nearly_eq(&b));
 //! ```
 //!
@@ -308,7 +308,7 @@
 /// # Examples
 ///
 /// ```
-/// use nearly::{assert_nearly, ToleranceF32};
+/// use nearly::{assert_nearly, Tolerance};
 ///
 /// let a: f32 = 1.0;
 /// let b: f32 = 1.0;
@@ -321,7 +321,7 @@
 ///
 /// // use absolute epsilon and ulps based tolerance
 /// assert_nearly!(a == b, eps = 0.01, ulps = 5);
-/// assert_nearly!(a == b, tol = ToleranceF32::new(0.01, 5));
+/// assert_nearly!(a == b, tol = Tolerance::new(0.01, 5));
 ///
 /// // use default absolute epsilon and default ulps based tolerance
 /// assert_nearly!(a == b);
@@ -348,7 +348,7 @@ pub use nearly_macros::assert_nearly;
 /// # Examples
 ///
 /// ```
-/// use nearly::{debug_assert_nearly, ToleranceF32};
+/// use nearly::{debug_assert_nearly, Tolerance};
 ///
 /// let a: f32 = 1.0;
 /// let b: f32 = 1.0;
@@ -361,7 +361,7 @@ pub use nearly_macros::assert_nearly;
 ///
 /// // use absolute epsilon and ulps based tolerance
 /// debug_assert_nearly!(a == b, eps = 0.01, ulps = 5);
-/// debug_assert_nearly!(a == b, tol = ToleranceF32::new(0.01, 5));
+/// debug_assert_nearly!(a == b, tol = Tolerance::new(0.01, 5));
 ///
 /// // use default absolute epsilon and default ulps based tolerance
 /// debug_assert_nearly!(a == b);
@@ -383,7 +383,7 @@ pub use nearly_macros::debug_assert_nearly;
 /// # Examples
 ///
 /// ```
-/// use nearly::{nearly, ToleranceF32};
+/// use nearly::{nearly, Tolerance};
 ///
 /// let a: f32 = 1.0;
 /// let b: f32 = 1.0;
@@ -396,7 +396,7 @@ pub use nearly_macros::debug_assert_nearly;
 ///
 /// // use absolute epsilon and ulps based tolerance
 /// let eq: bool = nearly!(a == b, eps = 0.01, ulps = 5);
-/// let eq: bool = nearly!(a == b, tol = ToleranceF32::new(0.01, 5));
+/// let eq: bool = nearly!(a == b, tol = Tolerance::new(0.01, 5));
 ///
 /// // use default absolute epsilon and default ulps based tolerance
 /// let eq: bool = nearly!(a == b);
@@ -542,7 +542,7 @@ pub use nearly_macros::NearlyEqUlps;
 /// let a = Point{x: -3.4, y: 2.1, z: 1.0};
 /// let b = Point{x: -3.4, y: 2.1, z: 1.0000008};
 ///
-/// assert_nearly!(a == b, tol = Tolerance::<Point>::new(0.0001, 8));
+/// assert_nearly!(a == b, tol = Tolerance::new(0.0001, 8));
 /// ```
 ///
 /// ## Different Types
@@ -568,7 +568,7 @@ pub use nearly_macros::NearlyEqUlps;
 /// let a = Point{x: -3.4, y: 2.1, z: 1.0};
 /// let b = Point{x: -3.4, y: 2.1, z: 1.0000008};
 ///
-/// assert_nearly!(a == b, tol = Tolerance::<Point>::new((0.0001, 0.000001, 0.0001), (8, 12, 8)));
+/// assert_nearly!(a == b, tol = Tolerance::new((0.0001, 0.000001, 0.0001), (8, 12, 8)));
 /// ```
 pub use nearly_macros::NearlyEqTol;
 
@@ -651,8 +651,6 @@ mod tolerance;
 pub use tolerance::EpsTolerance;
 pub use tolerance::EpsToleranceType;
 pub use tolerance::Tolerance;
-pub use tolerance::ToleranceF32;
-pub use tolerance::ToleranceF64;
 pub use tolerance::UlpsTolerance;
 pub use tolerance::UlpsToleranceType;
 
