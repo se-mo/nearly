@@ -21,15 +21,15 @@ mock!(
     }
 
     impl NearlyEqEps<Rhs> for Lhs {
-        fn nearly_eq_eps(&self, other: &Rhs, eps: EpsToleranceType<Self, Rhs>) -> bool;
+        fn nearly_eq_eps(&self, other: &Rhs, eps: &EpsToleranceType<Self, Rhs>) -> bool;
     }
 
     impl NearlyEqUlps<Rhs> for Lhs {
-        fn nearly_eq_ulps(&self, other: &Rhs, ulps: UlpsToleranceType<Self, Rhs>) -> bool;
+        fn nearly_eq_ulps(&self, other: &Rhs, ulps: &UlpsToleranceType<Self, Rhs>) -> bool;
     }
 
     impl NearlyEqTol<Rhs> for Lhs {
-        fn nearly_eq_tol(&self, other: &Rhs, tol: Tolerance<Self, Rhs>) -> bool;
+        fn nearly_eq_tol(&self, other: &Rhs, tol: &Tolerance<Self, Rhs>) -> bool;
     }
 
     impl NearlyEq<Rhs> for Lhs {}

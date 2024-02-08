@@ -209,13 +209,13 @@ fn fn_impl_struct<T: ToTokens>(
     if all_types_equal(types) {
         return match derive_trait {
             DeriveTrait::NearlyEqEps => {
-                quote!(#(self.#fields.#func(&other.#fields, eps))&&*)
+                quote!(#(self.#fields.#func(&other.#fields, &eps))&&*)
             }
             DeriveTrait::NearlyEqUlps => {
-                quote!(#(self.#fields.#func(&other.#fields, ulps))&&*)
+                quote!(#(self.#fields.#func(&other.#fields, &ulps))&&*)
             }
             DeriveTrait::NearlyEqTol => {
-                quote!(#(self.#fields.#func(&other.#fields, (tol.eps, tol.ulps).into()))&&*)
+                quote!(#(self.#fields.#func(&other.#fields, &(tol.eps, tol.ulps).into()))&&*)
             }
             DeriveTrait::NearlyEq => panic!("invalid derive trait"),
         };
@@ -230,13 +230,13 @@ fn fn_impl_struct<T: ToTokens>(
 
     match derive_trait {
         DeriveTrait::NearlyEqEps => {
-            quote!(#(self.#fields.#func(&other.#fields, eps.#indices))&&*)
+            quote!(#(self.#fields.#func(&other.#fields, &eps.#indices))&&*)
         }
         DeriveTrait::NearlyEqUlps => {
-            quote!(#(self.#fields.#func(&other.#fields, ulps.#indices))&&*)
+            quote!(#(self.#fields.#func(&other.#fields, &ulps.#indices))&&*)
         }
         DeriveTrait::NearlyEqTol => {
-            quote!(#(self.#fields.#func(&other.#fields, (tol.eps.#indices, tol.ulps.#indices).into()))&&*)
+            quote!(#(self.#fields.#func(&other.#fields, &(tol.eps.#indices, tol.ulps.#indices).into()))&&*)
         }
         DeriveTrait::NearlyEq => panic!("invalid derive trait"),
     }
@@ -254,17 +254,17 @@ fn fn_impl_enum(
         match derive_trait {
             DeriveTrait::NearlyEqEps => {
                 quote!(#((#enum_ident::#idents(self_val), #enum_ident::#idents(other_val)) => {
-                    self_val.#func(&other_val, eps)
+                    self_val.#func(&other_val, &eps)
                 })*)
             }
             DeriveTrait::NearlyEqUlps => {
                 quote!(#((#enum_ident::#idents(self_val), #enum_ident::#idents(other_val)) => {
-                    self_val.#func(&other_val, ulps)
+                    self_val.#func(&other_val, &ulps)
                 })*)
             }
             DeriveTrait::NearlyEqTol => {
                 quote!(#((#enum_ident::#idents(self_val), #enum_ident::#idents(other_val)) => {
-                    self_val.#func(&other_val, (tol.eps, tol.ulps).into())
+                    self_val.#func(&other_val, &(tol.eps, tol.ulps).into())
                 })*)
             }
             DeriveTrait::NearlyEq => panic!("invalid derive trait"),
@@ -280,17 +280,17 @@ fn fn_impl_enum(
         match derive_trait {
             DeriveTrait::NearlyEqEps => {
                 quote!(#((#enum_ident::#idents(self_val), #enum_ident::#idents(other_val)) => {
-                    self_val.#func(&other_val, eps.#indices)
+                    self_val.#func(&other_val, &eps.#indices)
                 })*)
             }
             DeriveTrait::NearlyEqUlps => {
                 quote!(#((#enum_ident::#idents(self_val), #enum_ident::#idents(other_val)) => {
-                    self_val.#func(&other_val, ulps.#indices)
+                    self_val.#func(&other_val, &ulps.#indices)
                 })*)
             }
             DeriveTrait::NearlyEqTol => {
                 quote!(#((#enum_ident::#idents(self_val), #enum_ident::#idents(other_val)) => {
-                    self_val.#func(&other_val, (tol.eps.#indices, tol.ulps.#indices).into())
+                    self_val.#func(&other_val, &(tol.eps.#indices, tol.ulps.#indices).into())
                 })*)
             }
             DeriveTrait::NearlyEq => panic!("invalid derive trait"),
@@ -329,7 +329,7 @@ fn derive_nearly_eq_eps(data: &Data, ident: &Ident) -> proc_macro2::TokenStream 
 
         #[automatically_derived]
         impl ::nearly::NearlyEqEps for #ident {
-            fn nearly_eq_eps(&self, other: &Self, eps: ::nearly::EpsToleranceType<Self>) -> bool {
+            fn nearly_eq_eps(&self, other: &Self, eps: &::nearly::EpsToleranceType<Self>) -> bool {
                 #fn_output
             }
         }
@@ -356,7 +356,7 @@ fn derive_nearly_eq_ulps(data: &Data, ident: &Ident) -> proc_macro2::TokenStream
 
         #[automatically_derived]
         impl ::nearly::NearlyEqUlps for #ident {
-            fn nearly_eq_ulps(&self, other: &Self, ulps: ::nearly::UlpsToleranceType<Self>) -> bool {
+            fn nearly_eq_ulps(&self, other: &Self, ulps: &::nearly::UlpsToleranceType<Self>) -> bool {
                 #fn_output
             }
         }
@@ -378,7 +378,7 @@ fn derive_nearly_eq_tol(data: &Data, ident: &Ident) -> proc_macro2::TokenStream 
         #ulps_output
         #[automatically_derived]
         impl ::nearly::NearlyEqTol for #ident {
-            fn nearly_eq_tol(&self, other: &Self, tol: ::nearly::Tolerance<Self>) -> bool {
+            fn nearly_eq_tol(&self, other: &Self, tol: &::nearly::Tolerance<Self>) -> bool {
                 #fn_output
             }
         }

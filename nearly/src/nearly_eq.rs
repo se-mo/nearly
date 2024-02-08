@@ -11,11 +11,11 @@ where
     RhsTol: ?Sized,
 {
     /// Returns whether `self` is nearly equal to `other` based on an absolute epsilon value `eps`.
-    fn nearly_eq_eps(&self, other: &Rhs, eps: EpsToleranceType<LhsTol, RhsTol>) -> bool;
+    fn nearly_eq_eps(&self, other: &Rhs, eps: &EpsToleranceType<LhsTol, RhsTol>) -> bool;
 
     /// Returns whether `self` is nearly not equal to `other` based on an absolute epsilon value `eps`.
     #[inline]
-    fn nearly_ne_eps(&self, other: &Rhs, eps: EpsToleranceType<LhsTol, RhsTol>) -> bool {
+    fn nearly_ne_eps(&self, other: &Rhs, eps: &EpsToleranceType<LhsTol, RhsTol>) -> bool {
         !self.nearly_eq_eps(other, eps)
     }
 }
@@ -28,11 +28,11 @@ where
     RhsTol: ?Sized,
 {
     /// Returns whether `self`is nearly equal to `other` based on an ulps value `ulps`.
-    fn nearly_eq_ulps(&self, other: &Rhs, ulps: UlpsToleranceType<LhsTol, RhsTol>) -> bool;
+    fn nearly_eq_ulps(&self, other: &Rhs, ulps: &UlpsToleranceType<LhsTol, RhsTol>) -> bool;
 
     /// Returns whether `self`is not nearly equal to `other` based on an ulps value `ulps`.
     #[inline]
-    fn nearly_ne_ulps(&self, other: &Rhs, ulps: UlpsToleranceType<LhsTol, RhsTol>) -> bool {
+    fn nearly_ne_ulps(&self, other: &Rhs, ulps: &UlpsToleranceType<LhsTol, RhsTol>) -> bool {
         !self.nearly_eq_ulps(other, ulps)
     }
 }
@@ -53,8 +53,8 @@ where
     /// Returns true if either `self` is nearly equal to `other` based on an epsilon value
     /// `tol.eps` or `self`is nearly equal to `other` based on an ulps value `tol.ulps`.
     #[inline]
-    fn nearly_eq_tol(&self, other: &Rhs, tol: Tolerance<LhsTol, RhsTol>) -> bool {
-        self.nearly_eq_eps(other, tol.eps) || self.nearly_eq_ulps(other, tol.ulps)
+    fn nearly_eq_tol(&self, other: &Rhs, tol: &Tolerance<LhsTol, RhsTol>) -> bool {
+        self.nearly_eq_eps(other, &tol.eps) || self.nearly_eq_ulps(other, &tol.ulps)
     }
 
     /// Returns whether `self` is not nearly equal to `other` based on a tolerance `tol`.
@@ -62,7 +62,7 @@ where
     /// `tol.eps` ans `self`is not nearly equal to `other` based on an ulps value
     /// `tol.ulps`.
     #[inline]
-    fn nearly_ne_tol(&self, other: &Rhs, tol: Tolerance<LhsTol, RhsTol>) -> bool {
+    fn nearly_ne_tol(&self, other: &Rhs, tol: &Tolerance<LhsTol, RhsTol>) -> bool {
         !self.nearly_eq_tol(other, tol)
     }
 }
@@ -82,7 +82,7 @@ where
     /// `Self`.
     #[inline]
     fn nearly_eq(&self, other: &Rhs) -> bool {
-        self.nearly_eq_tol(other, Tolerance::<LhsTol, RhsTol>::default())
+        self.nearly_eq_tol(other, &Tolerance::<LhsTol, RhsTol>::default())
     }
 
     /// Returns whether `self` is not nearly equal to `other` based on the default tolerance for
@@ -101,7 +101,7 @@ macro_rules! impl_nearly_float {
     ($float: ty) => {
         impl NearlyEqEps for $float {
             /// Returns true if `self - other` is in range `[-eps, eps]`.
-            fn nearly_eq_eps(&self, other: &Self, eps: EpsToleranceType<Self>) -> bool {
+            fn nearly_eq_eps(&self, other: &Self, eps: &EpsToleranceType<Self>) -> bool {
                 if self.is_infinite()
                     && other.is_infinite()
                     && self.is_sign_positive() == other.is_sign_positive()
@@ -118,7 +118,7 @@ macro_rules! impl_nearly_float {
                 #[cfg(feature = "std")]
                 let abs = diff.abs();
 
-                abs <= eps
+                abs <= *eps
             }
         }
 
@@ -129,7 +129,7 @@ macro_rules! impl_nearly_float {
             /// This function will only work for inputs with the same sign.
             /// It will always return false if `other` and `self` have different signs.
             /// Therefore, do not use this function for comparison around zero.
-            fn nearly_eq_ulps(&self, other: &Self, ulps: UlpsToleranceType<$float>) -> bool {
+            fn nearly_eq_ulps(&self, other: &Self, ulps: &UlpsToleranceType<$float>) -> bool {
                 // handles +0 == -0
                 if self == other {
                     return true;
@@ -143,7 +143,7 @@ macro_rules! impl_nearly_float {
                 }
 
                 let ulps_distance = self.signed_ulps_distance(*other);
-                ulps_distance >= -ulps && ulps_distance <= ulps
+                ulps_distance >= -*ulps && ulps_distance <= *ulps
             }
         }
 
@@ -166,7 +166,7 @@ macro_rules! impl_nearly_ref {
             Lhs: NearlyEqEps<Rhs> + EpsTolerance<Rhs>,
         {
             #[inline]
-            fn nearly_eq_eps(&self, other: &$rhs, eps: EpsToleranceType<Lhs, Rhs>) -> bool {
+            fn nearly_eq_eps(&self, other: &$rhs, eps: &EpsToleranceType<Lhs, Rhs>) -> bool {
                 NearlyEqEps::nearly_eq_eps(*self, *other, eps)
             }
         }
@@ -176,7 +176,7 @@ macro_rules! impl_nearly_ref {
             Lhs: NearlyEqUlps<Rhs> + UlpsTolerance<Rhs>,
         {
             #[inline]
-            fn nearly_eq_ulps(&self, other: &$rhs, ulps: UlpsToleranceType<Lhs, Rhs>) -> bool {
+            fn nearly_eq_ulps(&self, other: &$rhs, ulps: &UlpsToleranceType<Lhs, Rhs>) -> bool {
                 NearlyEqUlps::nearly_eq_ulps(*self, *other, ulps)
             }
         }
@@ -186,7 +186,7 @@ macro_rules! impl_nearly_ref {
             Lhs: NearlyEqTol<Rhs> + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
         {
             #[inline]
-            fn nearly_eq_tol(&self, other: &$rhs, tol: Tolerance<Lhs, Rhs>) -> bool {
+            fn nearly_eq_tol(&self, other: &$rhs, tol: &Tolerance<Lhs, Rhs>) -> bool {
                 NearlyEqTol::nearly_eq_tol(*self, *other, tol)
             }
         }
@@ -216,7 +216,7 @@ macro_rules! impl_nearly_collection {
             fn nearly_eq_eps(
                 &self,
                 other: &$rhs,
-                eps: EpsToleranceType<Lhs, Rhs>,
+                eps: &EpsToleranceType<Lhs, Rhs>,
             ) -> bool {
                 self.len() == other.len()
                     && self
@@ -233,7 +233,7 @@ macro_rules! impl_nearly_collection {
             fn nearly_eq_ulps(
                 &self,
                 other: &$rhs,
-                ulps: UlpsToleranceType<Lhs, Rhs>,
+                ulps: &UlpsToleranceType<Lhs, Rhs>,
             ) -> bool {
                 self.len() == other.len()
                     && self
@@ -250,7 +250,7 @@ macro_rules! impl_nearly_collection {
             fn nearly_eq_tol(
                 &self,
                 other: &$rhs,
-                tol: Tolerance<Lhs, Rhs>
+                tol: &Tolerance<Lhs, Rhs>
             ) -> bool {
                 self.len() == other.len()
                     && self
@@ -327,7 +327,7 @@ mod map {
         fn nearly_eq_eps(
             &self,
             other: &HashMap<K, Rhs, S>,
-            eps: EpsToleranceType<Lhs, Rhs>,
+            eps: &EpsToleranceType<Lhs, Rhs>,
         ) -> bool {
             self.len() == other.len()
                 && self.iter().all(|(key, v_lhs)| {
@@ -347,7 +347,7 @@ mod map {
         fn nearly_eq_ulps(
             &self,
             other: &HashMap<K, Rhs, S>,
-            ulps: UlpsToleranceType<Lhs, Rhs>,
+            ulps: &UlpsToleranceType<Lhs, Rhs>,
         ) -> bool {
             self.len() == other.len()
                 && self.iter().all(|(key, v_lhs)| {
@@ -364,7 +364,7 @@ mod map {
         Lhs: NearlyEqTol<Rhs> + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
         S: BuildHasher,
     {
-        fn nearly_eq_tol(&self, other: &HashMap<K, Rhs, S>, tol: Tolerance<Lhs, Rhs>) -> bool {
+        fn nearly_eq_tol(&self, other: &HashMap<K, Rhs, S>, tol: &Tolerance<Lhs, Rhs>) -> bool {
             self.len() == other.len()
                 && self.iter().all(|(key, v_lhs)| {
                     other
@@ -387,7 +387,7 @@ mod map {
         K: PartialEq,
         Lhs: NearlyEqEps<Rhs> + EpsTolerance<Rhs>,
     {
-        fn nearly_eq_eps(&self, other: &BTreeMap<K, Rhs>, eps: EpsToleranceType<Lhs, Rhs>) -> bool {
+        fn nearly_eq_eps(&self, other: &BTreeMap<K, Rhs>, eps: &EpsToleranceType<Lhs, Rhs>) -> bool {
             self.len() == other.len()
                 && self
                     .iter()
@@ -404,7 +404,7 @@ mod map {
         fn nearly_eq_ulps(
             &self,
             other: &BTreeMap<K, Rhs>,
-            ulps: UlpsToleranceType<Lhs, Rhs>,
+            ulps: &UlpsToleranceType<Lhs, Rhs>,
         ) -> bool {
             self.len() == other.len()
                 && self
@@ -419,7 +419,7 @@ mod map {
         K: PartialEq,
         Lhs: NearlyEqTol<Rhs> + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
     {
-        fn nearly_eq_tol(&self, other: &BTreeMap<K, Rhs>, tol: Tolerance<Lhs, Rhs>) -> bool {
+        fn nearly_eq_tol(&self, other: &BTreeMap<K, Rhs>, tol: &Tolerance<Lhs, Rhs>) -> bool {
             self.len() == other.len()
                 && self
                     .iter()
@@ -454,7 +454,7 @@ mod pointer {
                 Lhs: NearlyEqEps<Rhs> + EpsTolerance<Rhs>,
             {
                 #[inline]
-                fn nearly_eq_eps(&self, other: &$rhs, eps: EpsToleranceType<Lhs, Rhs>) -> bool {
+                fn nearly_eq_eps(&self, other: &$rhs, eps: &EpsToleranceType<Lhs, Rhs>) -> bool {
                     NearlyEqEps::nearly_eq_eps(&**self, &**other, eps)
                 }
             }
@@ -464,7 +464,7 @@ mod pointer {
                 Lhs: NearlyEqUlps<Rhs> + UlpsTolerance<Rhs>,
             {
                 #[inline]
-                fn nearly_eq_ulps(&self, other: &$rhs, ulps: UlpsToleranceType<Lhs, Rhs>) -> bool {
+                fn nearly_eq_ulps(&self, other: &$rhs, ulps: &UlpsToleranceType<Lhs, Rhs>) -> bool {
                     NearlyEqUlps::nearly_eq_ulps(&**self, &**other, ulps)
                 }
             }
@@ -474,7 +474,7 @@ mod pointer {
                 Lhs: NearlyEqTol<Rhs> + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
             {
                 #[inline]
-                fn nearly_eq_tol(&self, other: &$rhs, tol: Tolerance<Lhs, Rhs>) -> bool {
+                fn nearly_eq_tol(&self, other: &$rhs, tol: &Tolerance<Lhs, Rhs>) -> bool {
                     NearlyEqTol::nearly_eq_tol(&**self, &**other, tol)
                 }
             }
@@ -501,7 +501,7 @@ mod pointer {
         fn nearly_eq_eps(
             &self,
             other: &Pin<Rhs>,
-            eps: EpsToleranceType<Lhs::Target, Rhs::Target>,
+            eps: &EpsToleranceType<Lhs::Target, Rhs::Target>,
         ) -> bool {
             Lhs::Target::nearly_eq_eps(self, other, eps)
         }
@@ -515,7 +515,7 @@ mod pointer {
         fn nearly_eq_ulps(
             &self,
             other: &Pin<Rhs>,
-            ulps: UlpsToleranceType<Lhs::Target, Rhs::Target>,
+            ulps: &UlpsToleranceType<Lhs::Target, Rhs::Target>,
         ) -> bool {
             Lhs::Target::nearly_eq_ulps(self, other, ulps)
         }
@@ -530,7 +530,7 @@ mod pointer {
         fn nearly_eq_tol(
             &self,
             other: &Pin<Rhs>,
-            tol: Tolerance<Lhs::Target, Rhs::Target>,
+            tol: &Tolerance<Lhs::Target, Rhs::Target>,
         ) -> bool {
             Lhs::Target::nearly_eq_tol(self, other, tol)
         }
@@ -559,7 +559,7 @@ macro_rules! impl_nearly_tuple {
         where
             Lhs: NearlyEqEps<Rhs> + EpsTolerance<Rhs>,
         {
-            fn nearly_eq_eps(&self, other: &($($rhs,)+), eps: EpsToleranceType<Lhs, Rhs>) -> bool {
+            fn nearly_eq_eps(&self, other: &($($rhs,)+), eps: &EpsToleranceType<Lhs, Rhs>) -> bool {
                 $( self.$idx.nearly_eq_eps(&other.$idx, eps) )&&+
             }
         }
@@ -568,7 +568,7 @@ macro_rules! impl_nearly_tuple {
         where
             Lhs: NearlyEqUlps<Rhs> + UlpsTolerance<Rhs>,
         {
-            fn nearly_eq_ulps(&self, other: &($($rhs,)+), ulps: UlpsToleranceType<Lhs, Rhs>) -> bool {
+            fn nearly_eq_ulps(&self, other: &($($rhs,)+), ulps: &UlpsToleranceType<Lhs, Rhs>) -> bool {
                 $( self.$idx.nearly_eq_ulps(&other.$idx, ulps) )&&+
             }
         }
@@ -577,7 +577,7 @@ macro_rules! impl_nearly_tuple {
         where
             Lhs: NearlyEqTol<Rhs> + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
         {
-            fn nearly_eq_tol(&self, other: &($($rhs,)+), tol: Tolerance<Lhs, Rhs>) -> bool {
+            fn nearly_eq_tol(&self, other: &($($rhs,)+), tol: &Tolerance<Lhs, Rhs>) -> bool {
                 $( self.$idx.nearly_eq_tol(&other.$idx, tol) )&&+
             }
         }
@@ -601,14 +601,14 @@ impl_nearly_tuple!(
 
 impl NearlyEqEps for () {
     #[inline]
-    fn nearly_eq_eps(&self, _other: &Self, _eps: EpsToleranceType<Self>) -> bool {
+    fn nearly_eq_eps(&self, _other: &Self, _eps: &EpsToleranceType<Self>) -> bool {
         true
     }
 }
 
 impl NearlyEqUlps for () {
     #[inline]
-    fn nearly_eq_ulps(&self, _other: &Self, _ulps: UlpsToleranceType<Self>) -> bool {
+    fn nearly_eq_ulps(&self, _other: &Self, _ulps: &UlpsToleranceType<Self>) -> bool {
         true
     }
 }

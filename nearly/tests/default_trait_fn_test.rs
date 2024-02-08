@@ -23,11 +23,11 @@ mock!(
     }
 
     impl NearlyEqEps<Rhs> for Lhs {
-        fn nearly_eq_eps(&self, other: &Rhs, eps: EpsToleranceType<Self, Rhs>) -> bool;
+        fn nearly_eq_eps(&self, other: &Rhs, eps: &EpsToleranceType<Self, Rhs>) -> bool;
     }
 
     impl NearlyEqUlps<Rhs> for Lhs {
-        fn nearly_eq_ulps(&self, other: &Rhs, ulps: UlpsToleranceType<Self, Rhs>) -> bool;
+        fn nearly_eq_ulps(&self, other: &Rhs, ulps: &UlpsToleranceType<Self, Rhs>) -> bool;
     }
 
     impl NearlyEqTol<Rhs> for Lhs {}
@@ -44,7 +44,7 @@ fn nearly_ne_eps() {
         .with(eq(Rhs(5)), eq(0.1))
         .times(1)
         .return_const(false);
-    assert!(a.nearly_ne_eps(&b, 0.1));
+    assert!(a.nearly_ne_eps(&b, &0.1));
 
     a.checkpoint();
 
@@ -52,7 +52,7 @@ fn nearly_ne_eps() {
         .with(eq(Rhs(5)), eq(0.1))
         .times(1)
         .return_const(true);
-    assert!(!a.nearly_ne_eps(&b, 0.1));
+    assert!(!a.nearly_ne_eps(&b, &0.1));
 }
 
 #[test]
@@ -64,7 +64,7 @@ fn nearly_ne_ulps() {
         .with(eq(Rhs(5)), eq(5))
         .times(1)
         .return_const(false);
-    assert!(a.nearly_ne_ulps(&b, 5));
+    assert!(a.nearly_ne_ulps(&b, &5));
 
     a.checkpoint();
 
@@ -72,7 +72,7 @@ fn nearly_ne_ulps() {
         .with(eq(Rhs(5)), eq(5))
         .times(1)
         .return_const(true);
-    assert!(!a.nearly_ne_ulps(&b, 5));
+    assert!(!a.nearly_ne_ulps(&b, &5));
 }
 
 #[test]
@@ -87,7 +87,7 @@ fn nearly_eq_tol() {
         .times(1)
         .return_const(true);
     a.expect_nearly_eq_ulps().times(0);
-    assert!(a.nearly_eq_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+    assert!(a.nearly_eq_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
 
     a.checkpoint();
 
@@ -101,7 +101,7 @@ fn nearly_eq_tol() {
         .times(1)
         .in_sequence(&mut seq)
         .return_const(true);
-    assert!(a.nearly_eq_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+    assert!(a.nearly_eq_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
 
     a.checkpoint();
 
@@ -115,7 +115,7 @@ fn nearly_eq_tol() {
         .times(1)
         .in_sequence(&mut seq)
         .return_const(false);
-    assert!(!a.nearly_eq_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+    assert!(!a.nearly_eq_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
 }
 
 #[test]
@@ -130,7 +130,7 @@ fn nearly_ne_tol() {
         .times(1)
         .return_const(true);
     a.expect_nearly_eq_ulps().times(0);
-    assert!(!a.nearly_ne_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+    assert!(!a.nearly_ne_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
 
     a.checkpoint();
 
@@ -144,7 +144,7 @@ fn nearly_ne_tol() {
         .times(1)
         .in_sequence(&mut seq)
         .return_const(true);
-    assert!(!a.nearly_ne_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+    assert!(!a.nearly_ne_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
 
     a.checkpoint();
 
@@ -158,7 +158,7 @@ fn nearly_ne_tol() {
         .times(1)
         .in_sequence(&mut seq)
         .return_const(false);
-    assert!(a.nearly_ne_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+    assert!(a.nearly_ne_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
 }
 
 #[test]

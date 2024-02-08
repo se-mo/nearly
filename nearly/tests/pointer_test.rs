@@ -71,7 +71,7 @@ macro_rules! impl_test {
                         .return_const(true);
                     let a: lhs_type!($ptr) = lhs_value!(a_val, $ptr);
 
-                    assert!(a.nearly_eq_eps(&b, 0.1));
+                    assert!(a.nearly_eq_eps(&b, &0.1));
                 }
                 {
                     let mut a_val = MockLhs::new();
@@ -81,7 +81,7 @@ macro_rules! impl_test {
                         .return_const(false);
                     let a: lhs_type!($ptr) = lhs_value!(a_val, $ptr);
 
-                    assert!(!a.nearly_eq_eps(&b, 0.1));
+                    assert!(!a.nearly_eq_eps(&b, &0.1));
                 }
             }
 
@@ -97,7 +97,7 @@ macro_rules! impl_test {
                         .return_const(true);
                     let a: lhs_type!($ptr) = lhs_value!(a_val, $ptr);
 
-                    assert!(a.nearly_eq_ulps(&b, 5));
+                    assert!(a.nearly_eq_ulps(&b, &5));
                 }
                 {
                     let mut a_val = MockLhs::new();
@@ -107,7 +107,7 @@ macro_rules! impl_test {
                         .return_const(false);
                     let a: lhs_type!($ptr) = lhs_value!(a_val, $ptr);
 
-                    assert!(!a.nearly_eq_ulps(&b, 5));
+                    assert!(!a.nearly_eq_ulps(&b, &5));
                 }
             }
 
@@ -123,7 +123,7 @@ macro_rules! impl_test {
                         .return_const(true);
                     let a: lhs_type!($ptr) = lhs_value!(a_val, $ptr);
 
-                    assert!(a.nearly_eq_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+                    assert!(a.nearly_eq_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
                 }
                 {
                     let mut a_val = MockLhs::new();
@@ -133,7 +133,7 @@ macro_rules! impl_test {
                         .return_const(false);
                     let a: lhs_type!($ptr) = lhs_value!(a_val, $ptr);
 
-                    assert!(!a.nearly_eq_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+                    assert!(!a.nearly_eq_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
                 }
             }
         }

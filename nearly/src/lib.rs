@@ -87,9 +87,9 @@
 //! # let b: f32 = 3.14;
 //! use nearly::{NearlyEqEps, NearlyEqUlps, NearlyEqTol, NearlyEq, ToleranceF32};
 //!
-//! assert!(a.nearly_eq_eps(&b, 0.001));
-//! assert!(a.nearly_eq_ulps(&b, 5));
-//! assert!(a.nearly_eq_tol(&b, ToleranceF32::new(0.001, 5)));
+//! assert!(a.nearly_eq_eps(&b, &0.001));
+//! assert!(a.nearly_eq_ulps(&b, &5));
+//! assert!(a.nearly_eq_tol(&b, &ToleranceF32::new(0.001, 5)));
 //! assert!(a.nearly_eq(&b));
 //! ```
 //!
@@ -180,21 +180,21 @@
 //! };
 //!
 //! impl NearlyEqEps for Point {
-//!     fn nearly_eq_eps(&self, other: &Self, eps: EpsToleranceType<Self>) -> bool {
+//!     fn nearly_eq_eps(&self, other: &Self, eps: &EpsToleranceType<Self>) -> bool {
 //!         self.x.nearly_eq_eps(&other.x, eps) && self.y.nearly_eq_eps(&other.y, eps)
 //!     }
 //! }
 //!
 //! impl NearlyEqUlps for Point {
-//!     fn nearly_eq_ulps(&self, other: &Self, ulps: UlpsToleranceType<Self>) -> bool {
+//!     fn nearly_eq_ulps(&self, other: &Self, ulps: &UlpsToleranceType<Self>) -> bool {
 //!         self.x.nearly_eq_ulps(&other.x, ulps) && self.y.nearly_eq_ulps(&other.y, ulps)
 //!     }
 //! }
 //!
 //! impl NearlyEqTol for Point {
-//!     fn nearly_eq_tol(&self, other: &Self, tol: Tolerance<Self>) -> bool {
-//!         self.x.nearly_eq_tol(&other.x, (tol.eps, tol.ulps).into()) &&
-//!         self.y.nearly_eq_tol(&other.y, (tol.eps, tol.ulps).into())
+//!     fn nearly_eq_tol(&self, other: &Self, tol: &Tolerance<Self>) -> bool {
+//!         self.x.nearly_eq_tol(&other.x, &(tol.eps, tol.ulps).into()) &&
+//!         self.y.nearly_eq_tol(&other.y, &(tol.eps, tol.ulps).into())
 //!     }
 //! }
 //!
@@ -248,7 +248,7 @@
 //! where
 //!     T: NearlyEqEps + EpsTolerance,
 //! {
-//!     fn nearly_eq_eps(&self, other: &B<T>, eps: EpsToleranceType<Self, B<T>>) -> bool {
+//!     fn nearly_eq_eps(&self, other: &B<T>, eps: &EpsToleranceType<Self, B<T>>) -> bool {
 //!         self.x.nearly_eq_eps(&other.u, eps) && self.y.nearly_eq_eps(&other.v, eps)
 //!     }
 //! }
@@ -257,7 +257,7 @@
 //! where
 //!     T: NearlyEqUlps + UlpsTolerance,
 //! {
-//!     fn nearly_eq_ulps(&self, other: &B<T>, ulps: UlpsToleranceType<Self, B<T>>) -> bool {
+//!     fn nearly_eq_ulps(&self, other: &B<T>, ulps: &UlpsToleranceType<Self, B<T>>) -> bool {
 //!         self.x.nearly_eq_ulps(&other.u, ulps) && self.y.nearly_eq_ulps(&other.v, ulps)
 //!     }
 //! }
@@ -266,9 +266,9 @@
 //! where
 //!     T: NearlyEqTol + EpsTolerance + UlpsTolerance
 //! {
-//!     fn nearly_eq_tol(&self, other: &B<T>, tol: Tolerance<Self, B<T>>) -> bool {
-//!         self.x.nearly_eq_tol(&other.u, (tol.eps, tol.ulps).into()) &&
-//!         self.y.nearly_eq_tol(&other.v, (tol.eps, tol.ulps).into())
+//!     fn nearly_eq_tol(&self, other: &B<T>, tol: &Tolerance<Self, B<T>>) -> bool {
+//!         self.x.nearly_eq_tol(&other.u, &(tol.eps, tol.ulps).into()) &&
+//!         self.y.nearly_eq_tol(&other.v, &(tol.eps, tol.ulps).into())
 //!     }
 //! }
 //!

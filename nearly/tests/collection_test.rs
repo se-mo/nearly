@@ -188,7 +188,7 @@ macro_rules! impl_test_same_length {
                     .in_sequence(&mut seq)
                     .return_const(true);
 
-                assert!(a.nearly_eq_eps(&b, 0.1));
+                assert!(a.nearly_eq_eps(&b, &0.1));
 
                 checkpoint!(a);
                 get_element!(a, 0, $lhs).expect_nearly_eq_eps()
@@ -199,7 +199,7 @@ macro_rules! impl_test_same_length {
                 get_element!(a, 1, $lhs).expect_nearly_eq_eps().times(0);
                 get_element!(a, 2, $lhs).expect_nearly_eq_eps().times(0);
 
-                assert!(!a.nearly_eq_eps(&b, 0.1));
+                assert!(!a.nearly_eq_eps(&b, &0.1));
 
                 checkpoint!(a);
                 get_element!(a, 0, $lhs).expect_nearly_eq_eps()
@@ -214,7 +214,7 @@ macro_rules! impl_test_same_length {
                     .return_const(false);
                 get_element!(a, 2, $lhs).expect_nearly_eq_eps().times(0);
 
-                assert!(!a.nearly_eq_eps(&b, 0.1));
+                assert!(!a.nearly_eq_eps(&b, &0.1));
 
                 checkpoint!(a);
                 get_element!(a, 0, $lhs).expect_nearly_eq_eps()
@@ -233,7 +233,7 @@ macro_rules! impl_test_same_length {
                     .in_sequence(&mut seq)
                     .return_const(false);
 
-                assert!(!a.nearly_eq_eps(&b, 0.1));
+                assert!(!a.nearly_eq_eps(&b, &0.1));
             }
 
             #[test]
@@ -260,7 +260,7 @@ macro_rules! impl_test_same_length {
                     .in_sequence(&mut seq)
                     .return_const(true);
 
-                assert!(a.nearly_eq_ulps(&b, 5));
+                assert!(a.nearly_eq_ulps(&b, &5));
 
                 checkpoint!(a);
                 get_element!(a, 0, $lhs).expect_nearly_eq_ulps()
@@ -271,7 +271,7 @@ macro_rules! impl_test_same_length {
                 get_element!(a, 1, $lhs).expect_nearly_eq_ulps().times(0);
                 get_element!(a, 2, $lhs).expect_nearly_eq_ulps().times(0);
 
-                assert!(!a.nearly_eq_ulps(&b, 5));
+                assert!(!a.nearly_eq_ulps(&b, &5));
 
                 checkpoint!(a);
                 get_element!(a, 0, $lhs).expect_nearly_eq_ulps()
@@ -286,7 +286,7 @@ macro_rules! impl_test_same_length {
                     .return_const(false);
                 get_element!(a, 2, $lhs).expect_nearly_eq_ulps().times(0);
 
-                assert!(!a.nearly_eq_ulps(&b, 5));
+                assert!(!a.nearly_eq_ulps(&b, &5));
 
                 checkpoint!(a);
                 get_element!(a, 0, $lhs).expect_nearly_eq_ulps()
@@ -305,7 +305,7 @@ macro_rules! impl_test_same_length {
                     .in_sequence(&mut seq)
                     .return_const(false);
 
-                assert!(!a.nearly_eq_ulps(&b, 5));
+                assert!(!a.nearly_eq_ulps(&b, &5));
             }
 
             #[test]
@@ -332,7 +332,7 @@ macro_rules! impl_test_same_length {
                     .in_sequence(&mut seq)
                     .return_const(true);
 
-                assert!(a.nearly_eq_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+                assert!(a.nearly_eq_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
 
                 checkpoint!(a);
                 get_element!(a, 0, $lhs).expect_nearly_eq_tol()
@@ -343,7 +343,7 @@ macro_rules! impl_test_same_length {
                 get_element!(a, 1, $lhs).expect_nearly_eq_tol().times(0);
                 get_element!(a, 2, $lhs).expect_nearly_eq_tol().times(0);
 
-                assert!(!a.nearly_eq_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+                assert!(!a.nearly_eq_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
 
                 checkpoint!(a);
                 get_element!(a, 0, $lhs).expect_nearly_eq_tol()
@@ -358,7 +358,7 @@ macro_rules! impl_test_same_length {
                     .return_const(false);
                 get_element!(a, 2, $lhs).expect_nearly_eq_tol().times(0);
 
-                assert!(!a.nearly_eq_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+                assert!(!a.nearly_eq_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
 
                 checkpoint!(a);
                 get_element!(a, 0, $lhs).expect_nearly_eq_tol()
@@ -377,7 +377,7 @@ macro_rules! impl_test_same_length {
                     .in_sequence(&mut seq)
                     .return_const(false);
 
-                assert!(!a.nearly_eq_tol(&b, Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+                assert!(!a.nearly_eq_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
             }
         }
     };
@@ -399,7 +399,7 @@ macro_rules! impl_test_different_length {
                     get_element!(a, 1, $lhs).expect_nearly_eq_eps().times(0);
                     get_element!(a, 2, $lhs).expect_nearly_eq_eps().times(0);
 
-                    assert!(!a.nearly_eq_eps(&b, 0.1));
+                    assert!(!a.nearly_eq_eps(&b, &0.1));
                 }
                 {
                     #[allow(unused_mut)]
@@ -411,7 +411,7 @@ macro_rules! impl_test_different_length {
                     get_element!(a, 0, $lhs).expect_nearly_eq_eps().times(0);
                     get_element!(a, 1, $lhs).expect_nearly_eq_eps().times(0);
 
-                    assert!(!a.nearly_eq_eps(&b, 0.1));
+                    assert!(!a.nearly_eq_eps(&b, &0.1));
                 }
             }
 
@@ -428,7 +428,7 @@ macro_rules! impl_test_different_length {
                     get_element!(a, 1, $lhs).expect_nearly_eq_ulps().times(0);
                     get_element!(a, 2, $lhs).expect_nearly_eq_ulps().times(0);
 
-                    assert!(!a.nearly_eq_ulps(&b, 5));
+                    assert!(!a.nearly_eq_ulps(&b, &5));
                 }
                 {
                     #[allow(unused_mut)]
@@ -440,7 +440,7 @@ macro_rules! impl_test_different_length {
                     get_element!(a, 0, $lhs).expect_nearly_eq_ulps().times(0);
                     get_element!(a, 1, $lhs).expect_nearly_eq_ulps().times(0);
 
-                    assert!(!a.nearly_eq_ulps(&b, 5));
+                    assert!(!a.nearly_eq_ulps(&b, &5));
                 }
             }
 
@@ -457,7 +457,7 @@ macro_rules! impl_test_different_length {
                     get_element!(a, 1, $lhs).expect_nearly_eq_tol().times(0);
                     get_element!(a, 2, $lhs).expect_nearly_eq_tol().times(0);
 
-                    assert!(!a.nearly_eq_eps(&b, 0.1));
+                    assert!(!a.nearly_eq_eps(&b, &0.1));
                 }
                 {
                     #[allow(unused_mut)]
@@ -469,7 +469,7 @@ macro_rules! impl_test_different_length {
                     get_element!(a, 0, $lhs).expect_nearly_eq_tol().times(0);
                     get_element!(a, 1, $lhs).expect_nearly_eq_tol().times(0);
 
-                    assert!(!a.nearly_eq_eps(&b, 0.1));
+                    assert!(!a.nearly_eq_eps(&b, &0.1));
                 }
             }
         }

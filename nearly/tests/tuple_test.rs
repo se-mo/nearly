@@ -366,11 +366,11 @@ macro_rules! impl_test {
                 let mut seq = Sequence::new();
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 0);
-                assert!(a.$func(&b, $tol));
+                assert!(a.$func(&b, &$tol));
                 checkpoint!(a, 0);
 
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0);
             }
 
@@ -381,17 +381,17 @@ macro_rules! impl_test {
                 let mut seq = Sequence::new();
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1);
-                assert!(a.$func(&b, $tol));
+                assert!(a.$func(&b, &$tol));
                 checkpoint!(a, 0 1);
 
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
                 expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 1);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1);
             }
 
@@ -402,23 +402,23 @@ macro_rules! impl_test {
                 let mut seq = Sequence::new();
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2);
-                assert!(a.$func(&b, $tol));
+                assert!(a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2);
 
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
                 expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 2);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
                 expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2);
             }
 
@@ -429,29 +429,29 @@ macro_rules! impl_test {
                 let mut seq = Sequence::new();
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3);
-                assert!(a.$func(&b, $tol));
+                assert!(a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3);
 
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
                 expect_no_call!(a, [<expect_$func>], 0 1 2);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 3);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
                 expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
                 expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3);
             }
 
@@ -462,35 +462,35 @@ macro_rules! impl_test {
                 let mut seq = Sequence::new();
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4);
-                assert!(a.$func(&b, $tol));
+                assert!(a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4);
 
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 4);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
                 expect_no_call!(a, [<expect_$func>], 0 1 2);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
                 expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
                 expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4);
             }
 
@@ -501,41 +501,41 @@ macro_rules! impl_test {
                 let mut seq = Sequence::new();
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5);
-                assert!(a.$func(&b, $tol));
+                assert!(a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5);
 
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 5);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
                 expect_no_call!(a, [<expect_$func>], 0 1 2);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
                 expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
                 expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5);
             }
 
@@ -546,47 +546,47 @@ macro_rules! impl_test {
                 let mut seq = Sequence::new();
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5 6);
-                assert!(a.$func(&b, $tol));
+                assert!(a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6);
 
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 6);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 6);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 5 6);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5 6);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
                 expect_no_call!(a, [<expect_$func>], 0 1 2);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5 6);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
                 expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5 6);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
                 expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5 6);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6);
             }
 
@@ -597,53 +597,53 @@ macro_rules! impl_test {
                 let mut seq = Sequence::new();
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5 6 7);
-                assert!(a.$func(&b, $tol));
+                assert!(a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7);
 
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 7);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 7);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 6);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 6 7);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 5 6 7);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5 6 7);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
                 expect_no_call!(a, [<expect_$func>], 0 1 2);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5 6 7);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
                 expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5 6 7);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
                 expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5 6 7);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7);
             }
 
@@ -654,59 +654,59 @@ macro_rules! impl_test {
                 let mut seq = Sequence::new();
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5 6 7 8);
-                assert!(a.$func(&b, $tol));
+                assert!(a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
 
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 8);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 8);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 7);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 7 8);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 6);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 6 7 8);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 5 6 7 8);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5 6 7 8);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
                 expect_no_call!(a, [<expect_$func>], 0 1 2);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5 6 7 8);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
                 expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5 6 7 8);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
                 expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5 6 7 8);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
             }
 
@@ -717,65 +717,65 @@ macro_rules! impl_test {
                 let mut seq = Sequence::new();
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5 6 7 8 9);
-                assert!(a.$func(&b, $tol));
+                assert!(a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 9);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7 8);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 9);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 8);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 8 9);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 7);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 7 8 9);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 6);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 6 7 8 9);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 5 6 7 8 9);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5 6 7 8 9);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
                 expect_no_call!(a, [<expect_$func>], 0 1 2);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5 6 7 8 9);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
                 expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5 6 7 8 9);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
                 expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5 6 7 8 9);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
             }
 
@@ -786,71 +786,71 @@ macro_rules! impl_test {
                 let mut seq = Sequence::new();
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5 6 7 8 9 10);
-                assert!(a.$func(&b, $tol));
+                assert!(a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 10);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7 8 9);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 10);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 9);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7 8);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 9 10);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 8);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 8 9 10);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 7);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 7 8 9 10);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 6);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 6 7 8 9 10);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 5 6 7 8 9 10);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5 6 7 8 9 10);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
                 expect_no_call!(a, [<expect_$func>], 0 1 2);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5 6 7 8 9 10);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
                 expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5 6 7 8 9 10);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
                 expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5 6 7 8 9 10);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
             }
 
@@ -861,77 +861,77 @@ macro_rules! impl_test {
                 let mut seq = Sequence::new();
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5 6 7 8 9 10 11);
-                assert!(a.$func(&b, $tol));
+                assert!(a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 11);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7 8 9 10);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 11);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 10);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7 8 9);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 10 11);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 9);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7 8);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 9 10 11);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 8);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 8 9 10 11);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 7);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 7 8 9 10 11);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 6);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 6 7 8 9 10 11);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 5 6 7 8 9 10 11);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
                 expect_no_call!(a, [<expect_$func>], 0 1 2 3);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5 6 7 8 9 10 11);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
                 expect_no_call!(a, [<expect_$func>], 0 1 2);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5 6 7 8 9 10 11);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
                 expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5 6 7 8 9 10 11);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
                 expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
                 expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5 6 7 8 9 10 11);
                 expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, $tol));
+                assert!(!a.$func(&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
             }
         }
