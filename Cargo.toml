@@ -8,5 +8,5 @@ repository = "https://github.com/se-mo/nearly"
 documentation = "https://docs.rs/nearly"
 readme = "README.md"
 keywords = ["float", "compare", "comparison", "almost", "equal"]
-categories = ["mathematics", "no-std"]
+categories = ["development-tools::debugging", "mathematics", "no-std"]
 license = "MIT"
