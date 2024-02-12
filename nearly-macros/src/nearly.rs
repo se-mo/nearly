@@ -195,10 +195,10 @@ fn assert_macro_output(input: &NearlyMacroInput) -> proc_macro2::TokenStream {
                 let eps = &#eps;
                 if !#function(left, right, eps) {
                     panic!(
-                        r#"assertion failed: `nearly (left {} right)`
-  left: `{:?}`,
- right: `{:?}`,
-   eps: `{:?}`"#,
+                        r#"assertion `nearly (left {} right)` failed
+  left: {:?}
+ right: {:?}
+   eps: {:?}"#,
                         #op_str, left, right, eps
                     )
                 }
@@ -211,10 +211,10 @@ fn assert_macro_output(input: &NearlyMacroInput) -> proc_macro2::TokenStream {
                 let ulps = &#ulps;
                 if !#function(left, right, ulps) {
                     panic!(
-                        r#"assertion failed: `nearly (left {} right)`
-  left: `{:?}`,
- right: `{:?}`,
-  ulps: `{:?}`"#,
+                        r#"assertion `nearly (left {} right)` failed
+  left: {:?}
+ right: {:?}
+  ulps: {:?}"#,
                         #op_str, left, right, ulps
                     )
                 }
@@ -227,11 +227,11 @@ fn assert_macro_output(input: &NearlyMacroInput) -> proc_macro2::TokenStream {
                 let tol = &#tol;
                 if !#function(left, right, tol) {
                     panic!(
-                        r#"assertion failed: `nearly (left {} right)`
-  left: `{:?}`,
- right: `{:?}`,
-   eps: `{:?}`,
-  ulps: `{:?}`"#,
+                        r#"assertion `nearly (left {} right)` failed
+  left: {:?}
+ right: {:?}
+   eps: {:?}
+  ulps: {:?}"#,
                         #op_str, left, right, tol.eps, tol.ulps
                     )
                 }
@@ -245,11 +245,11 @@ fn assert_macro_output(input: &NearlyMacroInput) -> proc_macro2::TokenStream {
                 let ulps = &#ulps;
                 if !#function(left, right, &(*eps, *ulps).into()) {
                     panic!(
-                        r#"assertion failed: `nearly (left {} right)`
-  left: `{:?}`,
- right: `{:?}`,
-   eps: `{:?}`,
-  ulps: `{:?}`"#,
+                        r#"assertion `nearly (left {} right)` failed
+  left: {:?}
+ right: {:?}
+   eps: {:?}
+  ulps: {:?}"#,
                         #op_str, left, right, eps, ulps
                     )
                 }
@@ -261,11 +261,11 @@ fn assert_macro_output(input: &NearlyMacroInput) -> proc_macro2::TokenStream {
                 let right = &#right;
                 if !#function(left, right) {
                     panic!(
-                        r#"assertion failed: `nearly (left {} right)`
-  left: `{:?}`,
- right: `{:?}`,
-   eps: `{:?}`,
-  ulps: `{:?}`"#,
+                        r#"assertion `nearly (left {} right)` failed
+  left: {:?}
+ right: {:?}
+   eps: {:?}
+  ulps: {:?}"#,
                         #op_str, left, right,
                         ::nearly::EpsTolerance::default_eps(left, right),
                         ::nearly::UlpsTolerance::default_ulps(left, right)
