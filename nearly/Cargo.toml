@@ -3,6 +3,7 @@ name = "nearly"
 version = "0.3.0-pre"
 description = "Compare IEEE floating point types"
 edition.workspace = true
+rust-version.workspace = true
 authors.workspace = true
 repository.workspace = true
 documentation.workspace = true

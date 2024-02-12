@@ -3,6 +3,7 @@ members = ["nearly", "nearly-macros"]
 
 [workspace.package]
 edition = "2021"
+rust-version = "1.64.0"
 authors = ["Sebastian Mock"]
 repository = "https://github.com/se-mo/nearly"
 documentation = "https://docs.rs/nearly"
