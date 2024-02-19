@@ -17,7 +17,7 @@ default = ["std"]
 std = []
 
 [dependencies]
-nearly-macros = { path = "../nearly-macros" }
+nearly-macros = { version = "0.1.0", path = "../nearly-macros" }
 
 [dev-dependencies]
 mockall = "0.12"
