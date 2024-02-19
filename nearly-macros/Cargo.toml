@@ -1,6 +1,6 @@
 [package]
 name = "nearly-macros"
-version = "0.1.0-pre"
+version = "0.1.0"
 description = "Procedural macros for nearly"
 readme = "README.md"
 edition.workspace = true
