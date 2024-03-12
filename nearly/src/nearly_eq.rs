@@ -102,10 +102,7 @@ macro_rules! impl_nearly_float {
         impl NearlyEqEps for $float {
             /// Returns true if `self - other` is in range `[-eps, eps]`.
             fn nearly_eq_eps(&self, other: &Self, eps: &EpsToleranceType<Self>) -> bool {
-                if self.is_infinite()
-                    && other.is_infinite()
-                    && self.is_sign_positive() == other.is_sign_positive()
-                {
+                if self == other {
                     return true;
                 }
 
