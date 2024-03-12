@@ -118,8 +118,8 @@ fn nearly_eq_ulps_sum_f64() {
 fn nearly_eq_ulps_inf_f32() {
     let a: f32 = 1.0;
     let b: f32 = f32::INFINITY;
-    assert!(!a.nearly_eq_ulps(&b, &(i32::MAX << 1)));
-    assert!(!b.nearly_eq_ulps(&a, &(i32::MAX << 1)));
+    assert!(!a.nearly_eq_ulps(&b, &(i32::MAX >> 1)));
+    assert!(!b.nearly_eq_ulps(&a, &(i32::MAX >> 1)));
 
     assert!(f32::INFINITY.nearly_eq_ulps(&f32::INFINITY, &0));
     assert!((-f32::INFINITY).nearly_eq_ulps(&-f32::INFINITY, &0));
@@ -131,8 +131,8 @@ fn nearly_eq_ulps_inf_f32() {
 fn nearly_eq_ulps_inf_f64() {
     let a: f64 = 1.0;
     let b: f64 = f64::INFINITY;
-    assert!(!a.nearly_eq_ulps(&b, &(i64::MAX << 1)));
-    assert!(!b.nearly_eq_ulps(&a, &(i64::MAX << 1)));
+    assert!(!a.nearly_eq_ulps(&b, &(i64::MAX >> 1)));
+    assert!(!b.nearly_eq_ulps(&a, &(i64::MAX >> 1)));
 
     assert!(f64::INFINITY.nearly_eq_ulps(&f64::INFINITY, &0));
     assert!((-f64::INFINITY).nearly_eq_ulps(&-f64::INFINITY, &0));
@@ -274,8 +274,8 @@ fn nearly_ne_ulps_sum_f64() {
 fn nearly_ne_ulps_inf_f32() {
     let a: f32 = 1.0;
     let b: f32 = f32::INFINITY;
-    assert!(a.nearly_ne_ulps(&b, &(i32::MAX << 1)));
-    assert!(b.nearly_ne_ulps(&a, &(i32::MAX << 1)));
+    assert!(a.nearly_ne_ulps(&b, &(i32::MAX >> 1)));
+    assert!(b.nearly_ne_ulps(&a, &(i32::MAX >> 1)));
 
     assert!(!f32::INFINITY.nearly_ne_ulps(&f32::INFINITY, &0));
     assert!(!(-f32::INFINITY).nearly_ne_ulps(&-f32::INFINITY, &0));
@@ -287,8 +287,8 @@ fn nearly_ne_ulps_inf_f32() {
 fn nearly_ne_ulps_inf_f64() {
     let a: f64 = 1.0;
     let b: f64 = f64::INFINITY;
-    assert!(a.nearly_ne_ulps(&b, &(i64::MAX << 1)));
-    assert!(b.nearly_ne_ulps(&a, &(i64::MAX << 1)));
+    assert!(a.nearly_ne_ulps(&b, &(i64::MAX >> 1)));
+    assert!(b.nearly_ne_ulps(&a, &(i64::MAX >> 1)));
 
     assert!(!f64::INFINITY.nearly_ne_ulps(&f64::INFINITY, &0));
     assert!(!(-f64::INFINITY).nearly_ne_ulps(&-f64::INFINITY, &0));
