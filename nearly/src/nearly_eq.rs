@@ -50,15 +50,17 @@ where
     RhsTol: ?Sized,
 {
     /// Returns whether `self` is nearly equal to `other` based on a tolerance `tol`.
-    /// Returns true if either `self` is nearly equal to `other` based on an epsilon value
-    /// `tol.eps` or `self`is nearly equal to `other` based on an ulps value `tol.ulps`.
+    /// 
+    /// Returns true if either `self` is nearly equal to `other` based on an absolute epsilon value
+    /// `tol.eps` or `self` is nearly equal to `other` based on an ulps value `tol.ulps`.
     #[inline]
     fn nearly_eq_tol(&self, other: &Rhs, tol: &Tolerance<LhsTol, RhsTol>) -> bool {
         self.nearly_eq_eps(other, &tol.eps) || self.nearly_eq_ulps(other, &tol.ulps)
     }
 
     /// Returns whether `self` is not nearly equal to `other` based on a tolerance `tol`.
-    /// Returns true if both `self` is not nearly equal to `other` based on an epsilon value
+    /// 
+    /// Returns true if both `self` is not nearly equal to `other` based on an absolute epsilon value
     /// `tol.eps` ans `self`is not nearly equal to `other` based on an ulps value
     /// `tol.ulps`.
     #[inline]
@@ -78,15 +80,15 @@ where
     LhsTol: ?Sized + EpsTolerance<RhsTol> + UlpsTolerance<RhsTol>,
     RhsTol: ?Sized,
 {
-    /// Returns whether `self` is nearly equal to `other` based on the default tolerance for type
-    /// `Self`.
+    /// Returns whether `self` is nearly equal to `other` based on the default tolerance for
+    /// comparisons of `Self` with `other`.
     #[inline]
     fn nearly_eq(&self, other: &Rhs) -> bool {
         self.nearly_eq_tol(other, &Tolerance::<LhsTol, RhsTol>::default())
     }
 
     /// Returns whether `self` is not nearly equal to `other` based on the default tolerance for
-    /// type `Self`.
+    /// comparisons of `Self` with `other`.
     #[inline]
     fn nearly_ne(&self, other: &Rhs) -> bool {
         !self.nearly_eq(other)
@@ -124,7 +126,7 @@ macro_rules! impl_nearly_float {
             /// `[-ulps, ulps]`.
             ///
             /// This function will only work for inputs with the same sign.
-            /// It will always return false if `other` and `self` have different signs.
+            /// It will always return false if `self` and `other` have different signs.
             /// Therefore, do not use this function for comparison around zero.
             fn nearly_eq_ulps(&self, other: &Self, ulps: &UlpsToleranceType<$float>) -> bool {
                 // handles +0 == -0
