@@ -1,7 +1,7 @@
 use mockall::{mock, predicate::eq, Sequence};
 use nearly::{
-    EpsTolerance, EpsToleranceType, NearlyOrdEps, NearlyOrdUlps,
-    UlpsTolerance, UlpsToleranceType, NearlyEqEps, NearlyEqUlps,
+    EpsTolerance, EpsToleranceType, NearlyEqEps, NearlyEqUlps, NearlyOrdEps, NearlyOrdUlps,
+    UlpsTolerance, UlpsToleranceType,
 };
 
 #[derive(Debug, PartialEq)]

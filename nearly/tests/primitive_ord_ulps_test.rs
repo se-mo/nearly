@@ -46,7 +46,7 @@ fn nearly_lt_ulps_different_f32() {
 
     assert!(!a.nearly_lt_ulps(&b, &7));
     assert!(!b.nearly_lt_ulps(&a, &7));
-    
+
     assert!(!a.nearly_lt_ulps(&b, &8));
     assert!(!b.nearly_lt_ulps(&a, &8));
 }
@@ -61,7 +61,7 @@ fn nearly_lt_ulps_different_f64() {
 
     assert!(!a.nearly_lt_ulps(&b, &7));
     assert!(!b.nearly_lt_ulps(&a, &7));
-    
+
     assert!(!a.nearly_lt_ulps(&b, &8));
     assert!(!b.nearly_lt_ulps(&a, &8));
 }
@@ -204,7 +204,7 @@ fn nearly_le_ulps_different_f32() {
 
     assert!(a.nearly_le_ulps(&b, &7));
     assert!(b.nearly_le_ulps(&a, &7));
-    
+
     assert!(a.nearly_le_ulps(&b, &8));
     assert!(b.nearly_le_ulps(&a, &8));
 }
@@ -219,7 +219,7 @@ fn nearly_le_ulps_different_f64() {
 
     assert!(a.nearly_le_ulps(&b, &7));
     assert!(b.nearly_le_ulps(&a, &7));
-    
+
     assert!(a.nearly_le_ulps(&b, &8));
     assert!(b.nearly_le_ulps(&a, &8));
 }
@@ -362,7 +362,7 @@ fn nearly_gt_ulps_different_f32() {
 
     assert!(!a.nearly_gt_ulps(&b, &7));
     assert!(!b.nearly_gt_ulps(&a, &7));
-    
+
     assert!(!a.nearly_gt_ulps(&b, &8));
     assert!(!b.nearly_gt_ulps(&a, &8));
 }
@@ -377,7 +377,7 @@ fn nearly_gt_ulps_different_f64() {
 
     assert!(!a.nearly_gt_ulps(&b, &7));
     assert!(!b.nearly_gt_ulps(&a, &7));
-    
+
     assert!(!a.nearly_gt_ulps(&b, &8));
     assert!(!b.nearly_gt_ulps(&a, &8));
 }
@@ -520,7 +520,7 @@ fn nearly_ge_ulps_different_f32() {
 
     assert!(a.nearly_ge_ulps(&b, &7));
     assert!(b.nearly_ge_ulps(&a, &7));
-    
+
     assert!(a.nearly_ge_ulps(&b, &8));
     assert!(b.nearly_ge_ulps(&a, &8));
 }
@@ -535,7 +535,7 @@ fn nearly_ge_ulps_different_f64() {
 
     assert!(a.nearly_ge_ulps(&b, &7));
     assert!(b.nearly_ge_ulps(&a, &7));
-    
+
     assert!(a.nearly_ge_ulps(&b, &8));
     assert!(b.nearly_ge_ulps(&a, &8));
 }

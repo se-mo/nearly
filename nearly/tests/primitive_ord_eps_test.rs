@@ -46,7 +46,7 @@ fn nearly_lt_eps_different_f32() {
 
     assert!(a.nearly_lt_eps(&b, &0.0000008));
     assert!(!b.nearly_lt_eps(&a, &0.0000008));
-    
+
     assert!(!a.nearly_lt_eps(&b, &0.0000009));
     assert!(!b.nearly_lt_eps(&a, &0.0000009));
 }
@@ -61,7 +61,7 @@ fn nearly_lt_eps_different_f64() {
 
     assert!(!a.nearly_lt_eps(&b, &0.0000000000003));
     assert!(!b.nearly_lt_eps(&a, &0.0000000000003));
-    
+
     assert!(!a.nearly_lt_eps(&b, &0.0000000000004));
     assert!(!b.nearly_lt_eps(&a, &0.0000000000004));
 }
@@ -204,7 +204,7 @@ fn nearly_le_eps_different_f32() {
 
     assert!(a.nearly_le_eps(&b, &0.0000008));
     assert!(!b.nearly_le_eps(&a, &0.0000008));
-    
+
     assert!(a.nearly_le_eps(&b, &0.0000009));
     assert!(b.nearly_le_eps(&a, &0.0000009));
 }
@@ -219,7 +219,7 @@ fn nearly_le_eps_different_f64() {
 
     assert!(a.nearly_le_eps(&b, &0.0000000000003));
     assert!(b.nearly_le_eps(&a, &0.0000000000003));
-    
+
     assert!(a.nearly_le_eps(&b, &0.0000000000004));
     assert!(b.nearly_le_eps(&a, &0.0000000000004));
 }
@@ -325,7 +325,7 @@ fn nearly_gt_eps_zero_f32() {
     let a: f32 = 0.0;
     let b: f32 = -0.0;
     assert!(!a.nearly_gt_eps(&b, &0.0));
-    assert!(!b.nearly_gt_eps(&b, &0.0));   
+    assert!(!b.nearly_gt_eps(&b, &0.0));
 }
 
 #[test]
@@ -333,7 +333,7 @@ fn nearly_gt_eps_zero_f64() {
     let a: f64 = 0.0;
     let b: f64 = -0.0;
     assert!(!a.nearly_gt_eps(&b, &0.0));
-    assert!(!b.nearly_gt_eps(&b, &0.0));   
+    assert!(!b.nearly_gt_eps(&b, &0.0));
 }
 
 #[test]
@@ -362,7 +362,7 @@ fn nearly_gt_eps_different_f32() {
 
     assert!(a.nearly_gt_eps(&b, &0.0000008));
     assert!(!b.nearly_gt_eps(&a, &0.0000008));
-    
+
     assert!(!a.nearly_gt_eps(&b, &0.0000009));
     assert!(!b.nearly_gt_eps(&a, &0.0000009));
 }
@@ -377,7 +377,7 @@ fn nearly_gt_eps_different_f64() {
 
     assert!(!a.nearly_gt_eps(&b, &0.0000000000003));
     assert!(!b.nearly_gt_eps(&a, &0.0000000000003));
-    
+
     assert!(!a.nearly_gt_eps(&b, &0.0000000000004));
     assert!(!b.nearly_gt_eps(&a, &0.0000000000004));
 }
@@ -520,7 +520,7 @@ fn nearly_ge_eps_different_f32() {
 
     assert!(a.nearly_ge_eps(&b, &0.0000008));
     assert!(!b.nearly_ge_eps(&a, &0.0000008));
-    
+
     assert!(a.nearly_ge_eps(&b, &0.0000009));
     assert!(b.nearly_ge_eps(&a, &0.0000009));
 }
@@ -535,7 +535,7 @@ fn nearly_ge_eps_different_f64() {
 
     assert!(a.nearly_ge_eps(&b, &0.0000000000003));
     assert!(b.nearly_ge_eps(&a, &0.0000000000003));
-    
+
     assert!(a.nearly_ge_eps(&b, &0.0000000000004));
     assert!(b.nearly_ge_eps(&a, &0.0000000000004));
 }

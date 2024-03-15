@@ -50,7 +50,7 @@ where
     RhsTol: ?Sized,
 {
     /// Returns whether `self` is nearly equal to `other` based on a tolerance `tol`.
-    /// 
+    ///
     /// Returns true if either `self` is nearly equal to `other` based on an absolute epsilon value
     /// `tol.eps` or `self` is nearly equal to `other` based on an ulps value `tol.ulps`.
     #[inline]
@@ -59,7 +59,7 @@ where
     }
 
     /// Returns whether `self` is not nearly equal to `other` based on a tolerance `tol`.
-    /// 
+    ///
     /// Returns true if both `self` is not nearly equal to `other` based on an absolute epsilon value
     /// `tol.eps` ans `self`is not nearly equal to `other` based on an ulps value
     /// `tol.ulps`.
