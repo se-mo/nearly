@@ -1,6 +1,8 @@
 use mockall::predicate::eq;
 use mockall::Sequence;
-use nearly::{NearlyEqEps, NearlyEqTol, NearlyEqUlps, Tolerance};
+use nearly::{
+    NearlyEqEps, NearlyEqTol, NearlyEqUlps, NearlyOrdEps, NearlyOrdTol, NearlyOrdUlps, Tolerance,
+};
 use paste::paste;
 
 mod common;
@@ -152,242 +154,252 @@ macro_rules! get_element {
 }
 
 macro_rules! impl_test {
-    (array, array) => {
-        impl_test_same_length!(array, array);
-    };
     ($lhs: tt, $rhs: tt) => {
-        impl_test_same_length!($lhs, $rhs);
-        impl_test_different_length!($lhs, $rhs);
+        impl_test_fn!($lhs, $rhs, eq);
+        impl_test_fn!($lhs, $rhs, lt);
+        impl_test_fn!($lhs, $rhs, le);
+        impl_test_fn!($lhs, $rhs, gt);
+        impl_test_fn!($lhs, $rhs, ge);
+    };
+}
+
+macro_rules! impl_test_fn {
+    (array, array, $fn: ident) => {
+        impl_test_same_length!(array, array, $fn);
+    };
+    ($lhs: tt, $rhs: tt, $fn: ident) => {
+        impl_test_same_length!($lhs, $rhs, $fn);
+        impl_test_different_length!($lhs, $rhs, $fn);
     };
 }
 
 macro_rules! impl_test_same_length {
-    ($lhs: tt, $rhs: tt) => {
+    ($lhs: tt, $rhs: tt, $fn: ident) => {
         paste! {
             #[test]
-            fn [<nearly_eq_eps_ $lhs _ $rhs>]() {
+            fn [<nearly_ $fn _eps_ $lhs _ $rhs>]() {
                 #[allow(unused_mut)]
                 let mut a: lhs_type!($lhs) = lhs_value!($lhs);
                 let b: rhs_type!($rhs)  = rhs_value!($rhs);
 
                 let mut seq = Sequence::new();
 
-                get_element!(a, 0, $lhs).expect_nearly_eq_eps()
+                get_element!(a, 0, $lhs).[<expect_nearly_ $fn _eps>]()
                     .with(eq(Rhs(3)), eq(0.1))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(true);
-                get_element!(a, 1, $lhs).expect_nearly_eq_eps()
+                get_element!(a, 1, $lhs).[<expect_nearly_ $fn _eps>]()
                     .with(eq(Rhs(7)), eq(0.1))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(true);
-                get_element!(a, 2, $lhs).expect_nearly_eq_eps()
+                get_element!(a, 2, $lhs).[<expect_nearly_ $fn _eps>]()
                     .with(eq(Rhs(11)), eq(0.1))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(true);
 
-                assert!(a.nearly_eq_eps(&b, &0.1));
+                assert!(a.[<nearly_ $fn _eps>](&b, &0.1));
 
                 checkpoint!(a);
-                get_element!(a, 0, $lhs).expect_nearly_eq_eps()
+                get_element!(a, 0, $lhs).[<expect_nearly_ $fn _eps>]()
                     .with(eq(Rhs(3)), eq(0.1))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(false);
-                get_element!(a, 1, $lhs).expect_nearly_eq_eps().times(0);
-                get_element!(a, 2, $lhs).expect_nearly_eq_eps().times(0);
+                get_element!(a, 1, $lhs).[<expect_nearly_ $fn _eps>]().times(0);
+                get_element!(a, 2, $lhs).[<expect_nearly_ $fn _eps>]().times(0);
 
-                assert!(!a.nearly_eq_eps(&b, &0.1));
+                assert!(!a.[<nearly_ $fn _eps>](&b, &0.1));
 
                 checkpoint!(a);
-                get_element!(a, 0, $lhs).expect_nearly_eq_eps()
+                get_element!(a, 0, $lhs).[<expect_nearly_ $fn _eps>]()
                     .with(eq(Rhs(3)), eq(0.1))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(true);
-                get_element!(a, 1, $lhs).expect_nearly_eq_eps()
+                get_element!(a, 1, $lhs).[<expect_nearly_ $fn _eps>]()
                     .with(eq(Rhs(7)), eq(0.1))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(false);
-                get_element!(a, 2, $lhs).expect_nearly_eq_eps().times(0);
+                get_element!(a, 2, $lhs).[<expect_nearly_ $fn _eps>]().times(0);
 
-                assert!(!a.nearly_eq_eps(&b, &0.1));
+                assert!(!a.[<nearly_ $fn _eps>](&b, &0.1));
 
                 checkpoint!(a);
-                get_element!(a, 0, $lhs).expect_nearly_eq_eps()
+                get_element!(a, 0, $lhs).[<expect_nearly_ $fn _eps>]()
                     .with(eq(Rhs(3)), eq(0.1))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(true);
-                get_element!(a, 1, $lhs).expect_nearly_eq_eps()
+                get_element!(a, 1, $lhs).[<expect_nearly_ $fn _eps>]()
                     .with(eq(Rhs(7)), eq(0.1))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(true);
-                get_element!(a, 2, $lhs).expect_nearly_eq_eps()
+                get_element!(a, 2, $lhs).[<expect_nearly_ $fn _eps>]()
                     .with(eq(Rhs(11)), eq(0.1))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(false);
 
-                assert!(!a.nearly_eq_eps(&b, &0.1));
+                assert!(!a.[<nearly_ $fn _eps>](&b, &0.1));
             }
 
             #[test]
-            fn [<nearly_eq_ulps_ $lhs _ $rhs>]() {
+            fn [<nearly_ $fn _ulps_ $lhs _ $rhs>]() {
                 #[allow(unused_mut)]
                 let mut a: lhs_type!($lhs) = lhs_value!($lhs);
                 let b: rhs_type!($rhs)  = rhs_value!($rhs);
 
                 let mut seq = Sequence::new();
 
-                get_element!(a, 0, $lhs).expect_nearly_eq_ulps()
+                get_element!(a, 0, $lhs).[<expect_nearly_ $fn _ulps>]()
                     .with(eq(Rhs(3)), eq(5))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(true);
-                get_element!(a, 1, $lhs).expect_nearly_eq_ulps()
+                get_element!(a, 1, $lhs).[<expect_nearly_ $fn _ulps>]()
                     .with(eq(Rhs(7)), eq(5))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(true);
-                get_element!(a, 2, $lhs).expect_nearly_eq_ulps()
+                get_element!(a, 2, $lhs).[<expect_nearly_ $fn _ulps>]()
                     .with(eq(Rhs(11)), eq(5))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(true);
 
-                assert!(a.nearly_eq_ulps(&b, &5));
+                assert!(a.[<nearly_ $fn _ulps>](&b, &5));
 
                 checkpoint!(a);
-                get_element!(a, 0, $lhs).expect_nearly_eq_ulps()
+                get_element!(a, 0, $lhs).[<expect_nearly_ $fn _ulps>]()
                     .with(eq(Rhs(3)), eq(5))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(false);
-                get_element!(a, 1, $lhs).expect_nearly_eq_ulps().times(0);
-                get_element!(a, 2, $lhs).expect_nearly_eq_ulps().times(0);
+                get_element!(a, 1, $lhs).[<expect_nearly_ $fn _ulps>]().times(0);
+                get_element!(a, 2, $lhs).[<expect_nearly_ $fn _ulps>]().times(0);
 
-                assert!(!a.nearly_eq_ulps(&b, &5));
+                assert!(!a.[<nearly_ $fn _ulps>](&b, &5));
 
                 checkpoint!(a);
-                get_element!(a, 0, $lhs).expect_nearly_eq_ulps()
+                get_element!(a, 0, $lhs).[<expect_nearly_ $fn _ulps>]()
                     .with(eq(Rhs(3)), eq(5))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(true);
-                get_element!(a, 1, $lhs).expect_nearly_eq_ulps()
+                get_element!(a, 1, $lhs).[<expect_nearly_ $fn _ulps>]()
                     .with(eq(Rhs(7)), eq(5))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(false);
-                get_element!(a, 2, $lhs).expect_nearly_eq_ulps().times(0);
+                get_element!(a, 2, $lhs).[<expect_nearly_ $fn _ulps>]().times(0);
 
-                assert!(!a.nearly_eq_ulps(&b, &5));
+                assert!(!a.[<nearly_ $fn _ulps>](&b, &5));
 
                 checkpoint!(a);
-                get_element!(a, 0, $lhs).expect_nearly_eq_ulps()
+                get_element!(a, 0, $lhs).[<expect_nearly_ $fn _ulps>]()
                     .with(eq(Rhs(3)), eq(5))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(true);
-                get_element!(a, 1, $lhs).expect_nearly_eq_ulps()
+                get_element!(a, 1, $lhs).[<expect_nearly_ $fn _ulps>]()
                     .with(eq(Rhs(7)), eq(5))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(true);
-                get_element!(a, 2, $lhs).expect_nearly_eq_ulps()
+                get_element!(a, 2, $lhs).[<expect_nearly_ $fn _ulps>]()
                     .with(eq(Rhs(11)), eq(5))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(false);
 
-                assert!(!a.nearly_eq_ulps(&b, &5));
+                assert!(!a.[<nearly_ $fn _ulps>](&b, &5));
             }
 
             #[test]
-            fn [<nearly_eq_tol_ $lhs _ $rhs>]() {
+            fn [<nearly_ $fn _tol_ $lhs _ $rhs>]() {
                 #[allow(unused_mut)]
                 let mut a: lhs_type!($lhs) = lhs_value!($lhs);
                 let b: rhs_type!($rhs)  = rhs_value!($rhs);
 
                 let mut seq = Sequence::new();
 
-                get_element!(a, 0, $lhs).expect_nearly_eq_tol()
+                get_element!(a, 0, $lhs).[<expect_nearly_ $fn _tol>]()
                     .with(eq(Rhs(3)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(true);
-                get_element!(a, 1, $lhs).expect_nearly_eq_tol()
+                get_element!(a, 1, $lhs).[<expect_nearly_ $fn _tol>]()
                     .with(eq(Rhs(7)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(true);
-                get_element!(a, 2, $lhs).expect_nearly_eq_tol()
+                get_element!(a, 2, $lhs).[<expect_nearly_ $fn _tol>]()
                     .with(eq(Rhs(11)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(true);
 
-                assert!(a.nearly_eq_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+                assert!(a.[<nearly_ $fn _tol>](&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
 
                 checkpoint!(a);
-                get_element!(a, 0, $lhs).expect_nearly_eq_tol()
+                get_element!(a, 0, $lhs).[<expect_nearly_ $fn _tol>]()
                     .with(eq(Rhs(3)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(false);
-                get_element!(a, 1, $lhs).expect_nearly_eq_tol().times(0);
-                get_element!(a, 2, $lhs).expect_nearly_eq_tol().times(0);
+                get_element!(a, 1, $lhs).[<expect_nearly_ $fn _tol>]().times(0);
+                get_element!(a, 2, $lhs).[<expect_nearly_ $fn _tol>]().times(0);
 
-                assert!(!a.nearly_eq_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+                assert!(!a.[<nearly_ $fn _tol>](&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
 
                 checkpoint!(a);
-                get_element!(a, 0, $lhs).expect_nearly_eq_tol()
+                get_element!(a, 0, $lhs).[<expect_nearly_ $fn _tol>]()
                     .with(eq(Rhs(3)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(true);
-                get_element!(a, 1, $lhs).expect_nearly_eq_tol()
+                get_element!(a, 1, $lhs).[<expect_nearly_ $fn _tol>]()
                     .with(eq(Rhs(7)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(false);
-                get_element!(a, 2, $lhs).expect_nearly_eq_tol().times(0);
+                get_element!(a, 2, $lhs).[<expect_nearly_ $fn _tol>]().times(0);
 
-                assert!(!a.nearly_eq_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+                assert!(!a.[<nearly_ $fn _tol>](&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
 
                 checkpoint!(a);
-                get_element!(a, 0, $lhs).expect_nearly_eq_tol()
+                get_element!(a, 0, $lhs).[<expect_nearly_ $fn _tol>]()
                     .with(eq(Rhs(3)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(true);
-                get_element!(a, 1, $lhs).expect_nearly_eq_tol()
+                get_element!(a, 1, $lhs).[<expect_nearly_ $fn _tol>]()
                     .with(eq(Rhs(7)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(true);
-                get_element!(a, 2, $lhs).expect_nearly_eq_tol()
+                get_element!(a, 2, $lhs).[<expect_nearly_ $fn _tol>]()
                     .with(eq(Rhs(11)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
                     .times(1)
                     .in_sequence(&mut seq)
                     .return_const(false);
 
-                assert!(!a.nearly_eq_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+                assert!(!a.[<nearly_ $fn _tol>](&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
             }
         }
     };
 }
 
 macro_rules! impl_test_different_length {
-    ($lhs: tt, $rhs: tt) => {
+    ($lhs: tt, $rhs: tt, $fn: ident) => {
         paste! {
             #[test]
-            fn [<nearly_eq_eps_different_length_ $lhs _ $rhs>]() {
+            fn [<nearly_ $fn _eps_different_length_ $lhs _ $rhs>]() {
                 {
                     #[allow(unused_mut)]
                     let mut a: lhs_type!($lhs) = lhs_value!($lhs);
@@ -395,11 +407,11 @@ macro_rules! impl_test_different_length {
 
                     assert!(a.len() > b.len());
 
-                    get_element!(a, 0, $lhs).expect_nearly_eq_eps().times(0);
-                    get_element!(a, 1, $lhs).expect_nearly_eq_eps().times(0);
-                    get_element!(a, 2, $lhs).expect_nearly_eq_eps().times(0);
+                    get_element!(a, 0, $lhs).[<expect_nearly_ $fn _eps>]().times(0);
+                    get_element!(a, 1, $lhs).[<expect_nearly_ $fn _eps>]().times(0);
+                    get_element!(a, 2, $lhs).[<expect_nearly_ $fn _eps>]().times(0);
 
-                    assert!(!a.nearly_eq_eps(&b, &0.1));
+                    assert!(!a.[<nearly_ $fn _eps>](&b, &0.1));
                 }
                 {
                     #[allow(unused_mut)]
@@ -408,15 +420,15 @@ macro_rules! impl_test_different_length {
 
                     assert!(a.len() < b.len());
 
-                    get_element!(a, 0, $lhs).expect_nearly_eq_eps().times(0);
-                    get_element!(a, 1, $lhs).expect_nearly_eq_eps().times(0);
+                    get_element!(a, 0, $lhs).[<expect_nearly_ $fn _eps>]().times(0);
+                    get_element!(a, 1, $lhs).[<expect_nearly_ $fn _eps>]().times(0);
 
-                    assert!(!a.nearly_eq_eps(&b, &0.1));
+                    assert!(!a.[<nearly_ $fn _eps>](&b, &0.1));
                 }
             }
 
             #[test]
-            fn [<nearly_eq_ulps_different_length_ $lhs _ $rhs>]() {
+            fn [<nearly_ $fn _ulps_different_length_ $lhs _ $rhs>]() {
                 {
                     #[allow(unused_mut)]
                     let mut a: lhs_type!($lhs) = lhs_value!($lhs);
@@ -424,11 +436,11 @@ macro_rules! impl_test_different_length {
 
                     assert!(a.len() > b.len());
 
-                    get_element!(a, 0, $lhs).expect_nearly_eq_ulps().times(0);
-                    get_element!(a, 1, $lhs).expect_nearly_eq_ulps().times(0);
-                    get_element!(a, 2, $lhs).expect_nearly_eq_ulps().times(0);
+                    get_element!(a, 0, $lhs).[<expect_nearly_ $fn _ulps>]().times(0);
+                    get_element!(a, 1, $lhs).[<expect_nearly_ $fn _ulps>]().times(0);
+                    get_element!(a, 2, $lhs).[<expect_nearly_ $fn _ulps>]().times(0);
 
-                    assert!(!a.nearly_eq_ulps(&b, &5));
+                    assert!(!a.[<nearly_ $fn _ulps>](&b, &5));
                 }
                 {
                     #[allow(unused_mut)]
@@ -437,15 +449,15 @@ macro_rules! impl_test_different_length {
 
                     assert!(a.len() < b.len());
 
-                    get_element!(a, 0, $lhs).expect_nearly_eq_ulps().times(0);
-                    get_element!(a, 1, $lhs).expect_nearly_eq_ulps().times(0);
+                    get_element!(a, 0, $lhs).[<expect_nearly_ $fn _ulps>]().times(0);
+                    get_element!(a, 1, $lhs).[<expect_nearly_ $fn _ulps>]().times(0);
 
-                    assert!(!a.nearly_eq_ulps(&b, &5));
+                    assert!(!a.[<nearly_ $fn _ulps>](&b, &5));
                 }
             }
 
             #[test]
-            fn [<nearly_eq_tol_different_length_ $lhs _ $rhs>]() {
+            fn [<nearly_ $fn _tol_different_length_ $lhs _ $rhs>]() {
                 {
                     #[allow(unused_mut)]
                     let mut a: lhs_type!($lhs) = lhs_value!($lhs);
@@ -453,11 +465,11 @@ macro_rules! impl_test_different_length {
 
                     assert!(a.len() > b.len());
 
-                    get_element!(a, 0, $lhs).expect_nearly_eq_tol().times(0);
-                    get_element!(a, 1, $lhs).expect_nearly_eq_tol().times(0);
-                    get_element!(a, 2, $lhs).expect_nearly_eq_tol().times(0);
+                    get_element!(a, 0, $lhs).[<expect_nearly_ $fn _tol>]().times(0);
+                    get_element!(a, 1, $lhs).[<expect_nearly_ $fn _tol>]().times(0);
+                    get_element!(a, 2, $lhs).[<expect_nearly_ $fn _tol>]().times(0);
 
-                    assert!(!a.nearly_eq_eps(&b, &0.1));
+                    assert!(!a.[<nearly_ $fn _eps>](&b, &0.1));
                 }
                 {
                     #[allow(unused_mut)]
@@ -466,10 +478,10 @@ macro_rules! impl_test_different_length {
 
                     assert!(a.len() < b.len());
 
-                    get_element!(a, 0, $lhs).expect_nearly_eq_tol().times(0);
-                    get_element!(a, 1, $lhs).expect_nearly_eq_tol().times(0);
+                    get_element!(a, 0, $lhs).[<expect_nearly_ $fn _tol>]().times(0);
+                    get_element!(a, 1, $lhs).[<expect_nearly_ $fn _tol>]().times(0);
 
-                    assert!(!a.nearly_eq_eps(&b, &0.1));
+                    assert!(!a.[<nearly_ $fn _eps>](&b, &0.1));
                 }
             }
         }
