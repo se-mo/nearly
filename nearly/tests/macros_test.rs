@@ -1,5 +1,4 @@
-use mockall::predicate::eq;
-use mockall::{mock, Sequence};
+use mockall::{mock, predicate::eq, Sequence};
 use nearly::{
     assert_nearly, debug_assert_nearly, nearly, EpsTolerance, EpsToleranceType, NearlyEq,
     NearlyEqEps, NearlyEqTol, NearlyEqUlps, Tolerance, UlpsTolerance, UlpsToleranceType,

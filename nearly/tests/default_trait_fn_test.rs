@@ -1,6 +1,4 @@
-use mockall::mock;
-use mockall::predicate::eq;
-use mockall::Sequence;
+use mockall::{mock, predicate::eq, Sequence};
 use nearly::{
     EpsTolerance, EpsToleranceType, NearlyEq, NearlyEqEps, NearlyEqTol, NearlyEqUlps, Tolerance,
     UlpsTolerance, UlpsToleranceType,
@@ -85,6 +83,7 @@ fn nearly_eq_tol() {
     a.expect_nearly_eq_eps()
         .with(eq(Rhs(5)), eq(0.1))
         .times(1)
+        .in_sequence(&mut seq)
         .return_const(true);
     a.expect_nearly_eq_ulps().times(0);
     assert!(a.nearly_eq_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
@@ -128,6 +127,7 @@ fn nearly_ne_tol() {
     a.expect_nearly_eq_eps()
         .with(eq(Rhs(5)), eq(0.1))
         .times(1)
+        .in_sequence(&mut seq)
         .return_const(true);
     a.expect_nearly_eq_ulps().times(0);
     assert!(!a.nearly_ne_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
@@ -171,6 +171,7 @@ fn nearly_eq() {
     a.expect_nearly_eq_eps()
         .with(eq(Rhs(5)), eq(0.01))
         .times(1)
+        .in_sequence(&mut seq)
         .return_const(true);
     a.expect_nearly_eq_ulps().times(0);
     assert!(a.nearly_eq(&b));
@@ -214,6 +215,7 @@ fn nearly_ne() {
     a.expect_nearly_eq_eps()
         .with(eq(Rhs(5)), eq(0.01))
         .times(1)
+        .in_sequence(&mut seq)
         .return_const(true);
     a.expect_nearly_eq_ulps().times(0);
     assert!(!a.nearly_ne(&b));
