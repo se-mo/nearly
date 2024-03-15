@@ -648,10 +648,10 @@ pub use nearly_eq::NearlyEqTol;
 pub use nearly_eq::NearlyEqUlps;
 
 mod nearly_ord;
-pub use nearly_ord::NearlyOrdEps;
-pub use nearly_ord::NearlyOrdUlps;
-pub use nearly_ord::NearlyOrdTol;
 pub use nearly_ord::NearlyOrd;
+pub use nearly_ord::NearlyOrdEps;
+pub use nearly_ord::NearlyOrdTol;
+pub use nearly_ord::NearlyOrdUlps;
 
 mod tolerance;
 pub use tolerance::EpsTolerance;
