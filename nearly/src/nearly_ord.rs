@@ -261,3 +261,97 @@ macro_rules! impl_float {
 
 impl_float!(f32);
 impl_float!(f64);
+
+////////////////
+// references //
+////////////////
+
+macro_rules! impl_ref {
+    ($lhs: ty, $rhs: ty) => {
+        impl<Lhs: ?Sized, Rhs: ?Sized> NearlyOrdEps<$rhs, Lhs, Rhs> for $lhs
+        where
+            Lhs: NearlyOrdEps<Rhs> + EpsTolerance<Rhs>,
+        {
+            #[inline]
+            fn nearly_lt_eps(&self, other: &$rhs, eps: &EpsToleranceType<Lhs, Rhs>) -> bool {
+                NearlyOrdEps::nearly_lt_eps(*self, *other, eps)
+            }
+
+            #[inline]
+            fn nearly_le_eps(&self, other: &$rhs, eps: &EpsToleranceType<Lhs, Rhs>) -> bool {
+                NearlyOrdEps::nearly_le_eps(*self, *other, eps)
+            }
+
+            #[inline]
+            fn nearly_gt_eps(&self, other: &$rhs, eps: &EpsToleranceType<Lhs, Rhs>) -> bool {
+                NearlyOrdEps::nearly_gt_eps(*self, *other, eps)
+            }
+
+            #[inline]
+            fn nearly_ge_eps(&self, other: &$rhs, eps: &EpsToleranceType<Lhs, Rhs>) -> bool {
+                NearlyOrdEps::nearly_ge_eps(*self, *other, eps)
+            }
+        }
+
+        impl<Lhs: ?Sized, Rhs: ?Sized> NearlyOrdUlps<$rhs, Lhs, Rhs> for $lhs
+        where
+            Lhs: NearlyOrdUlps<Rhs> + UlpsTolerance<Rhs>,
+        {
+            #[inline]
+            fn nearly_lt_ulps(&self, other: &$rhs, ulps: &UlpsToleranceType<Lhs, Rhs>) -> bool {
+                NearlyOrdUlps::nearly_lt_ulps(*self, *other, ulps)
+            }
+
+            #[inline]
+            fn nearly_le_ulps(&self, other: &$rhs, ulps: &UlpsToleranceType<Lhs, Rhs>) -> bool {
+                NearlyOrdUlps::nearly_le_ulps(*self, *other, ulps)
+            }
+
+            #[inline]
+            fn nearly_gt_ulps(&self, other: &$rhs, ulps: &UlpsToleranceType<Lhs, Rhs>) -> bool {
+                NearlyOrdUlps::nearly_gt_ulps(*self, *other, ulps)
+            }
+
+            #[inline]
+            fn nearly_ge_ulps(&self, other: &$rhs, ulps: &UlpsToleranceType<Lhs, Rhs>) -> bool {
+                NearlyOrdUlps::nearly_ge_ulps(*self, *other, ulps)
+            }
+        }
+
+        impl<Lhs: ?Sized, Rhs: ?Sized> NearlyOrdTol<$rhs, Lhs, Rhs> for $lhs
+        where
+            Lhs: NearlyOrdTol<Rhs> + EpsTolerance<Rhs> + UlpsTolerance<Rhs>,
+        {
+            #[inline]
+            fn nearly_lt_tol(&self, other: &$rhs, tol: &Tolerance<Lhs, Rhs>) -> bool {
+                NearlyOrdTol::nearly_lt_tol(*self, *other, tol)
+            }
+
+            #[inline]
+            fn nearly_le_tol(&self, other: &$rhs, tol: &Tolerance<Lhs, Rhs>) -> bool {
+                NearlyOrdTol::nearly_le_tol(*self, *other, tol)
+            }
+
+            #[inline]
+            fn nearly_gt_tol(&self, other: &$rhs, tol: &Tolerance<Lhs, Rhs>) -> bool {
+                NearlyOrdTol::nearly_gt_tol(*self, *other, tol)
+            }
+
+            #[inline]
+            fn nearly_ge_tol(&self, other: &$rhs, tol: &Tolerance<Lhs, Rhs>) -> bool {
+                NearlyOrdTol::nearly_ge_tol(*self, *other, tol)
+            }
+        }
+
+        impl<Lhs: ?Sized, Rhs: ?Sized> NearlyOrd<$rhs, Lhs, Rhs> for $lhs where
+            Lhs: NearlyOrd<Rhs> + EpsTolerance<Rhs> + UlpsTolerance<Rhs>
+        {
+        }
+    };
+}
+
+impl_ref!(&Lhs, &Rhs);
+impl_ref!(&Lhs, &mut Rhs);
+impl_ref!(&mut Lhs, &Rhs);
+impl_ref!(&mut Lhs, &mut Rhs);
+
