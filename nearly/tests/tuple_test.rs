@@ -1,6 +1,8 @@
 use mockall::predicate::eq;
 use mockall::Sequence;
-use nearly::{NearlyEqEps, NearlyEqTol, NearlyEqUlps, Tolerance};
+use nearly::{
+    NearlyEqEps, NearlyEqTol, NearlyEqUlps, NearlyOrdEps, NearlyOrdTol, NearlyOrdUlps, Tolerance,
+};
 use paste::paste;
 
 mod common;
@@ -357,587 +359,597 @@ macro_rules! checkpoint {
 }
 
 macro_rules! impl_test {
-    ($func: ident, $tol: expr) => {
+    ($tol_fn: ident, $tol: expr) => {
+        impl_test_fn!($tol_fn, $tol, eq);
+        impl_test_fn!($tol_fn, $tol, lt);
+        impl_test_fn!($tol_fn, $tol, le);
+        impl_test_fn!($tol_fn, $tol, gt);
+        impl_test_fn!($tol_fn, $tol, ge);
+    };
+}
+
+macro_rules! impl_test_fn {
+    ($tol_fn: ident, $tol: expr, $fn: ident) => {
         paste! {
             #[test]
-            fn [<$func _tuple_1>]() {
+            fn [<nearly_ $fn _ $tol_fn _tuple_1>]() {
                 let mut a: lhs_type!(1) = lhs_value!(1);
                 let b: rhs_type!(1) = rhs_value!(1);
                 let mut seq = Sequence::new();
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 0);
-                assert!(a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 0);
+                assert!(a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0);
 
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0);
             }
 
             #[test]
-            fn [<$func _tuple_2>]() {
+            fn [<nearly_ $fn _ $tol_fn _tuple_2>]() {
                 let mut a: lhs_type!(2) = lhs_value!(2);
                 let b: rhs_type!(2) = rhs_value!(2);
                 let mut seq = Sequence::new();
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1);
-                assert!(a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 0 1);
+                assert!(a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1);
 
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
-                expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 1);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 1);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 1);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1);
             }
 
             #[test]
-            fn [<$func _tuple_3>]() {
+            fn [<nearly_ $fn _ $tol_fn _tuple_3>]() {
                 let mut a: lhs_type!(3) = lhs_value!(3);
                 let b: rhs_type!(3) = rhs_value!(3);
                 let mut seq = Sequence::new();
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2);
-                assert!(a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 0 1 2);
+                assert!(a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2);
 
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
-                expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 2);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 2);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
-                expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 2);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 1);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 1 2);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2);
             }
 
             #[test]
-            fn [<$func _tuple_4>]() {
+            fn [<nearly_ $fn _ $tol_fn _tuple_4>]() {
                 let mut a: lhs_type!(4) = lhs_value!(4);
                 let b: rhs_type!(4) = rhs_value!(4);
                 let mut seq = Sequence::new();
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3);
-                assert!(a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 0 1 2 3);
+                assert!(a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3);
 
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
-                expect_no_call!(a, [<expect_$func>], 0 1 2);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 3);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 3);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
-                expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 3);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 2);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
-                expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 2 3);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 1);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 1 2 3);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3);
             }
 
             #[test]
-            fn [<$func _tuple_5>]() {
+            fn [<nearly_ $fn _ $tol_fn _tuple_5>]() {
                 let mut a: lhs_type!(5) = lhs_value!(5);
                 let b: rhs_type!(5) = rhs_value!(5);
                 let mut seq = Sequence::new();
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4);
-                assert!(a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 0 1 2 3 4);
+                assert!(a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4);
 
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 4);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 4);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
-                expect_no_call!(a, [<expect_$func>], 0 1 2);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 4);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 3);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
-                expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 3 4);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 2);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
-                expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 2 3 4);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 1);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 1 2 3 4);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4);
             }
 
             #[test]
-            fn [<$func _tuple_6>]() {
+            fn [<nearly_ $fn _ $tol_fn _tuple_6>]() {
                 let mut a: lhs_type!(6) = lhs_value!(6);
                 let b: rhs_type!(6) = rhs_value!(6);
                 let mut seq = Sequence::new();
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5);
-                assert!(a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 0 1 2 3 4 5);
+                assert!(a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5);
 
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 5);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 5);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 5);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 4);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
-                expect_no_call!(a, [<expect_$func>], 0 1 2);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 4 5);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 3);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
-                expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 3 4 5);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 2);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
-                expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 2 3 4 5);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 1);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 1 2 3 4 5);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5);
             }
 
             #[test]
-            fn [<$func _tuple_7>]() {
+            fn [<nearly_ $fn _ $tol_fn _tuple_7>]() {
                 let mut a: lhs_type!(7) = lhs_value!(7);
                 let b: rhs_type!(7) = rhs_value!(7);
                 let mut seq = Sequence::new();
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5 6);
-                assert!(a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 0 1 2 3 4 5 6);
+                assert!(a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6);
 
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 6);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 6);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 6);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 6);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 5);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 5 6);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 5 6);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 4);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5 6);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
-                expect_no_call!(a, [<expect_$func>], 0 1 2);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 4 5 6);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 3);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5 6);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
-                expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 3 4 5 6);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 2);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5 6);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
-                expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 2 3 4 5 6);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 1);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5 6);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 1 2 3 4 5 6);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6);
             }
 
             #[test]
-            fn [<$func _tuple_8>]() {
+            fn [<nearly_ $fn _ $tol_fn _tuple_8>]() {
                 let mut a: lhs_type!(8) = lhs_value!(8);
                 let b: rhs_type!(8) = rhs_value!(8);
                 let mut seq = Sequence::new();
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5 6 7);
-                assert!(a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 0 1 2 3 4 5 6 7);
+                assert!(a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7);
 
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 7);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 7);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5 6);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 7);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 6);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 7);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 6);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 6 7);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 6 7);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 5);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 5 6 7);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 5 6 7);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 4);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5 6 7);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
-                expect_no_call!(a, [<expect_$func>], 0 1 2);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 4 5 6 7);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 3);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5 6 7);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
-                expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 3 4 5 6 7);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 2);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5 6 7);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
-                expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 2 3 4 5 6 7);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 1);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5 6 7);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 1 2 3 4 5 6 7);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7);
             }
 
             #[test]
-            fn [<$func _tuple_9>]() {
+            fn [<nearly_ $fn _ $tol_fn _tuple_9>]() {
                 let mut a: lhs_type!(9) = lhs_value!(9);
                 let b: rhs_type!(9) = rhs_value!(9);
                 let mut seq = Sequence::new();
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5 6 7 8);
-                assert!(a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 0 1 2 3 4 5 6 7 8);
+                assert!(a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
 
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 8);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 8);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5 6 7);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 8);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 7);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 8);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 7);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5 6);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 7 8);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 6);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 7 8);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 6);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 6 7 8);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 6 7 8);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 5);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 5 6 7 8);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 5 6 7 8);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 4);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5 6 7 8);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
-                expect_no_call!(a, [<expect_$func>], 0 1 2);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 4 5 6 7 8);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 3);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5 6 7 8);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
-                expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 3 4 5 6 7 8);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 2);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5 6 7 8);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
-                expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 2 3 4 5 6 7 8);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 1);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5 6 7 8);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 1 2 3 4 5 6 7 8);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8);
             }
 
             #[test]
-            fn [<$func _tuple_10>]() {
+            fn [<nearly_ $fn _ $tol_fn _tuple_10>]() {
                 let mut a: lhs_type!(10) = lhs_value!(10);
                 let b: rhs_type!(10) = rhs_value!(10);
                 let mut seq = Sequence::new();
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5 6 7 8 9);
-                assert!(a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 0 1 2 3 4 5 6 7 8 9);
+                assert!(a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 9);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7 8);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 9);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5 6 7 8);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 9);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 8);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 9);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 8);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5 6 7);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 8 9);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 7);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 8 9);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 7);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5 6);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 7 8 9);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 6);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 7 8 9);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 6);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 6 7 8 9);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 6 7 8 9);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 5);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 5 6 7 8 9);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 5 6 7 8 9);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 4);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5 6 7 8 9);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
-                expect_no_call!(a, [<expect_$func>], 0 1 2);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 4 5 6 7 8 9);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 3);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5 6 7 8 9);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
-                expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 3 4 5 6 7 8 9);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 2);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5 6 7 8 9);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
-                expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 2 3 4 5 6 7 8 9);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 1);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5 6 7 8 9);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 1 2 3 4 5 6 7 8 9);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9);
             }
 
             #[test]
-            fn [<$func _tuple_11>]() {
+            fn [<nearly_ $fn _ $tol_fn _tuple_11>]() {
                 let mut a: lhs_type!(11) = lhs_value!(11);
                 let b: rhs_type!(11) = rhs_value!(11);
                 let mut seq = Sequence::new();
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5 6 7 8 9 10);
-                assert!(a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 0 1 2 3 4 5 6 7 8 9 10);
+                assert!(a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 10);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7 8 9);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 10);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5 6 7 8 9);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 10);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 9);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7 8);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 10);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 9);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5 6 7 8);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 9 10);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 8);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 9 10);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 8);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5 6 7);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 8 9 10);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 7);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 8 9 10);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 7);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5 6);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 7 8 9 10);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 6);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 7 8 9 10);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 6);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 6 7 8 9 10);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 6 7 8 9 10);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 5);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 5 6 7 8 9 10);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 5 6 7 8 9 10);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 4);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5 6 7 8 9 10);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
-                expect_no_call!(a, [<expect_$func>], 0 1 2);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 4 5 6 7 8 9 10);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 3);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5 6 7 8 9 10);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
-                expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 3 4 5 6 7 8 9 10);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 2);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5 6 7 8 9 10);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
-                expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 2 3 4 5 6 7 8 9 10);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 1);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5 6 7 8 9 10);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 1 2 3 4 5 6 7 8 9 10);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10);
             }
 
             #[test]
-            fn [<$func _tuple_12>]() {
+            fn [<nearly_ $fn _ $tol_fn _tuple_12>]() {
                 let mut a: lhs_type!(12) = lhs_value!(12);
                 let b: rhs_type!(12) = rhs_value!(12);
                 let mut seq = Sequence::new();
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 0 1 2 3 4 5 6 7 8 9 10 11);
-                assert!(a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 0 1 2 3 4 5 6 7 8 9 10 11);
+                assert!(a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 11);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7 8 9 10);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 11);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5 6 7 8 9 10);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 11);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 10);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7 8 9);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 11);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 10);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5 6 7 8 9);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 10 11);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 9);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7 8);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 10 11);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 9);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5 6 7 8);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 9 10 11);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 8);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6 7);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 9 10 11);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 8);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5 6 7);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 8 9 10 11);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 7);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5 6);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 8 9 10 11);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 7);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5 6);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 7 8 9 10 11);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 6);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4 5);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 7 8 9 10 11);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 6);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4 5);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 6 7 8 9 10 11);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 5);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3 4);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 6 7 8 9 10 11);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 5);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3 4);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 5 6 7 8 9 10 11);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 4);
-                expect_no_call!(a, [<expect_$func>], 0 1 2 3);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 5 6 7 8 9 10 11);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 4);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2 3);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 4 5 6 7 8 9 10 11);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 3);
-                expect_no_call!(a, [<expect_$func>], 0 1 2);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 4 5 6 7 8 9 10 11);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 3);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1 2);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 3 4 5 6 7 8 9 10 11);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 2);
-                expect_no_call!(a, [<expect_$func>], 0 1);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 3 4 5 6 7 8 9 10 11);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 2);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0 1);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 2 3 4 5 6 7 8 9 10 11);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 1);
-                expect_no_call!(a, [<expect_$func>], 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 2 3 4 5 6 7 8 9 10 11);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 1);
+                expect_no_call!(a, [<expect_nearly_ $fn _ $tol_fn>], 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
 
-                expect_call!(a, seq, [<expect_$func>], true, $tol, 1 2 3 4 5 6 7 8 9 10 11);
-                expect_call!(a, seq, [<expect_$func>], false, $tol, 0);
-                assert!(!a.$func(&b, &$tol));
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], true, $tol, 1 2 3 4 5 6 7 8 9 10 11);
+                expect_call!(a, seq, [<expect_nearly_ $fn _ $tol_fn>], false, $tol, 0);
+                assert!(!a.[<nearly_ $fn _ $tol_fn>](&b, &$tol));
                 checkpoint!(a, 0 1 2 3 4 5 6 7 8 9 10 11);
             }
         }
     };
 }
 
-impl_test!(nearly_eq_eps, 0.1);
-impl_test!(nearly_eq_ulps, 5);
-impl_test!(nearly_eq_tol, Tolerance::<MockLhs, Rhs>::new(0.1, 5));
+impl_test!(eps, 0.1);
+impl_test!(ulps, 5);
+impl_test!(tol, Tolerance::<MockLhs, Rhs>::new(0.1, 5));
