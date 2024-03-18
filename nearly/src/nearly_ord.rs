@@ -1222,3 +1222,54 @@ impl_nearly_tuple!(
     Lhs Lhs Lhs Lhs Lhs Lhs Lhs Lhs Lhs Lhs Lhs Lhs,
     Rhs Rhs Rhs Rhs Rhs Rhs Rhs Rhs Rhs Rhs Rhs Rhs,
     11 10 9 8 7 6 5 4 3 2 1 0);
+
+//////////
+// unit //
+//////////
+
+impl NearlyOrdEps for () {
+    #[inline]
+    fn nearly_lt_eps(&self, _other: &Self, _eps: &EpsToleranceType<Self>) -> bool {
+        false
+    }
+
+    #[inline]
+    fn nearly_le_eps(&self, _other: &Self, _eps: &EpsToleranceType<Self>) -> bool {
+        true
+    }
+
+    #[inline]
+    fn nearly_gt_eps(&self, _other: &Self, _eps: &EpsToleranceType<Self>) -> bool {
+        false
+    }
+
+    #[inline]
+    fn nearly_ge_eps(&self, _other: &Self, _eps: &EpsToleranceType<Self>) -> bool {
+        true
+    }
+}
+
+impl NearlyOrdUlps for () {
+    #[inline]
+    fn nearly_lt_ulps(&self, _other: &Self, _ulps: &UlpsToleranceType<Self>) -> bool {
+        false
+    }
+
+    #[inline]
+    fn nearly_le_ulps(&self, _other: &Self, _ulps: &UlpsToleranceType<Self>) -> bool {
+        true
+    }
+
+    #[inline]
+    fn nearly_gt_ulps(&self, _other: &Self, _ulps: &UlpsToleranceType<Self>) -> bool {
+        false
+    }
+
+    #[inline]
+    fn nearly_ge_ulps(&self, _other: &Self, _ulps: &UlpsToleranceType<Self>) -> bool {
+        true
+    }
+}
+
+impl NearlyOrdTol for () {}
+impl NearlyOrd for () {}
