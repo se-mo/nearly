@@ -1,7 +1,9 @@
 #![cfg(feature = "std")]
 
 use mockall::predicate::eq;
-use nearly::{NearlyEqEps, NearlyEqTol, NearlyEqUlps, Tolerance};
+use nearly::{
+    NearlyEqEps, NearlyEqTol, NearlyEqUlps, NearlyOrdEps, NearlyOrdTol, NearlyOrdUlps, Tolerance,
+};
 use paste::paste;
 use std::boxed::Box;
 use std::pin::Pin;
@@ -58,82 +60,92 @@ macro_rules! rhs_value {
 
 macro_rules! impl_test {
     ($ptr: tt) => {
+        impl_test_fn!($ptr, eq);
+        impl_test_fn!($ptr, lt);
+        impl_test_fn!($ptr, le);
+        impl_test_fn!($ptr, gt);
+        impl_test_fn!($ptr, ge);
+    };
+}
+
+macro_rules! impl_test_fn {
+    ($ptr: tt, $fn: ident) => {
         paste! {
             #[test]
-            fn [<nearly_eq_eps_ $ptr>]() {
+            fn [<nearly_ $fn _eps_ $ptr>]() {
                 let b: rhs_type!($ptr) = rhs_value!($ptr);
 
                 {
                     let mut a_val = MockLhs::new();
-                    a_val.expect_nearly_eq_eps()
+                    a_val.[<expect_nearly_ $fn _eps>]()
                         .with(eq(Rhs(5)), eq(0.1))
                         .times(1)
                         .return_const(true);
                     let a: lhs_type!($ptr) = lhs_value!(a_val, $ptr);
 
-                    assert!(a.nearly_eq_eps(&b, &0.1));
+                    assert!(a.[<nearly_ $fn _eps>](&b, &0.1));
                 }
                 {
                     let mut a_val = MockLhs::new();
-                    a_val.expect_nearly_eq_eps()
+                    a_val.[<expect_nearly_ $fn _eps>]()
                         .with(eq(Rhs(5)), eq(0.1))
                         .times(1)
                         .return_const(false);
                     let a: lhs_type!($ptr) = lhs_value!(a_val, $ptr);
 
-                    assert!(!a.nearly_eq_eps(&b, &0.1));
+                    assert!(!a.[<nearly_ $fn _eps>](&b, &0.1));
                 }
             }
 
             #[test]
-            fn [<nearly_eq_ulps_ $ptr>]() {
+            fn [<nearly_ $fn _ulps_ $ptr>]() {
                 let b: rhs_type!($ptr) = rhs_value!($ptr);
 
                 {
                     let mut a_val = MockLhs::new();
-                    a_val.expect_nearly_eq_ulps()
+                    a_val.[<expect_nearly_ $fn _ulps>]()
                         .with(eq(Rhs(5)), eq(5))
                         .times(1)
                         .return_const(true);
                     let a: lhs_type!($ptr) = lhs_value!(a_val, $ptr);
 
-                    assert!(a.nearly_eq_ulps(&b, &5));
+                    assert!(a.[<nearly_ $fn _ulps>](&b, &5));
                 }
                 {
                     let mut a_val = MockLhs::new();
-                    a_val.expect_nearly_eq_ulps()
+                    a_val.[<expect_nearly_ $fn _ulps>]()
                         .with(eq(Rhs(5)), eq(5))
                         .times(1)
                         .return_const(false);
                     let a: lhs_type!($ptr) = lhs_value!(a_val, $ptr);
 
-                    assert!(!a.nearly_eq_ulps(&b, &5));
+                    assert!(!a.[<nearly_ $fn _ulps>](&b, &5));
                 }
             }
 
             #[test]
-            fn [<nearly_eq_tol_ $ptr>]() {
+            fn [<nearly_ $fn _tol_ $ptr>]() {
                 let b: rhs_type!($ptr) = rhs_value!($ptr);
 
                 {
                     let mut a_val = MockLhs::new();
-                    a_val.expect_nearly_eq_tol()
+                    a_val.[<expect_nearly_ $fn _tol>]()
                         .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
                         .times(1)
                         .return_const(true);
                     let a: lhs_type!($ptr) = lhs_value!(a_val, $ptr);
 
-                    assert!(a.nearly_eq_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+                    assert!(a.[<nearly_ $fn _tol>](&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
                 }
                 {
                     let mut a_val = MockLhs::new();
-                    a_val.expect_nearly_eq_tol()
+                    a_val.[<expect_nearly_ $fn _tol>]()
                         .with(eq(Rhs(5)), eq(Tolerance::<MockLhs, Rhs>::new(0.1, 5)))
                         .times(1)
                         .return_const(false);
                     let a: lhs_type!($ptr) = lhs_value!(a_val, $ptr);
 
-                    assert!(!a.nearly_eq_tol(&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
+                    assert!(!a.[<nearly_ $fn _tol>](&b, &Tolerance::<MockLhs, Rhs>::new(0.1, 5)));
                 }
             }
         }
