@@ -202,25 +202,11 @@ macro_rules! impl_float {
                 self < other && self.nearly_ne_eps(other, eps)
             }
 
-            /// Returns true if `self < other` or `self` is nearly equal to `other` based on
-            /// the absolute epsilon value `eps`.
-            #[inline]
-            fn nearly_le_eps(&self, other: &Self, eps: &EpsToleranceType<Self>) -> bool {
-                self < other || self.nearly_eq_eps(other, eps)
-            }
-
             /// Returns true if `self > other` and `self` is not nearly equal to `other` based on
             /// the absolute epsilon value `eps`.
             #[inline]
             fn nearly_gt_eps(&self, other: &Self, eps: &EpsToleranceType<Self>) -> bool {
                 self > other && self.nearly_ne_eps(other, eps)
-            }
-
-            /// Returns true if `self > other` or `self` is nearly equal to `other` based on
-            /// the absolute epsilon value `eps`.
-            #[inline]
-            fn nearly_ge_eps(&self, other: &Self, eps: &EpsToleranceType<Self>) -> bool {
-                self > other || self.nearly_eq_eps(other, eps)
             }
         }
 
@@ -232,25 +218,11 @@ macro_rules! impl_float {
                 self < other && self.nearly_ne_ulps(other, ulps)
             }
 
-            /// Returns true if `self < other` or `self` is nearly equal to `other` based on
-            /// the ulps distance `ulps`.
-            #[inline]
-            fn nearly_le_ulps(&self, other: &Self, ulps: &UlpsToleranceType<Self>) -> bool {
-                self < other || self.nearly_eq_ulps(other, ulps)
-            }
-
             /// Returns true if `self > other` and `self` is not nearly equal to `other` based on
             /// the ulps distance `ulps`.
             #[inline]
             fn nearly_gt_ulps(&self, other: &Self, ulps: &UlpsToleranceType<Self>) -> bool {
                 self > other && self.nearly_ne_ulps(other, ulps)
-            }
-
-            /// Returns true if `self > other` or `self` is nearly equal to `other` based on
-            /// the ulps distance `ulps`.
-            #[inline]
-            fn nearly_ge_ulps(&self, other: &Self, ulps: &UlpsToleranceType<Self>) -> bool {
-                self > other || self.nearly_eq_ulps(other, ulps)
             }
         }
 
@@ -1234,18 +1206,8 @@ impl NearlyOrdEps for () {
     }
 
     #[inline]
-    fn nearly_le_eps(&self, _other: &Self, _eps: &EpsToleranceType<Self>) -> bool {
-        true
-    }
-
-    #[inline]
     fn nearly_gt_eps(&self, _other: &Self, _eps: &EpsToleranceType<Self>) -> bool {
         false
-    }
-
-    #[inline]
-    fn nearly_ge_eps(&self, _other: &Self, _eps: &EpsToleranceType<Self>) -> bool {
-        true
     }
 }
 
@@ -1256,18 +1218,8 @@ impl NearlyOrdUlps for () {
     }
 
     #[inline]
-    fn nearly_le_ulps(&self, _other: &Self, _ulps: &UlpsToleranceType<Self>) -> bool {
-        true
-    }
-
-    #[inline]
     fn nearly_gt_ulps(&self, _other: &Self, _ulps: &UlpsToleranceType<Self>) -> bool {
         false
-    }
-
-    #[inline]
-    fn nearly_ge_ulps(&self, _other: &Self, _ulps: &UlpsToleranceType<Self>) -> bool {
-        true
     }
 }
 
