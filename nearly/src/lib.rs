@@ -660,4 +660,5 @@ pub use tolerance::Tolerance;
 pub use tolerance::UlpsTolerance;
 pub use tolerance::UlpsToleranceType;
 
+mod trait_impl;
 mod ulps;
