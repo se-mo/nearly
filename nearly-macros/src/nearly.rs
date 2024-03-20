@@ -16,6 +16,10 @@ pub(crate) enum NearlyMacroType {
 enum NearlyOp {
     Eq,
     Ne,
+    Lt,
+    Le,
+    Gt,
+    Ge,
 }
 
 impl NearlyOp {
@@ -23,6 +27,17 @@ impl NearlyOp {
         match self {
             NearlyOp::Eq => "_eq",
             NearlyOp::Ne => "_ne",
+            NearlyOp::Lt => "_lt",
+            NearlyOp::Le => "_le",
+            NearlyOp::Gt => "_gt",
+            NearlyOp::Ge => "_ge",
+        }
+    }
+
+    fn trait_postfix(&self) -> &str {
+        match self {
+            NearlyOp::Eq | NearlyOp::Ne => "Eq",
+            NearlyOp::Lt | NearlyOp::Le | NearlyOp::Gt | NearlyOp::Ge => "Ord",
         }
     }
 
@@ -30,6 +45,10 @@ impl NearlyOp {
         match self {
             NearlyOp::Eq => "==",
             NearlyOp::Ne => "!=",
+            NearlyOp::Lt => "<",
+            NearlyOp::Le => "<=",
+            NearlyOp::Gt => ">",
+            NearlyOp::Ge => ">=",
         }
     }
 }
@@ -83,6 +102,10 @@ impl Parse for NearlyMacroInput {
         let op = match op {
             BinOp::Eq(_) => NearlyOp::Eq,
             BinOp::Ne(_) => NearlyOp::Ne,
+            BinOp::Lt(_) => NearlyOp::Lt,
+            BinOp::Le(_) => NearlyOp::Le,
+            BinOp::Gt(_) => NearlyOp::Gt,
+            BinOp::Ge(_) => NearlyOp::Ge,
             _ => {
                 return Err(syn::Error::new(op.span(), "invalid comparison operation"));
             }
@@ -160,7 +183,7 @@ fn update_tolerance(tol: NearlyTol, ident: Ident, expr: Expr) -> Result<NearlyTo
 
 fn fn_token_stream(op: &NearlyOp, tolerance: &NearlyTol) -> proc_macro2::TokenStream {
     let fn_ident = format_ident!("nearly{}{}", op.fn_postfix(), tolerance.fn_postfix());
-    let trait_ident = format_ident!("NearlyEq{}", tolerance.trait_postfix());
+    let trait_ident = format_ident!("Nearly{}{}", op.trait_postfix(), tolerance.trait_postfix());
 
     quote!(::nearly::#trait_ident::#fn_ident)
 }
