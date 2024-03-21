@@ -45,3 +45,27 @@ pub fn nearly_eq_tol_derive(input: TokenStream) -> TokenStream {
 pub fn nearly_eq_derive(input: TokenStream) -> TokenStream {
     derive::nearly_eq(input, derive::DeriveTrait::NearlyEq)
 }
+
+#[proc_macro_derive(NearlyOrdEps)]
+#[proc_macro_error]
+pub fn nearly_ord_eps_derive(input: TokenStream) -> TokenStream {
+    derive::nearly_eq(input, derive::DeriveTrait::NearlyOrdEps)
+}
+
+#[proc_macro_derive(NearlyOrdUlps)]
+#[proc_macro_error]
+pub fn nearly_ord_ulps_derive(input: TokenStream) -> TokenStream {
+    derive::nearly_eq(input, derive::DeriveTrait::NearlyOrdUlps)
+}
+
+#[proc_macro_derive(NearlyOrdTol)]
+#[proc_macro_error]
+pub fn nearly_ord_tol_derive(input: TokenStream) -> TokenStream {
+    derive::nearly_eq(input, derive::DeriveTrait::NearlyOrdTol)
+}
+
+#[proc_macro_derive(NearlyOrd)]
+#[proc_macro_error]
+pub fn nearly_ord_derive(input: TokenStream) -> TokenStream {
+    derive::nearly_eq(input, derive::DeriveTrait::NearlyOrd)
+}

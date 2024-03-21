@@ -572,7 +572,7 @@ pub use nearly_macros::NearlyEqUlps;
 /// ```
 pub use nearly_macros::NearlyEqTol;
 
-/// Derives all nearly traits for a custom type.
+/// Derives all nearly equality traits for a custom type.
 ///
 /// The derived traits are: [NearlyEqEps], [NearlyEqUlps], [NearlyEqTol] and [NearlyEq].
 /// This trait can be derived for structs with named or unnamed fields as well as enums.
@@ -640,6 +640,253 @@ pub use nearly_macros::NearlyEqTol;
 /// assert_nearly!(a == b);
 /// ```
 pub use nearly_macros::NearlyEq;
+
+/// Derives the [NearlyOrdEps] trait for a custom type.
+///
+/// This trait can be derived for structs with named or unnamed fields as well as enums.
+/// To derive this trait, all types used for fields have to implemented [NearlyOrdEps].
+///
+/// To derive [NearlyOrdEps] on a type, this type also has to implement or derive [NearlyEqEps].
+/// 
+/// To use the [assert_nearly!] and [debug_assert_nearly!] macros, your type must also implement
+/// the Debug trait.
+///
+/// # Example
+///
+/// ## Same Type
+///
+/// If all fields have the same type, the epsilon tolerance will have the same type as the
+/// epsilon tolerance of the fields type. E.g., for [f32] this would be [f32].
+///
+/// ```
+/// use nearly::{assert_nearly, NearlyEqEps, NearlyOrdEps};
+///
+/// #[derive(NearlyEqEps, NearlyOrdEps, Debug)]
+/// struct Point {
+///     x: f32,
+///     y: f32,
+///     z: f32,
+/// }
+///
+/// let a = Point{x: -3.4, y: 2.1, z: 1.0};
+/// let b = Point{x: -3.4, y: 2.1, z: 1.0000008};
+///
+/// assert_nearly!(a <= b, eps = 0.0001);
+/// ```
+///
+/// ## Different Types
+///
+/// If the fields have different types, the epsilon tolerance will have a tuple type. The tuple
+/// will consist of the epsilon types of the fields type in the same order as they are defined.
+/// E.g., for fields with the type [f32], [f64] and [f32] this would be ([f32], [f64], [f32]).
+///
+/// ```
+/// use nearly::{assert_nearly, NearlyEqEps, NearlyOrdEps};
+///
+/// #[derive(NearlyEqEps, NearlyOrdEps, Debug)]
+/// struct Point {
+///     x: f32,
+///     y: f64,
+///     z: f32,
+/// }
+///
+/// let a = Point{x: -3.4, y: 2.1, z: 1.0};
+/// let b = Point{x: -3.4, y: 2.1, z: 1.0000008};
+///
+/// assert_nearly!(a <= b, eps = (0.0001, 0.000001, 0.0001));
+/// ```
+pub use nearly_macros::NearlyOrdEps;
+
+/// Derives the [NearlyOrdUlps] trait for a custom type.
+///
+/// This trait can be derived for structs with named or unnamed fields as well as enums.
+/// To derive this trait, all types used for fields have to implemented [NearlyEqUlps].
+///
+/// To derive [NearlyOrdUlps] on a type, this type also has to implement or derive [NearlyEqUlps].
+/// 
+/// To use the [assert_nearly!] and [debug_assert_nearly!] macros, your type must also implement
+/// the Debug trait.
+///
+/// # Example
+///
+/// ## Same Type
+///
+/// If all fields have the same type, the epsilon tolerance will have the same type as the
+/// epsilon tolerance of the fields type. E.g., for [f32] this would be [i32].
+///
+/// ```
+/// use nearly::{assert_nearly, NearlyEqUlps, NearlyOrdUlps};
+///
+/// #[derive(NearlyEqUlps, NearlyOrdUlps, Debug)]
+/// struct Point {
+///     x: f32,
+///     y: f32,
+///     z: f32,
+/// }
+///
+/// let a = Point{x: -3.4, y: 2.1, z: 1.0};
+/// let b = Point{x: -3.4, y: 2.1, z: 1.0000008};
+///
+/// assert_nearly!(a <= b, ulps = 8);
+/// ```
+///
+/// ## Different Types
+///
+/// If the fields have different types, the epsilon tolerance will have a tuple type. The tuple
+/// will consist of the epsilon types of the fields type in the same order as they are defined.
+/// E.g., for fields with the type [f32], [f64] and [f32] this would be ([i32], [i64], [i32]).
+///
+/// ```
+/// use nearly::{assert_nearly, NearlyEqUlps, NearlyOrdUlps};
+///
+/// #[derive(NearlyEqUlps, NearlyOrdUlps, Debug)]
+/// struct Point {
+///     x: f32,
+///     y: f64,
+///     z: f32,
+/// }
+///
+/// let a = Point{x: -3.4, y: 2.1, z: 1.0};
+/// let b = Point{x: -3.4, y: 2.1, z: 1.0000008};
+///
+/// assert_nearly!(a <= b, ulps = (8, 12, 8));
+/// ```
+pub use nearly_macros::NearlyOrdUlps;
+
+/// Derives the [NearlyOrdTol] trait for a custom type.
+///
+/// This trait can be derived for structs with named or unnamed fields as well as enums.
+/// To derive this trait, all types used for fields have to implemented [NearlyEqTol].
+///
+/// To derive [NearlyOrdTol] on a type, this type also has to implement or derive [NearlyEqTol].
+/// 
+/// To use the [assert_nearly!] and [debug_assert_nearly!] macros, your type must also implement
+/// the Debug trait.
+///
+/// # Example
+///
+/// ## Same Type
+///
+/// If all fields have the same type:
+///   - the epsilon tolerance will have the same type as the epsilon tolerance of the fields type.
+///     E.g., for [f32] this would be [f32].
+///   - the ulps tolerance will have the same type as the ulps tolerance of the fields type.
+///     E.g., for [f32] this would be [i32].
+///
+/// ```
+/// use nearly::{assert_nearly, NearlyEqTol, NearlyOrdTol, Tolerance};
+///
+/// #[derive(NearlyEqTol, NearlyOrdTol, Debug)]
+/// struct Point {
+///     x: f32,
+///     y: f32,
+///     z: f32,
+/// }
+///
+/// let a = Point{x: -3.4, y: 2.1, z: 1.0};
+/// let b = Point{x: -3.4, y: 2.1, z: 1.0000008};
+///
+/// assert_nearly!(a <= b, tol = Tolerance::new(0.0001, 8));
+/// ```
+///
+/// ## Different Types
+///
+/// If the fields have different types:
+///   - the epsilon tolerance will have a tuple type. The tuple will consist of the epsilon types
+///     of the fields type in the same order as they are defined.
+///     E.g., for fields with the type [f32], [f64] and [f32] this would be ([f32], [f64], [f32]).
+///   - the ulps tolerance will have a tuple type. The tuple will consist of the ulps types
+///     of the fields type in the same order as they are defined.
+///     E.g., for fields with the type [f32], [f64], [f32] this would be ([i32], [i64], [i32]).
+///
+/// ```
+/// use nearly::{assert_nearly, NearlyEqTol, NearlyOrdTol, Tolerance};
+///
+/// #[derive(NearlyEqTol, NearlyOrdTol, Debug)]
+/// struct Point {
+///     x: f32,
+///     y: f64,
+///     z: f32,
+/// }
+///
+/// let a = Point{x: -3.4, y: 2.1, z: 1.0};
+/// let b = Point{x: -3.4, y: 2.1, z: 1.0000008};
+///
+/// assert_nearly!(a <= b, tol = Tolerance::new((0.0001, 0.000001, 0.0001), (8, 12, 8)));
+/// ```
+pub use nearly_macros::NearlyOrdTol;
+
+/// Derives all nearly ordering traits for a custom type.
+///
+/// The derived traits are: [NearlyOrdEps], [NearlyOrdUlps], [NearlyOrdTol] and [NearlyOrd].
+/// This trait can be derived for structs with named or unnamed fields as well as enums.
+/// To derive this trait, all types used for fields have to implemented
+/// [NearlyOrdEps], [NearlyOrdUlps], [NearlyOrdTol] and [NearlyOrd].
+///
+/// To derive all nearly ordering traits on a type, this type also has to implement or derive all
+/// nearly equality traits [NearlyEqEps], [NearlyEqUlps], [NearlyEqTol] and [NearlyEq].
+/// 
+/// To use the [assert_nearly!] and [debug_assert_nearly!] macros, your type must also implement
+/// the Debug trait.
+///
+/// # Example
+///
+/// ## Same Type
+///
+/// If all fields have the same type:
+///   - the epsilon tolerance will have the same type as the epsilon tolerance of the fields type.
+///     E.g., for [f32] this would be [f32].
+///   - the ulps tolerance will have the same type as the ulps tolerance of the fields type.
+///     E.g., for [f32] this would be [i32].
+///
+/// ```
+/// use nearly::{assert_nearly, NearlyEq, NearlyOrd};
+///
+/// #[derive(NearlyEq, NearlyOrd, Debug)]
+/// struct Point {
+///     x: f32,
+///     y: f32,
+///     z: f32,
+/// }
+///
+/// let a = Point{x: -3.4, y: 2.1, z: 1.0};
+/// let b = Point{x: -3.4, y: 2.1, z: 1.0000008};
+///
+/// assert_nearly!(a <= b, eps = 0.0001);
+/// assert_nearly!(a <= b, ulps = 8);
+/// assert_nearly!(a <= b, eps = 0.0001, ulps = 8);
+/// assert_nearly!(a <= b);
+/// ```
+///
+/// ## Different Types
+///
+/// If the fields have different types:
+///   - the epsilon tolerance will have a tuple type. The tuple will consist of the epsilon types
+///     of the fields type in the same order as they are defined.
+///     E.g., for fields with the type [f32], [f64] and [f32] this would be ([f32], [f64], [f32]).
+///   - the ulps tolerance will have a tuple type. The tuple will consist of the ulps types
+///     of the fields type in the same order as they are defined.
+///     E.g., for fields with the type [f32], [f64], [f32] this would be ([i32], [i64], [i32]).
+///
+/// ```
+/// use nearly::{assert_nearly, NearlyEq, NearlyOrd};
+///
+/// #[derive(NearlyEq, NearlyOrd, Debug)]
+/// struct Point {
+///     x: f32,
+///     y: f64,
+///     z: f32,
+/// }
+///
+/// let a = Point{x: -3.4, y: 2.1, z: 1.0};
+/// let b = Point{x: -3.4, y: 2.1, z: 1.0000008};
+///
+/// assert_nearly!(a <= b, eps = (0.0001, 0.000001, 0.0001));
+/// assert_nearly!(a <= b, ulps = (8, 12, 8));
+/// assert_nearly!(a <= b, eps = (0.0001, 0.000001, 0.0001), ulps = (8, 12, 8));
+/// assert_nearly!(a <= b);
+/// ```
+pub use nearly_macros::NearlyOrd;
 
 mod nearly_eq;
 pub use nearly_eq::NearlyEq;
