@@ -122,10 +122,7 @@ fn struct_tol_output(
     }
 }
 
-fn struct_fn_output(
-    data_struct: &DataStruct,
-    trait_fn: TraitFn,
-) -> proc_macro2::TokenStream {
+fn struct_fn_output(data_struct: &DataStruct, trait_fn: TraitFn) -> proc_macro2::TokenStream {
     match &data_struct.fields {
         Named(fields) => struct_named_fields_fn_output(fields, trait_fn),
         Unnamed(fields) => struct_unnamed_fields_fn_output(fields, trait_fn),
@@ -424,7 +421,7 @@ fn derive_nearly_ord_eps(data: &Data, ident: &Ident) -> proc_macro2::TokenStream
     let le_fn_output = fn_output(data, ident, TraitFn::Eps(Cmp::Le));
     let gt_fn_output = fn_output(data, ident, TraitFn::Eps(Cmp::Gt));
     let ge_fn_output = fn_output(data, ident, TraitFn::Eps(Cmp::Ge));
-    
+
     quote!(
         #[automatically_derived]
         impl ::nearly::NearlyOrdEps for #ident {
