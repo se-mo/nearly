@@ -28,6 +28,10 @@
 //! The comparison can be:
 //!   - `a == b` for testing whether a is nearly equal to b
 //!   - `a != b` for testing whether a is not nearly equal to b
+//!   - `a < b` for testing whether a is strict less than b but not nearly equal to b
+//!   - `a <= b` for testing whether a is strict less than b or nearly equal to b
+//!   - `a > b` for testing whether a is strict greater than b but not nearly equal to b
+//!   - `a >= b` for testing whether a is strict greater than b or nearly equal to b
 //!
 //! The tolerance used can be:
 //!   - `eps` for an absolute epsilon tolerance
@@ -98,12 +102,13 @@
 //! ## Derive the nearly traits
 //!
 //! The easiest way to add nearly comparison to your own types is by deriving the nearly traits.
-//! Just derive [NearlyEq](nearly_macros::NearlyEq) to get full support on your type.
+//! Just derive [NearlyEq](nearly_macros::NearlyEq) and [NearlyOrd](nearly_macros::NearlyOrd)
+//! to get full support on your type.
 //!
 //! ```
-//! use nearly::{assert_nearly, NearlyEq};
+//! use nearly::{assert_nearly, NearlyEq, NearlyOrd};
 //!
-//! #[derive(Debug, NearlyEq)]
+//! #[derive(Debug, NearlyEq, NearlyOrd)]
 //! struct Point {
 //!     x: f32,
 //!     y: f32,
@@ -113,20 +118,29 @@
 //! let b = Point { x: 1.23, y: 4.567 };
 //!
 //! assert_nearly!(a == b, eps = 0.01);
+//! assert_nearly!(a <= b, eps = 0.01);
 //! ```
 //!
 //! To use the [assert_nearly!] and [debug_assert_nearly!] macros, your type must also implement
 //! the Debug trait.
 //!
 //! You can derive the following traits:
-//!   - [NearlyEqEps](nearly_macros::NearlyEqEps): enables nearly support with absolute epsilon
-//!     tolerance
-//!   - [NearlyEqUlps](nearly_macros::NearlyEqUlps): enables nearly support with ulps based
-//!     tolerance
-//!   - [NearlyEqTol][nearly_macros::NearlyEqTol]: enables nearly support with absolute epsilon
-//!     and ulps based tolerances
-//!   - [NearlyEq](nearly_macros::NearlyEq): enables nearly support with absolute epsilon and ulps
-//!     based tolerances with default values
+//!   - [NearlyEqEps](nearly_macros::NearlyEqEps): enables nearly equality support with
+//!     absolute epsilon tolerance
+//!   - [NearlyEqUlps](nearly_macros::NearlyEqUlps): enables nearly equality support with
+//!     ulps based tolerance
+//!   - [NearlyEqTol][nearly_macros::NearlyEqTol]: enables nearly equality support with
+//!     absolute epsilon and ulps based tolerances
+//!   - [NearlyEq](nearly_macros::NearlyEq): enables nearly equality support with
+//!     absolute epsilon and ulps based tolerances with default values
+//!   - [NearlyOrdEps](nearly_macros::NearlyOrdEps): enables nearly ordering support with
+//!     absolute epsilon tolerance
+//!   - [NearlyOrdUlps](nearly_macros::NearlyOrdUlps): enables nearly ordering support with
+//!     ulps based tolerance
+//!   - [NearlyOrdTol][nearly_macros::NearlyOrdTol]: enables nearly ordering support with
+//!     absolute epsilon and ulps based tolerances
+//!   - [NearlyOrd](nearly_macros::NearlyOrd): enables nearly ordering support with
+//!     absolute epsilon and ulps based tolerances with default values
 //!  
 //! ## Implement the nearly traits
 //!
@@ -165,9 +179,11 @@
 //! ```
 //!
 //! After we have defined the tolerances, we have to implement the comparison traits.
-//! These implementations specify how our struct is checked for nearly equality. In this
-//! example we simply call the nearly equality for each field. Since our fields are of type [f32],
-//! we can utilize the nearly comparison implementation this crate provides.
+//! These implementations specify how our struct is checked for nearly equality and ordering.
+//! In this example we simply call the corresponding nearly comparison for each field. Since our
+//! fields are of type [f32], we can utilize the nearly comparison implementation this crate provides.
+//!
+//! Fist let's implement the nearly equality traits:
 //!
 //! ```
 //! # use nearly::{EpsTolerance, UlpsTolerance};
@@ -202,13 +218,81 @@
 //! impl NearlyEq for Point {}
 //! ```
 //!
+//! Now let's also implement the nearly ordering traits:
+//!
+//! ```
+//! # use nearly::{NearlyEq};
+//! # #[derive(NearlyEq)] struct Point { x: f32, y: f32 }
+//! use nearly::{
+//!     EpsToleranceType, NearlyOrd, NearlyOrdEps, NearlyOrdTol, NearlyOrdUlps, Tolerance,
+//!     UlpsToleranceType
+//! };
+//!
+//! impl NearlyOrdEps for Point {
+//!     fn nearly_lt_eps(&self, other: &Self, eps: &EpsToleranceType<Self>) -> bool {
+//!         self.x.nearly_lt_eps(&other.x, eps) && self.y.nearly_lt_eps(&other.y, eps)
+//!     }
+//!     fn nearly_le_eps(&self, other: &Self, eps: &EpsToleranceType<Self>) -> bool {
+//!         self.x.nearly_le_eps(&other.x, eps) && self.y.nearly_le_eps(&other.y, eps)
+//!     }
+//!     fn nearly_gt_eps(&self, other: &Self, eps: &EpsToleranceType<Self>) -> bool {
+//!         self.x.nearly_gt_eps(&other.x, eps) && self.y.nearly_gt_eps(&other.y, eps)
+//!     }
+//!     fn nearly_ge_eps(&self, other: &Self, eps: &EpsToleranceType<Self>) -> bool {
+//!         self.x.nearly_ge_eps(&other.x, eps) && self.y.nearly_ge_eps(&other.y, eps)
+//!     }
+//! }
+//!
+//! impl NearlyOrdUlps for Point {
+//!     fn nearly_lt_ulps(&self, other: &Self, ulps: &UlpsToleranceType<Self>) -> bool {
+//!         self.x.nearly_lt_ulps(&other.x, ulps) && self.y.nearly_lt_ulps(&other.y, ulps)
+//!     }
+//!     fn nearly_le_ulps(&self, other: &Self, ulps: &UlpsToleranceType<Self>) -> bool {
+//!         self.x.nearly_le_ulps(&other.x, ulps) && self.y.nearly_le_ulps(&other.y, ulps)
+//!     }
+//!     fn nearly_gt_ulps(&self, other: &Self, ulps: &UlpsToleranceType<Self>) -> bool {
+//!         self.x.nearly_gt_ulps(&other.x, ulps) && self.y.nearly_gt_ulps(&other.y, ulps)
+//!     }
+//!     fn nearly_ge_ulps(&self, other: &Self, ulps: &UlpsToleranceType<Self>) -> bool {
+//!         self.x.nearly_ge_ulps(&other.x, ulps) && self.y.nearly_ge_ulps(&other.y, ulps)
+//!     }
+//! }
+//!
+//! impl NearlyOrdTol for Point {
+//!     fn nearly_lt_tol(&self, other: &Self, tol: &Tolerance<Self>) -> bool {
+//!         self.x.nearly_lt_tol(&other.x, &(tol.eps, tol.ulps).into()) &&
+//!         self.y.nearly_lt_tol(&other.y, &(tol.eps, tol.ulps).into())
+//!     }
+//!     fn nearly_le_tol(&self, other: &Self, tol: &Tolerance<Self>) -> bool {
+//!         self.x.nearly_le_tol(&other.x, &(tol.eps, tol.ulps).into()) &&
+//!         self.y.nearly_le_tol(&other.y, &(tol.eps, tol.ulps).into())
+//!     }
+//!     fn nearly_gt_tol(&self, other: &Self, tol: &Tolerance<Self>) -> bool {
+//!         self.x.nearly_gt_tol(&other.x, &(tol.eps, tol.ulps).into()) &&
+//!         self.y.nearly_gt_tol(&other.y, &(tol.eps, tol.ulps).into())
+//!     }
+//!     fn nearly_ge_tol(&self, other: &Self, tol: &Tolerance<Self>) -> bool {
+//!         self.x.nearly_ge_tol(&other.x, &(tol.eps, tol.ulps).into()) &&
+//!         self.y.nearly_ge_tol(&other.y, &(tol.eps, tol.ulps).into())
+//!     }
+//! }
+//!
+//! // use provided trait implementation
+//! impl NearlyOrd for Point {}
+//! ```
+//!
+//! Please not that when implementing the nearly ordering traits, you also must implement the
+//! nearly equality traits.
+//!
 //! ### Comparing two different structs
 //!
 //! So far, we implemented nearly comparison for a type to compare it with the same type.
 //! This crate also allows to implement a nearly comparison between two different types.
 //! This is similar to implementing the [PartialEq] trait.
 //!
-//! This example also shows the use of generic typed fields.
+//! This following example shows such an implementation for the nearly equality traits.
+//! You can also implement the nearly ordering traits in the same way.
+//! The example also shows the use of generic typed fields.
 //!
 //! ```
 //! use nearly::{
@@ -647,7 +731,7 @@ pub use nearly_macros::NearlyEq;
 /// To derive this trait, all types used for fields have to implemented [NearlyOrdEps].
 ///
 /// To derive [NearlyOrdEps] on a type, this type also has to implement or derive [NearlyEqEps].
-/// 
+///
 /// To use the [assert_nearly!] and [debug_assert_nearly!] macros, your type must also implement
 /// the Debug trait.
 ///
@@ -703,7 +787,7 @@ pub use nearly_macros::NearlyOrdEps;
 /// To derive this trait, all types used for fields have to implemented [NearlyEqUlps].
 ///
 /// To derive [NearlyOrdUlps] on a type, this type also has to implement or derive [NearlyEqUlps].
-/// 
+///
 /// To use the [assert_nearly!] and [debug_assert_nearly!] macros, your type must also implement
 /// the Debug trait.
 ///
@@ -759,7 +843,7 @@ pub use nearly_macros::NearlyOrdUlps;
 /// To derive this trait, all types used for fields have to implemented [NearlyEqTol].
 ///
 /// To derive [NearlyOrdTol] on a type, this type also has to implement or derive [NearlyEqTol].
-/// 
+///
 /// To use the [assert_nearly!] and [debug_assert_nearly!] macros, your type must also implement
 /// the Debug trait.
 ///
@@ -825,7 +909,7 @@ pub use nearly_macros::NearlyOrdTol;
 ///
 /// To derive all nearly ordering traits on a type, this type also has to implement or derive all
 /// nearly equality traits [NearlyEqEps], [NearlyEqUlps], [NearlyEqTol] and [NearlyEq].
-/// 
+///
 /// To use the [assert_nearly!] and [debug_assert_nearly!] macros, your type must also implement
 /// the Debug trait.
 ///

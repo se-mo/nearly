@@ -42,6 +42,10 @@ a boolean whether the comparison is true or false by using the provided toleranc
 The comparison can be:
   - `a == b` for testing whether a is nearly equal to b
   - `a != b` for testing whether a is not nearly equal to b
+  - `a < b` for testing whether a is strict less than b but not nearly equal to b
+  - `a <= b` for testing whether a is strict less than b or nearly equal to b
+  - `a > b` for testing whether a is strict greater than b but not nearly equal to b
+  - `a >= b` for testing whether a is strict greater than b or nearly equal to b
 
 The tolerance used can be:
   - `eps` for an absolute epsilon tolerance
@@ -93,12 +97,12 @@ debug_assert_nearly!(a == b);
 ## Derive the nearly traits
 
 The easiest way to add nearly comparison to your own types is by deriving the nearly traits.
-Just derive `NearlyEq` to get full support on your type.
+Just derive `NearlyEq` and `NearlyOrd` to get full support on your type.
  
 ```rust
-use nearly::{assert_nearly, NearlyEq};
+use nearly::{assert_nearly, NearlyEq, NearlyOrd};
 
-#[derive(Debug, NearlyEq)]
+#[derive(Debug, NearlyEq, NearlyOrd)]
 struct Point {
     x: f32,
     y: f32,
@@ -108,16 +112,20 @@ let a = Point { x: 1.23, y: 4.56 };
 let b = Point { x: 1.23, y: 4.567 };
 
 assert_nearly!(a == b, eps = 0.01);
+assert_nearly!(a <>= b, eps = 0.01);
 ```
  
-To use the `assert_nearly!` and `debug_assert_nearly!` macros, your type must also implement the Debug trait.
+To use the `assert_nearly!` and `debug_assert_nearly!` macros, your type must also implement
+the Debug trait.
 
 You can derive the following traits:
-  - `NearlyEqEps`: enables nearly support with absolute epsilon
-    tolerance
-  - `NearlyEqUlps`: enables nearly support with ulps based
-    tolerance
-  - `NearlyEqTol`: enables nearly support with absolute epsilon
-    and ulps based tolerances
-  - `NearlyEq`: enables nearly support with absolute epsilon and ulps
-    based tolerances with default values
+  - `NearlyEqEps`: enables nearly support with absolute epsilon tolerance
+  - `NearlyEqUlps`: enables nearly support with ulps based tolerance
+  - `NearlyEqTol`: enables nearly support with absolute epsilon and ulps based tolerances
+  - `NearlyEq`: enables nearly support with absolute epsilon and ulps based tolerances
+    with default values
+  - `NearlyOrdEps`: enables nearly ordering support with absolute epsilon tolerance
+  - `NearlyOrdUlps`: enables nearly ordering support with ulps based tolerance
+  - `NearlyOrdTol`: enables nearly ordering support with absolute epsilon and ulps based tolerances
+  - `NearlyOrd`: enables nearly ordering support with absolute epsilon and ulps based tolerances
+    with default values
