@@ -99,16 +99,16 @@
 //!
 //! The nearly functionality is also implemented for a variety of other types holding floats like
 //! containers, maps, pointers or tuples. Here is an example of comparing two arrays of floats.
-//! 
+//!
 //! ```
 //! use nearly::nearly;
-//! 
+//!
 //! let a: [f32; 4] = [1.1, 2.2, 2.2, 4.4];
 //! let b: [f32; 4] = [1.1, 2.2, 3.3, 4.4];
-//! 
+//!
 //! nearly!(a <= b, eps = 0.001, ulps = 5);
 //! ```
-//! 
+//!
 //! # Own types
 //!
 //! ## Derive the nearly traits
