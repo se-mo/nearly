@@ -61,7 +61,7 @@
 //! nearly!(a == b);
 //! ```
 //!
-//! There is also an [assert_nearly!] and [debug_assert_nearly!] macros you can use that panic
+//! There is also an [assert_nearly!] and [debug_assert_nearly!] macro you can use that panic
 //! if the nearly comparison evaluates to false. The signature is the same as for the [nearly!]
 //! macro.
 //!

@@ -75,7 +75,7 @@ nearly!(a == b, tol = Tolerance::new(0.001, 5));
 nearly!(a == b);
 ```
 
-There is also an `assert_nearly!` and `debug_assert_nearly!` macros you can use that panic if the
+There is also an `assert_nearly!` and `debug_assert_nearly!` macro you can use that panic if the
 nearly comparison evaluates to false. The signature is the same as for the `nearly!` macro.
 
 ```rust
@@ -103,7 +103,7 @@ use nearly::nearly;
 let a: [f32; 4] = [1.1, 2.2, 2.2, 4.4];
 let b: [f32; 4] = [1.1, 2.2, 3.3, 4.4];
 
-nearly!(a == b, eps = 0.001, ulps = 5);
+nearly!(a <= b, eps = 0.001, ulps = 5);
 ```
 
 ## Derive the nearly traits
@@ -124,7 +124,7 @@ let a = Point { x: 1.23, y: 4.56 };
 let b = Point { x: 1.23, y: 4.567 };
 
 assert_nearly!(a == b, eps = 0.01);
-assert_nearly!(a <>= b, eps = 0.01);
+assert_nearly!(a <= b, eps = 0.01);
 ```
  
 To use the `assert_nearly!` and `debug_assert_nearly!` macros, your type must also implement
