@@ -69,3 +69,15 @@ mock!(
         fn nearly_ge(&self, other: &Rhs) -> bool;
     }
 );
+
+/// Inner value of enum variant
+#[macro_export]
+macro_rules! inner_value {
+    ($target: expr, $var: path) => {{
+        if let $var(ref mut inner) = $target {
+            inner
+        } else {
+            panic!("mismatch variant when extracting inner value")
+        }
+    }};
+}
